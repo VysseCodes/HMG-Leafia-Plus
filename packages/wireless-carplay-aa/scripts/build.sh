@@ -10,14 +10,8 @@ TBT_BACKUP=/data/nemesis/backup/projection.tbt
 LP_ROOT=.
 . ./scripts/lpatch.sh
 
-car_variant() {
-    case "$(getprop ro.build.product 2>/dev/null)" in
-        CVEV.*) echo ev6 ;;
-        NEEV.*) echo neev ;;
-        DL3HEV.KOR.*) echo dl3hev ;;
-        *) return 1 ;;
-    esac
-}
+CARS_DIR=patches
+. ./scripts/cars.sh
 
 lp_md5() {
     local _l

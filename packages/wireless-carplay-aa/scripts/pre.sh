@@ -6,7 +6,7 @@ for _p in $PARTS; do
     [ -d "comp/$_p/scripts" ] || { log "FAIL: payload part $_p missing"; exit 1; }
 done
 if ! _car=$(car_name); then
-    log "this package supports Kia EV6 and Hyundai Ioniq 5 (260507) and Kia K5 Hybrid Korea (260902)"
+    log "this package supports: $(while read -r _a _b _c; do case "$_a" in ''|\#*) ;; *) printf '%s; ' "$_c" ;; esac; done < patches/cars)"
     fail_unknown_unit "unsupported car/firmware $(getprop ro.build.product 2>/dev/null)"
     exit 1
 fi

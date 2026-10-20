@@ -28,7 +28,7 @@ def run(*a): subprocess.run(a, check=True, stdout=subprocess.DEVNULL)
 
 def main():
     var, stock, pay, out = sys.argv[1:5]
-    fdir = FILES[var]
+    fdir = FILES.get(var, 'files_' + var)
     os.makedirs(os.path.join(out, var), exist_ok=True)
     os.makedirs(os.path.join(out, 'common'), exist_ok=True)
     lines = []

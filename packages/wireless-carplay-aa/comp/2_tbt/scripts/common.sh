@@ -10,46 +10,23 @@ LOG=/data/nemesis/projection.tbt.log
 APP_DIR=/system/app
 LIB_BASE=libautoreceiver_infobank.so
 LIB_LIVE=/system/lib/libautoreceiver_infobank.so
-# Stock 260507 bytes. A live file that does not match is left alone.
-SUM_GPM_APK=c155b0fb97384e645987dc1bd0f85922
-SUM_GPM_ODEX=96cd7c27a9db19acb3900f21f57ea9f0
-SUM_DIPO_APK=01446fb79dc4fcfc826271ba18158fa4
-SUM_DIPO_ODEX=a565e180fdb0b73d6520f28c91cdba63
-SUM_IAP_APK=fde208439f993986a60396e759797a01
-SUM_IAP_ODEX=03950e4b691f846e5478a5a69818c65e
-SUM_NAVI_APK=19559e742b1d21550aa8f0324e8e6d36
-SUM_NAVI_ODEX=9cf41f78ce312b3762b354714d12eec3
-SUM_LIB=48ee793af8b86052503b8c952b034731
-
-# ---- car variant: picked from the firmware's own product id, then the stock
-# checksums below must still match exactly before anything is written.
-#   CVEV.* = Kia EV6 (default)   NEEV.* = Hyundai Ioniq 5   DL3HEV.KOR.* = Kia K5 Hybrid (Korea)
 # the modified apps and library, rebuilt on the unit by scripts/build.sh
 FILES=/data/nemesis/build/wireless.carplay.aa/2_tbt
-case "$(getprop ro.build.product 2>/dev/null)" in
-    NEEV.*)
-        VARIANT=neev
-        SUM_GPM_APK=2e9a5e738fffad4bca38421971a07364
-        SUM_GPM_ODEX=6e67470f8ccd5afcd6c1408ac3fd9459
-        SUM_DIPO_APK=1b080aa15a39acc19d04ff56d731f484
-        SUM_DIPO_ODEX=460433b8ec27354f5b787d2382e7efaf
-        SUM_IAP_ODEX=43c40662352937dd2c25a154dfa60b9d
-        SUM_NAVI_ODEX=0617cbf37079ec5c2e6408f1fb7862b9
-        ;;
-    DL3HEV.KOR.*)
-        VARIANT=dl3hev
-        SUM_GPM_APK=4805d9e0cafbbb4f0f622e033d4359c4
-        SUM_GPM_ODEX=def8588772f648a6acedbed8ecdcd5d8
-        SUM_DIPO_APK=ad9859a698f0ac3fbc1093ac21f61dbf
-        SUM_DIPO_ODEX=b6c36634ebf49b45d84798b89cbfbf67
-        SUM_IAP_ODEX=1252fd62faecba96941f2177bf36eb8b
-        SUM_NAVI_APK=278641941999ea3b288ceae97a846f30
-        SUM_NAVI_ODEX=bd758e94e85dc4e79ba13cd4a7b0f1fe
-        ;;
-    *)
-        VARIANT=ev6
-        ;;
-esac
+# ---- car: picked from the firmware's own product id (patches/cars); the stock
+# files must then match that car's checksums (patches/<car>/stock) exactly.
+# A live file that does not match is left alone.
+CARS_DIR=../../patches
+. ../../scripts/cars.sh
+VARIANT=$(car_variant) || VARIANT=unknown
+SUM_GPM_APK=$(stock_sum HKMC_GPM.apk)
+SUM_GPM_ODEX=$(stock_sum HKMC_GPM.odex)
+SUM_DIPO_APK=$(stock_sum HKMC_DiPO.apk)
+SUM_DIPO_ODEX=$(stock_sum HKMC_DiPO.odex)
+SUM_IAP_APK=$(stock_sum Iap2ServerApp.apk)
+SUM_IAP_ODEX=$(stock_sum Iap2ServerApp.odex)
+SUM_NAVI_APK=$(stock_sum HKMC_Navi_ExSL.apk)
+SUM_NAVI_ODEX=$(stock_sum HKMC_Navi_ExSL.odex)
+SUM_LIB=$(stock_sum libautoreceiver_infobank.so)
 
 log() {
     local _msg="$1"

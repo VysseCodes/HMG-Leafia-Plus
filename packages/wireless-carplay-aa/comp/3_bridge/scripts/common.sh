@@ -21,34 +21,33 @@ PROP_FILE=$BACKUP_DIR/props
 PROPS="persist.sys.iap2.wifi persist.iap2.iden.wireless"
 PROP_ON=t
 PROP_OFF=f
-# projection.tbt build - must be live before we install (md5 of the APKs
-# scripts/build.sh assembles; they match patches/<car>/manifest)
-SUM_TBT_DIPO_APK=c40739d474cd39ff3625ed73bfcd5b1c
-SUM_TBT_IAP_APK=7e90fa7d8a161ade71e11dc15e56c410
-# bridge build - the payload in files/
-SUM_DIPO_APK=dd7ec49474db7f0bba8a7b64a7623b22
-SUM_IAP_APK=75d7fea4d2009be6aa5c840118f58c94
-
-# ---- car variant: picked from the firmware's own product id, then the stock
-# checksums below must still match exactly before anything is written.
-#   CVEV.* = Kia EV6 (default)   NEEV.* = Hyundai Ioniq 5   DL3HEV.KOR.* = Kia K5 Hybrid (Korea)
 # the bridge builds, rebuilt on the unit by scripts/build.sh
 FILES=/data/nemesis/build/wireless.carplay.aa/3_bridge
-case "$(getprop ro.build.product 2>/dev/null)" in
-    NEEV.*)
-        VARIANT=neev
-        SUM_TBT_DIPO_APK=9a73d5ae6354e2f980de775741bdddd3
-        SUM_DIPO_APK=c09d221ebaa535d291d5b5c05c4ac568
-        ;;
-    DL3HEV.KOR.*)
-        VARIANT=dl3hev
-        SUM_TBT_DIPO_APK=f02aa12337d9814d44282d5b88ff4001
-        SUM_DIPO_APK=2bdce30b41c070a286b73478960ed41d
-        ;;
-    *)
-        VARIANT=ev6
-        ;;
-esac
+# ---- car: picked from the firmware's own product id (patches/cars). The
+# expected APKs come from that car's patches/<car>/manifest:
+#   SUM_TBT_*  projection.tbt's build, which must be live before we install
+#   SUM_*      this part's bridge build
+# They are saved in the backup folder at install, for uninstall.
+CARS_DIR=../../patches
+. ../../scripts/cars.sh
+VARIANT=$(car_variant) || VARIANT=unknown
+SUM_TBT_DIPO_APK=$(built_sum 2_tbt HKMC_DiPO)
+SUM_TBT_IAP_APK=$(built_sum 2_tbt Iap2ServerApp)
+SUM_DIPO_APK=$(built_sum 3_bridge HKMC_DiPO)
+SUM_IAP_APK=$(built_sum 3_bridge Iap2ServerApp)
+if [ -z "$SUM_DIPO_APK" ] && [ -s "$BACKUP_DIR/sums" ]; then
+    . "$BACKUP_DIR/sums"
+fi
+
+save_sums() {
+    mkdir -p "$BACKUP_DIR" || return 1
+    printf 'SUM_TBT_DIPO_APK=%s
+SUM_TBT_IAP_APK=%s
+SUM_DIPO_APK=%s
+SUM_IAP_APK=%s
+' \
+        "$SUM_TBT_DIPO_APK" "$SUM_TBT_IAP_APK" "$SUM_DIPO_APK" "$SUM_IAP_APK" > "$BACKUP_DIR/sums"
+}
 
 log() {
     local _msg="$1"

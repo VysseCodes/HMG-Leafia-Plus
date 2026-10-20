@@ -24,14 +24,8 @@ ADDONS="projection.cardata"
 
 log() { echo "$1"; mkdir -p /data/nemesis 2>/dev/null; echo "$1" >> "$LOG" 2>/dev/null; true; }
 
-car_name() {
-    case "$(getprop ro.build.product 2>/dev/null)" in
-        CVEV.*) echo "Kia EV6" ;;
-        NEEV.*) echo "Hyundai Ioniq 5" ;;
-        DL3HEV.KOR.*) echo "Kia K5 Hybrid (Korea)" ;;
-        *) return 1 ;;
-    esac
-}
+CARS_DIR=patches
+. ./scripts/cars.sh
 
 part_name() {
     case "$1" in

@@ -6,6 +6,7 @@ log "postinstall wireless.carplay.bt"
 check_sums || exit 1
 check_core || exit 1
 snapshot_props || exit 1
+save_sums || exit 1
 apply_props || exit 1
 if is_applied && core_done; then
     log "bridge APKs and libCarPlayCore.so already live - props updated, no reboot needed"
