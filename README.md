@@ -1,5 +1,10 @@
 # HMG Leafia Plus
 
+[![Sponsor on GitHub](https://img.shields.io/badge/Sponsor_on_GitHub-%E2%9D%A4-bf3989?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/VysseCodes)
+[![Buy me a coffee on Ko-fi](https://img.shields.io/badge/Buy_me_a_coffee-Ko--fi-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white)](https://ko-fi.com/vyssecodes)
+
+> **HMG Leafia Plus is free.** If it saved you a dealer visit or made your drives nicer, please consider chipping in through [GitHub Sponsors](https://github.com/sponsors/VysseCodes) or [Ko-fi](https://ko-fi.com/vyssecodes). It keeps the testing and new-car ports going.
+
 Community tooling to improve Hyundai, Kia and Genesis **Gen5W** head units through [NEMESIS](https://github.com/xwtk/hmg_nemesis) packages. The first goal is wireless CarPlay and Android Auto on as many head units as possible.
 
 **Compatibility checker:** https://vyssecodes.github.io/HMG-Leafia-Plus/
@@ -62,10 +67,6 @@ Make a recipe from a stock/patched pair:
 ```
 tools/mkrecipe.py <id> /system/lib/libX.so stock.so patched.so --desc "what it does"
 ```
-
-## Support the project
-
-HMG Leafia Plus is free. If it saved you a dealer visit or made your drives nicer, you can chip in through [GitHub Sponsors](https://github.com/sponsors/VysseCodes) or [Ko-fi](https://ko-fi.com/vyssecodes).
 
 ## Credits and licences
 

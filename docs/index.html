@@ -12,6 +12,7 @@
   --ok: #0b6e4f; --ok-soft: #e3f1ea; --native: #1f5fa8; --native-soft: #e4edf8;
   --build: #9a5b00; --build-soft: #fbf0dc; --no: #a1262b; --no-soft: #f8e3e3;
   --unknown: #5d636b; --unknown-soft: #ececea;
+  --support-a: #fbeef5; --support-b: #fdecea; --support-line: #f0d3df;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
@@ -22,6 +23,7 @@
     --ok: #4cc79a; --ok-soft: #17302a; --native: #7fb2ee; --native-soft: #1a2738;
     --build: #e6b25c; --build-soft: #33281a; --no: #ef8a8e; --no-soft: #3a1f21;
     --unknown: #a3a8ae; --unknown-soft: #26292d;
+    --support-a: #2a1a24; --support-b: #2d1c1c; --support-line: #4a2a3a;
   }
 }
 :root[data-theme="dark"] {
@@ -30,6 +32,7 @@
   --ok: #4cc79a; --ok-soft: #17302a; --native: #7fb2ee; --native-soft: #1a2738;
   --build: #e6b25c; --build-soft: #33281a; --no: #ef8a8e; --no-soft: #3a1f21;
   --unknown: #a3a8ae; --unknown-soft: #26292d;
+  --support-a: #2a1a24; --support-b: #2d1c1c; --support-line: #4a2a3a;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); }
@@ -79,6 +82,15 @@ footer { color: var(--muted); font-size: 14px; margin-top: 28px; }
 footer a, .sub a, li a { color: var(--accent); }
 code { font: 13px var(--mono); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 1px 5px; }
 .note { font-size: 14px; color: var(--muted); margin-top: 12px; }
+.support { margin-top: 20px; padding: 16px 18px; border-radius: 14px; border: 1px solid var(--support-line);
+  background: linear-gradient(135deg, var(--support-a), var(--support-b)); }
+.support p { margin: 0 0 12px; max-width: 640px; }
+.btn.sponsor { background: #bf3989; border-color: #bf3989; color: #fff; }
+.btn.kofi { background: #d9403d; border-color: #d9403d; color: #fff; }
+.btn.sponsor, .btn.kofi { box-shadow: 0 2px 8px rgba(0,0,0,.12); transition: transform .12s, box-shadow .12s, filter .12s; }
+.btn.sponsor:hover, .btn.kofi:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,.18); filter: brightness(1.07); }
+.btn.sponsor:focus-visible, .btn.kofi:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .btn.sponsor, .btn.kofi { transition: none; } .btn.sponsor:hover, .btn.kofi:hover { transform: none; } }
 @media (max-width: 560px) {
   .parts td:first-child { width: 42%; }
   .compat thead { display: none; }
@@ -95,6 +107,13 @@ code { font: 13px var(--mono); background: var(--bg); border: 1px solid var(--li
     <div class="kicker">HMG Leafia Plus · Gen5W</div>
     <h1>Is your head unit ready for wireless CarPlay and Android Auto?</h1>
     <p class="lede">Run a read-only kit on your Hyundai, Kia or Genesis Gen5W head unit, drop the report here, and see part by part what works on your firmware. Everything is checked in your browser.</p>
+    <div class="support">
+      <p><b>Free and community-made.</b> If it saved you a dealer visit, chip in to keep the testing and new-car ports going.</p>
+      <div class="row">
+        <a class="btn sponsor" href="https://github.com/sponsors/VysseCodes" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 14.25s-6.25-3.6-6.25-8.1A3.4 3.4 0 0 1 8 4.3a3.4 3.4 0 0 1 6.25 1.85c0 4.5-6.25 8.1-6.25 8.1Z"/></svg>Sponsor on GitHub</a>
+        <a class="btn kofi" href="https://ko-fi.com/vyssecodes" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M2 4h9.5v1h1A2.5 2.5 0 0 1 15 7.5 2.5 2.5 0 0 1 12.5 10h-1.1A4.5 4.5 0 0 1 7 13H6.5A4.5 4.5 0 0 1 2 8.5Zm9.5 2.5V8.5h1a1 1 0 0 0 0-2Z"/></svg>Buy a coffee on Ko-fi</a>
+      </div>
+    </div>
   </header>
 
   <section>
@@ -147,7 +166,6 @@ code { font: 13px var(--mono); background: var(--bg); border: 1px solid var(--li
 
   <footer>
     <p>HMG Leafia Plus is a community project (<a href="https://github.com/VysseCodes/HMG-Leafia-Plus">source</a>, GPL-3.0). It installs through <a href="https://github.com/xwtk/hmg_nemesis">NEMESIS</a> by xwtk (AGPL-3.0). Not affiliated with Hyundai, Kia, Genesis, Apple or Google. Modifying your head unit is at your own risk.</p>
-    <p>Free to use. Like it? <a href="https://github.com/sponsors/VysseCodes">Sponsor on GitHub</a> or <a href="https://ko-fi.com/vyssecodes">buy a coffee on Ko-fi</a>.</p>
   </footer>
 </main>
 <script src="app.js"></script>
