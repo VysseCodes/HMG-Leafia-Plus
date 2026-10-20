@@ -20,6 +20,12 @@ if ! check_remount; then
     exit 1
 fi
 check_cluster_api || { fail_unknown_unit "cluster API missing for turn-by-turn"; exit 1; }
+. ./scripts/build.sh
+if ! build_payloads; then
+    clean_build
+    fail_unknown_unit "stock apps do not match this package's patches"
+    exit 1
+fi
 # parts 1 and 2 check stock files; 3-4 depend on earlier parts, so they check during postinstall
 # a failed check here means files this package does not recognise
 run_part 1_projection pre || { fail_unknown_unit "$(part_name 1_projection) check failed"; exit 1; }

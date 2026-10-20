@@ -4,6 +4,12 @@ log "postinstall wireless.carplay.aa"
 check_legacy || { toast "Install failed: uninstall the separate wireless/projection packages first, reboot, then try again."; exit 1; }
 check_remount || { toast "Install failed: could not unlock the system partition. Reboot the head unit and try again."; exit 1; }
 check_cluster_api || { fail_unknown_unit "cluster API missing for turn-by-turn"; exit 1; }
+. ./scripts/build.sh
+if ! build_payloads; then
+    clean_build
+    fail_unknown_unit "stock apps do not match this package's patches"
+    exit 1
+fi
 _done=""
 for _p in $PARTS; do
     _step=pre
@@ -20,6 +26,7 @@ for _p in $PARTS; do
         toast "Install failed and could not be fully undone. Do not reboot yet - check the NEMESIS logs."
         exit 1
     fi
+    clean_build
     sync
     log "unit is back to stock - reboot the head unit"
     if [ "$_step" = pre ]; then
@@ -30,6 +37,7 @@ for _p in $PARTS; do
     fi
     exit 1
 done
+clean_build
 sync
 if [ -n "$EV6_TEST_ROOT" ]; then log "test mode - not rebooting"; exit 0; fi
 log "all parts installed - rebooting"

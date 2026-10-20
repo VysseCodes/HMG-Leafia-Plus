@@ -9,6 +9,15 @@
  *   lpatch check <recipe> [file]        report status, exit 0 if usable
  *   lpatch apply <recipe> <src> <dst>   write a patched copy of src to dst
  *   lpatch md5 <file>
+ *   lpatch delta <patch.lpd> <src> <dst>  rebuild a file from a delta, only if src
+ *                                       is the exact expected original
+ *   lpatch zipadd <src.apk> <classes.dex> <dst.apk>
+ *                                       add classes.dex (stored) to an APK
+ *
+ * Delta files (.lpd) rebuild a modified app's code from the head unit's own
+ * stock copy. They hold the md5 of the original and of the result: nothing is
+ * written unless the source is that exact original and the rebuilt file
+ * matches exactly.
  *
  * Recipe lines (anything after # is a comment):
  *   id <name>
@@ -59,11 +68,17 @@ static void xexit(int c) { sys3(1, c, 0, 0); for (;;) ; }
 #endif
 
 #define MAXFILE (8u << 20)
+#define MAXOUT (6u << 20)
+#define MAXDELTA (6u << 20)
+#define MAXRAW (16u << 20)
 #define MAXRECIPE (256u << 10)
 #define MAXPATCH 256
 #define MAXNATIVE 32
 
 static u8 fbuf[MAXFILE];
+static u8 obuf[MAXOUT];
+static u8 dbuf[MAXDELTA];
+static u8 ubuf[MAXRAW];
 static char rbuf[MAXRECIPE + 1];
 static ul flen;
 
@@ -220,6 +235,7 @@ static void loadrecipe(const char *path)
 }
 
 static int seq(const char *a, const char *b) { while (*a && *a == *b) { a++; b++; } return *a == *b; }
+static int seq2(const char *a, const char *b, ul n) { for (ul i = 0; i < n; i++) if (a[i] != b[i]) return 0; return 1; }
 
 /* status of the loaded file: 0 PATCHABLE 1 APPLIED 2 NATIVE 3 MISMATCH */
 static int classify(int verbose)
@@ -286,8 +302,245 @@ static int cmd_apply(const char *recipe, const char *src, const char *dst)
     return 0;
 }
 
+
+/* ---- raw DEFLATE decoder (RFC 1951) ---- */
+typedef struct { const u8 *in; ul inlen, pos; u32 bitbuf; int bitcnt; u8 *out; ul outmax, outlen; } Inf;
+typedef struct { unsigned short count[16], sym[288]; } Huff;
+static int getbit(Inf *s)
+{
+    if (!s->bitcnt) { if (s->pos >= s->inlen) return -1; s->bitbuf = s->in[s->pos++]; s->bitcnt = 8; }
+    int b = s->bitbuf & 1; s->bitbuf >>= 1; s->bitcnt--; return b;
+}
+static long getbits(Inf *s, int n)
+{
+    long v = 0;
+    for (int i = 0; i < n; i++) { int b = getbit(s); if (b < 0) return -1; v |= (long)b << i; }
+    return v;
+}
+static int build(Huff *h, const u8 *len, int n)
+{
+    unsigned short offs[16]; int i;
+    for (i = 0; i < 16; i++) h->count[i] = 0;
+    for (i = 0; i < n; i++) h->count[len[i]]++;
+    h->count[0] = 0;
+    offs[1] = 0;
+    for (i = 1; i < 15; i++) offs[i + 1] = offs[i] + h->count[i];
+    for (i = 0; i < n; i++) if (len[i]) h->sym[offs[len[i]]++] = i;
+    return 0;
+}
+static int decsym(Inf *s, Huff *h)
+{
+    int code = 0, first = 0, index = 0;
+    for (int len = 1; len < 16; len++) {
+        int b = getbit(s); if (b < 0) return -1;
+        code |= b;
+        int count = h->count[len];
+        if (code - count < first) return h->sym[index + (code - first)];
+        index += count; first += count; first <<= 1; code <<= 1;
+    }
+    return -1;
+}
+static const unsigned short LBASE[29] = {3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258};
+static const u8 LEXT[29] = {0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0};
+static const unsigned short DBASE[30] = {1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577};
+static const u8 DEXT[30] = {0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13};
+static int codes(Inf *s, Huff *lh, Huff *dh)
+{
+    for (;;) {
+        int sym = decsym(s, lh);
+        if (sym < 0) return -1;
+        if (sym < 256) { if (s->outlen >= s->outmax) return -1; s->out[s->outlen++] = sym; }
+        else if (sym == 256) return 0;
+        else {
+            sym -= 257; if (sym >= 29) return -1;
+            long len = getbits(s, LEXT[sym]); if (len < 0) return -1; len += LBASE[sym];
+            int ds = decsym(s, dh); if (ds < 0 || ds >= 30) return -1;
+            long dist = getbits(s, DEXT[ds]); if (dist < 0) return -1; dist += DBASE[ds];
+            if ((ul)dist > s->outlen || s->outlen + len > s->outmax) return -1;
+            for (long i = 0; i < len; i++) { s->out[s->outlen] = s->out[s->outlen - dist]; s->outlen++; }
+        }
+    }
+}
+static long inflate_raw(const u8 *in, ul inlen, u8 *out, ul outmax)
+{
+    static Huff lh, dh; static u8 lens[320];
+    static const u8 ORD[19] = {16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15};
+    Inf s; s.in = in; s.inlen = inlen; s.pos = 0; s.bitbuf = 0; s.bitcnt = 0; s.out = out; s.outmax = outmax; s.outlen = 0;
+    int last;
+    do {
+        last = getbit(&s); long type = getbits(&s, 2);
+        if (last < 0 || type < 0) return -1;
+        if (type == 0) {
+            s.bitbuf = 0; s.bitcnt = 0;
+            if (s.pos + 4 > s.inlen) return -1;
+            ul len = s.in[s.pos] | (s.in[s.pos+1] << 8), nlen = s.in[s.pos+2] | (s.in[s.pos+3] << 8);
+            s.pos += 4;
+            if ((len ^ 0xffff) != nlen || s.pos + len > s.inlen || s.outlen + len > s.outmax) return -1;
+            for (ul i = 0; i < len; i++) s.out[s.outlen++] = s.in[s.pos++];
+        } else if (type == 1) {
+            int i;
+            for (i = 0; i < 144; i++) lens[i] = 8;
+            for (; i < 256; i++) lens[i] = 9;
+            for (; i < 280; i++) lens[i] = 7;
+            for (; i < 288; i++) lens[i] = 8;
+            build(&lh, lens, 288);
+            for (i = 0; i < 30; i++) lens[i] = 5;
+            build(&dh, lens, 30);
+            if (codes(&s, &lh, &dh) < 0) return -1;
+        } else if (type == 2) {
+            long nlen = getbits(&s, 5), ndist = getbits(&s, 5), ncode = getbits(&s, 4);
+            if (nlen < 0 || ndist < 0 || ncode < 0) return -1;
+            nlen += 257; ndist += 1; ncode += 4;
+            if (nlen > 286 || ndist > 30) return -1;
+            int i;
+            for (i = 0; i < 19; i++) lens[i] = 0;
+            for (i = 0; i < ncode; i++) { long v = getbits(&s, 3); if (v < 0) return -1; lens[ORD[i]] = v; }
+            build(&lh, lens, 19);
+            i = 0;
+            while (i < nlen + ndist) {
+                int sym = decsym(&s, &lh); long rep; u8 val;
+                if (sym < 0) return -1;
+                if (sym < 16) { lens[i++] = sym; continue; }
+                if (sym == 16) { if (!i) return -1; val = lens[i - 1]; rep = getbits(&s, 2); if (rep < 0) return -1; rep += 3; }
+                else if (sym == 17) { val = 0; rep = getbits(&s, 3); if (rep < 0) return -1; rep += 3; }
+                else { val = 0; rep = getbits(&s, 7); if (rep < 0) return -1; rep += 11; }
+                if (i + rep > nlen + ndist) return -1;
+                while (rep--) lens[i++] = val;
+            }
+            build(&lh, lens, nlen);
+            build(&dh, lens + nlen, ndist);
+            if (codes(&s, &lh, &dh) < 0) return -1;
+        } else return -1;
+    } while (!last);
+    return (long)s.outlen;
+}
+
+/* ---- delta ---- */
+static u32 rd32(const u8 *p) { return p[0] | (p[1] << 8) | (p[2] << 16) | ((u32)p[3] << 24); }
+static void wr32(u8 *p, u32 v) { p[0] = v; p[1] = v >> 8; p[2] = v >> 16; p[3] = v >> 24; }
+static void wr16(u8 *p, u32 v) { p[0] = v; p[1] = v >> 8; }
+static void tohex(const u8 *raw, char *o) { for (int i = 0; i < 16; i++) { o[2*i] = "0123456789abcdef"[raw[i] >> 4]; o[2*i+1] = "0123456789abcdef"[raw[i] & 15]; } o[32] = 0; }
+static ul loadinto(const char *path, u8 *buf, ul max)
+{
+    long fd = xopen(path, O_RDONLY, 0), r; ul n = 0;
+    if (fd < 0) die("cannot open input");
+    while ((r = xread(fd, buf + n, max - n)) > 0) n += r;
+    xclose(fd);
+    if (r < 0) die("read error");
+    if (n == max) die("input too large");
+    return n;
+}
+/* .lpd: "LPD1" src_len src_md5[16] out_len out_md5[16] comp payload_len payload
+   payload (raw or deflate): nctrl, nctrl*(x,y,z) int32, diff_len, diff, extra_len, extra */
+static int cmd_delta(const char *patch, const char *src, const char *dst)
+{
+    char want[33], got[33]; ul plen = loadinto(patch, dbuf, MAXDELTA); const u8 *pl; ul pll;
+    if (plen < 52 || dbuf[0] != 'L' || dbuf[1] != 'P' || dbuf[2] != 'D' || dbuf[3] != '1') die("not an lpatch delta");
+    u32 srclen = rd32(dbuf + 4), outlen = rd32(dbuf + 24), comp = rd32(dbuf + 44), paylen = rd32(dbuf + 48);
+    if (52 + (ul)paylen != plen) die("delta truncated");
+    if (outlen > MAXOUT) die("result too large");
+    if (loadfile(src) < 0) { out("RESULT delta status=MISSING file="); out(src); out("\n"); return 1; }
+    md5hex(fbuf, flen, got); tohex(dbuf + 8, want);
+    if (flen != srclen || !seq(got, want)) {
+        out("RESULT delta status=MISMATCH file="); out(src); out(" md5="); out(got); out(" want="); out(want); out("\n");
+        return 1;
+    }
+    if (comp == 1) {
+        long n = inflate_raw(dbuf + 52, paylen, ubuf, MAXRAW);
+        if (n < 0) die("delta payload is corrupt");
+        pl = ubuf; pll = n;
+    } else if (comp == 0) { pl = dbuf + 52; pll = paylen; }
+    else die("unknown delta compression");
+    if (pll < 4) die("delta payload too short");
+    u32 nctrl = rd32(pl); ul cpos = 4, need = 4 + (ul)nctrl * 12;
+    if (need + 4 > pll) die("delta payload too short");
+    u32 dlen = rd32(pl + need); const u8 *diff = pl + need + 4;
+    if (need + 4 + dlen + 4 > pll) die("delta payload too short");
+    u32 elen = rd32(diff + dlen); const u8 *extra = diff + dlen + 4;
+    if (need + 8 + dlen + elen != pll) die("delta payload size mismatch");
+    long oldpos = 0; ul newpos = 0, dpos = 0, epos = 0;
+    for (u32 i = 0; i < nctrl; i++, cpos += 12) {
+        long x = (int)rd32(pl + cpos), y = (int)rd32(pl + cpos + 4), z = (int)rd32(pl + cpos + 8);
+        if (x < 0 || y < 0 || newpos + x + y > outlen || dpos + x > dlen || epos + y > elen) die("delta control is corrupt");
+        for (long k = 0; k < x; k++) {
+            u8 v = diff[dpos + k]; long o = oldpos + k;
+            if (o >= 0 && (ul)o < flen) v += fbuf[o];
+            obuf[newpos + k] = v;
+        }
+        newpos += x; oldpos += x; dpos += x;
+        for (long k = 0; k < y; k++) obuf[newpos + k] = extra[epos + k];
+        newpos += y; epos += y; oldpos += z;
+    }
+    if (newpos != outlen) die("delta did not produce the expected size");
+    md5hex(obuf, outlen, got); tohex(dbuf + 28, want);
+    if (!seq(got, want)) die("rebuilt file md5 mismatch - nothing written");
+    if (writefile(dst, obuf, outlen) < 0) die("cannot write destination");
+    if (loadfile(dst) < 0 || flen != outlen) die("written file did not verify");
+    md5hex(fbuf, flen, got);
+    if (!seq(got, want)) die("written file did not verify");
+    out("RESULT delta status=BUILT file="); out(dst); out(" md5="); out(got); out("\n");
+    return 0;
+}
+
+/* ---- zipadd: append classes.dex (stored) to an APK that has none ---- */
+static u32 crc32(const u8 *p, ul n)
+{
+    u32 c = 0xffffffff;
+    for (ul i = 0; i < n; i++) { c ^= p[i]; for (int k = 0; k < 8; k++) c = (c >> 1) ^ (0xedb88320 & (0 - (c & 1))); }
+    return ~c;
+}
+static int cmd_zipadd(const char *apk, const char *dex, const char *dst)
+{
+    static const char NAME[] = "classes.dex"; const ul NL = 11;
+    ul dlen = loadinto(dex, ubuf, MAXRAW);
+    if (loadfile(apk) < 0) die("cannot read apk");
+    if (flen < 22) die("apk too small");
+    long e = -1;
+    for (long i = flen - 22; i >= 0 && i >= (long)flen - 22 - 65535; i--)
+        if (rd32(fbuf + i) == 0x06054b50) { e = i; break; }
+    if (e < 0) die("apk: no end of central directory");
+    u32 cnt = fbuf[e + 10] | (fbuf[e + 11] << 8), cdsize = rd32(fbuf + e + 12), cdoff = rd32(fbuf + e + 16);
+    u32 clen = fbuf[e + 20] | (fbuf[e + 21] << 8);
+    if ((ul)cdoff + cdsize != (ul)e || cnt >= 65535) die("apk: unsupported layout");
+    for (ul p = cdoff, k = 0; k < cnt; k++) {   /* refuse if classes.dex already exists */
+        if (rd32(fbuf + p) != 0x02014b50) die("apk: bad central directory");
+        u32 n = fbuf[p + 28] | (fbuf[p + 29] << 8), x = fbuf[p + 30] | (fbuf[p + 31] << 8), c = fbuf[p + 32] | (fbuf[p + 33] << 8);
+        if (n == NL && seq2((const char *)fbuf + p + 46, NAME, NL)) die("apk already contains classes.dex");
+        p += 46 + n + x + c;
+    }
+    ul total = cdoff + 30 + NL + dlen + cdsize + 46 + NL + 22 + clen;
+    if (total > MAXOUT) die("result too large");
+    u32 crc = crc32(ubuf, dlen); const u32 TIME = 0, DATE = (46 << 9) | (10 << 5) | 18;   /* 2026-10-18 00:00 */
+    u8 *o = obuf; ul q = 0;
+    for (ul i = 0; i < cdoff; i++) o[q++] = fbuf[i];
+    ul loc = q;
+    wr32(o + q, 0x04034b50); wr16(o + q + 4, 10); wr16(o + q + 6, 0); wr16(o + q + 8, 0);
+    wr16(o + q + 10, TIME); wr16(o + q + 12, DATE); wr32(o + q + 14, crc); wr32(o + q + 18, dlen); wr32(o + q + 22, dlen);
+    wr16(o + q + 26, NL); wr16(o + q + 28, 0); q += 30;
+    for (ul i = 0; i < NL; i++) o[q++] = NAME[i];
+    for (ul i = 0; i < dlen; i++) o[q++] = ubuf[i];
+    ul newcd = q;
+    for (ul i = 0; i < cdsize; i++) o[q++] = fbuf[cdoff + i];
+    wr32(o + q, 0x02014b50); wr16(o + q + 4, 10); wr16(o + q + 6, 10); wr16(o + q + 8, 0); wr16(o + q + 10, 0);
+    wr16(o + q + 12, TIME); wr16(o + q + 14, DATE); wr32(o + q + 16, crc); wr32(o + q + 20, dlen); wr32(o + q + 24, dlen);
+    wr16(o + q + 28, NL); wr16(o + q + 30, 0); wr16(o + q + 32, 0); wr16(o + q + 34, 0); wr16(o + q + 36, 0);
+    wr32(o + q + 38, 0x81a40000); wr32(o + q + 42, loc); q += 46;
+    for (ul i = 0; i < NL; i++) o[q++] = NAME[i];
+    ul newcdsize = q - newcd;
+    wr32(o + q, 0x06054b50); wr16(o + q + 4, 0); wr16(o + q + 6, 0); wr16(o + q + 8, cnt + 1); wr16(o + q + 10, cnt + 1);
+    wr32(o + q + 12, newcdsize); wr32(o + q + 16, newcd); wr16(o + q + 20, clen); q += 22;
+    for (ul i = 0; i < clen; i++) o[q++] = fbuf[e + 22 + i];
+    if (q != total) die("internal: zip size");
+    if (writefile(dst, obuf, q) < 0) die("cannot write destination");
+    char m[33]; md5hex(obuf, q, m);
+    out("RESULT zipadd status=BUILT file="); out(dst); out(" md5="); out(m); out("\n");
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
+    if (argc >= 5 && seq(argv[1], "delta")) return cmd_delta(argv[2], argv[3], argv[4]);
+    if (argc >= 5 && seq(argv[1], "zipadd")) return cmd_zipadd(argv[2], argv[3], argv[4]);
     if (argc >= 3 && seq(argv[1], "check")) return cmd_check(argv[2], argc > 3 ? argv[3] : 0);
     if (argc >= 5 && seq(argv[1], "apply")) return cmd_apply(argv[2], argv[3], argv[4]);
     if (argc >= 3 && seq(argv[1], "md5")) {
@@ -301,7 +554,8 @@ int main(int argc, char **argv)
         md5end(&c, m); out(m); out("  "); out(argv[2]); out("\n");
         return 0;
     }
-    err("usage: lpatch check <recipe> [file] | apply <recipe> <src> <dst> | md5 <file>\n");
+    err("usage: lpatch check <recipe> [file] | apply <recipe> <src> <dst> | md5 <file>\n"
+        "       lpatch delta <patch.lpd> <src> <dst> | zipadd <src.apk> <classes.dex> <dst.apk>\n");
     return 2;
 }
 

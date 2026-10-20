@@ -9,19 +9,15 @@ NEMESIS package source. It installs four parts in order, with one reboot at the 
 | CarPlay bridge | `comp/3_bridge` | Projection apps + `libCarPlayCore` via lpatch (`carplay-core-wifi`) |
 | CarPlay audio | `comp/4_audio` | `libCarPlayAudio` / `libCarPlayUtils` via lpatch, plus `libev6aac.so` where needed |
 
-Native libraries are patched on the head unit with `lpatch` and the recipes in `/recipes`. No modified system library is shipped.
+Nothing modified is shipped. The head unit patches its own files:
 
-## App payloads are not in this repository
+- **Native libraries:** `lpatch` patches them in place from the hash-only recipes in `/recipes`.
+- **Projection apps** (`HKMC_DiPO`, `HKMC_GPM`, `HKMC_Navi_ExSL`, `Iap2ServerApp`) and `libautoreceiver_infobank.so`: `scripts/build.sh` rebuilds them from the unit's stock files with the patch sets in `/patches`, before any part installs. For each app, `lpatch delta` rebuilds the modified code from the stock `.odex` (only if that `.odex` is the exact expected original), and `lpatch zipadd` adds it to the stock APK. Each result must match the md5 in `patches/<car>/manifest`. If the unit's stock files are not the expected ones, nothing is written and the unknown-unit report runs.
 
-`comp/2_tbt/files*` and `comp/3_bridge/files*` hold the projection app builds (`HKMC_DiPO`, `HKMC_GPM`, `HKMC_Navi_ExSL`, `Iap2ServerApp`, `libautoreceiver_infobank.so`). They are modified copies of manufacturer apps, so they are kept out of this repository.
-
-- **Where they come from:** the turn-by-turn builds come from the NEMESIS community package. The bridge builds are those plus the HMG Leafia Plus bridge code.
-- **Per-car folders:** `files_neev` holds the Ioniq 5 builds: the same code placed into that car's own app files. `files_dl3hev` holds the Kia K5 Hybrid (Korea) builds: the same changes merged onto that firmware's own app code, which differs from the EV6's in places.
-
-To build the installable zip, point the build script at a folder that has the same layout:
+## Building the zip
 
 ```
-tools/build-package.sh /path/to/payloads
+tools/build-package.sh
 ```
 
-`/path/to/payloads` must contain `2_tbt/files`, `2_tbt/files_neev`, `2_tbt/files_dl3hev`, `3_bridge/files`, `3_bridge/files_neev` and `3_bridge/files_dl3hev`.
+Everything comes from this repository. To add a car or change an app, see `patches/README.md`.

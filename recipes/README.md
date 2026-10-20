@@ -29,3 +29,12 @@ patch <hex offset> <new bytes hex>
 `lpatch apply <recipe> <src> <dst>` writes a patched copy only when the file is `PATCHABLE`, then re-reads it and verifies every region.
 
 Generate one with `tools/mkrecipe.py` from a stock/patched pair.
+
+## Delta patches (apps)
+
+For files whose changes are too large for a recipe (the projection apps), `lpatch` has two more commands:
+
+- `lpatch delta <patch.lpd> <src> <dst>`: rebuilds a file from a delta. It writes nothing unless `src` has the exact md5 the delta was made from, and the rebuilt file has the exact md5 it records.
+- `lpatch zipadd <src.apk> <classes.dex> <dst.apk>`: adds `classes.dex` (stored) to a stock APK that has none, keeping every original entry byte for byte. The output is deterministic, so its md5 can be checked.
+
+Deltas are made with `tools/mkdelta.py`; per-car sets live in `/patches`.

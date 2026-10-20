@@ -21,29 +21,29 @@ PROP_FILE=$BACKUP_DIR/props
 PROPS="persist.sys.iap2.wifi persist.iap2.iden.wireless"
 PROP_ON=t
 PROP_OFF=f
-# projection.tbt build - must be live before we install
-SUM_TBT_DIPO_APK=21aec10793fa3847b299077d650b44d7
-SUM_TBT_IAP_APK=29a6a93954b02ac444a12802106b2b85
+# projection.tbt build - must be live before we install (md5 of the APKs
+# scripts/build.sh assembles; they match patches/<car>/manifest)
+SUM_TBT_DIPO_APK=c40739d474cd39ff3625ed73bfcd5b1c
+SUM_TBT_IAP_APK=7e90fa7d8a161ade71e11dc15e56c410
 # bridge build - the payload in files/
-SUM_DIPO_APK=de39108149a363e252c7b4ea21b512f5
-SUM_IAP_APK=9595ffb7edc86ac396a29a3d931d8b3d
+SUM_DIPO_APK=dd7ec49474db7f0bba8a7b64a7623b22
+SUM_IAP_APK=75d7fea4d2009be6aa5c840118f58c94
 
 # ---- car variant: picked from the firmware's own product id, then the stock
 # checksums below must still match exactly before anything is written.
 #   CVEV.* = Kia EV6 (default)   NEEV.* = Hyundai Ioniq 5   DL3HEV.KOR.* = Kia K5 Hybrid (Korea)
-FILES=files
+# the bridge builds, rebuilt on the unit by scripts/build.sh
+FILES=/data/nemesis/build/wireless.carplay.aa/3_bridge
 case "$(getprop ro.build.product 2>/dev/null)" in
     NEEV.*)
         VARIANT=neev
-        FILES=files_neev
-        SUM_TBT_DIPO_APK=a9d02688931476cd93dc51c33a06380b
-        SUM_DIPO_APK=6e01be822a82cdb98f48314e8811c945
+        SUM_TBT_DIPO_APK=9a73d5ae6354e2f980de775741bdddd3
+        SUM_DIPO_APK=c09d221ebaa535d291d5b5c05c4ac568
         ;;
     DL3HEV.KOR.*)
         VARIANT=dl3hev
-        FILES=files_dl3hev
-        SUM_TBT_DIPO_APK=bc216a2d220cdb3536ba763542c6d239
-        SUM_DIPO_APK=437a7607ff48038d031fb291f94d57ba
+        SUM_TBT_DIPO_APK=f02aa12337d9814d44282d5b88ff4001
+        SUM_DIPO_APK=2bdce30b41c070a286b73478960ed41d
         ;;
     *)
         VARIANT=ev6

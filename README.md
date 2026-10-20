@@ -17,13 +17,12 @@ Firmware differs between models, regions and versions, so whole-file checksums r
 | Wireless projection | Enables the wireless CarPlay/AA feature flags for the unit's own region folder. Hotspot only: no Wi-Fi client, no extra Wi-Fi menu. | Feature files + config edits, all restored on uninstall |
 | CarPlay Wi-Fi sessions | Lets `libCarPlayCore` accept Wi-Fi sessions | `carplay-core-wifi.recipe` |
 | CarPlay wireless audio | Offers AAC (music) and Opus (Siri, calls, mic) over Wi-Fi, decoded with the unit's own codecs | `carplay-audio-formats.recipe`, `carplay-utils-converter.recipe` + `libev6aac.so` |
-| CarPlay Bluetooth bridge | Starts wireless CarPlay over Bluetooth/iAP2 | Per-firmware app builds |
-| Turn-by-turn | Projection navigation on the cluster and HUD | Per-firmware app builds. Uses only the standard cluster calls, so cars without a HUD are fine. The installer refuses if the firmware lacks any call it needs. |
+| CarPlay Bluetooth bridge | Starts wireless CarPlay over Bluetooth/iAP2 | Rebuilt on the unit from its stock apps (`patches/<car>`) |
+| Turn-by-turn | Projection navigation on the cluster and HUD | Rebuilt on the unit from its stock apps (`patches/<car>`). Uses only the standard cluster calls, so cars without a HUD are fine. The installer refuses if the firmware lacks any call it needs. |
 
 ## Packages
 
-- **`packages/wireless-carplay-aa`:** the Wireless CarPlay/AA NEMESIS package source. Native libraries are patched on the head unit with `lpatch`, so no modified system library is shipped.
-- **App builds:** the projection app builds it installs are modified manufacturer apps. They are kept out of this repository; `tools/build-package.sh` assembles the package from a local payload folder. See the package README.
+- **`packages/wireless-carplay-aa`:** the Wireless CarPlay/AA NEMESIS package source. Nothing modified is shipped: native libraries are patched on the head unit with `lpatch` recipes, and the projection apps are rebuilt on the unit from its own stock files with the patch sets in `patches/`.
 
 ## Supported head units
 
@@ -41,7 +40,7 @@ Both kits are read-only.
 ### Data policy
 
 - **Public** (issues, this repo): fingerprint reports, recipes, checksums, compatibility data.
-- **Private only** (never committed here): stock firmware files, firmware key files from deep collections, and the projection app builds.
+- **Private only** (never committed here): stock firmware files, firmware key files from deep collections, and full modified app builds. The repo holds only patch sets that rebuild them from a unit's own stock files.
 - **Never collected:** anything under `/data` (accounts, paired phones, Wi-Fi passwords), the vehicle security partition (modem and connected-service certificates), the VIN and serial numbers.
 
 ## Building
@@ -52,6 +51,10 @@ tools/lpatch/build.sh
 
 ```
 tools/build-kit.sh docs/downloads/leafia-fingerprint-kit.zip
+```
+
+```
+tools/build-package.sh
 ```
 
 Make a recipe from a stock/patched pair:

@@ -1,6 +1,6 @@
 #!/system/bin/sh
-# projection.tbt — snapshot the live APK and odex, then install a dex-injected APK.
-# Uninstall writes that snapshot back. Patched APKs in files/ are the payload.
+# projection.tbt — snapshot the live APK and odex, then install the modified APKs
+# rebuilt on the unit from those stock files. Uninstall writes the snapshot back.
 
 export PATH=/data/nemesis/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
 export LD_LIBRARY_PATH=/vendor/lib:/system/lib
@@ -24,11 +24,11 @@ SUM_LIB=48ee793af8b86052503b8c952b034731
 # ---- car variant: picked from the firmware's own product id, then the stock
 # checksums below must still match exactly before anything is written.
 #   CVEV.* = Kia EV6 (default)   NEEV.* = Hyundai Ioniq 5   DL3HEV.KOR.* = Kia K5 Hybrid (Korea)
-FILES=files
+# the modified apps and library, rebuilt on the unit by scripts/build.sh
+FILES=/data/nemesis/build/wireless.carplay.aa/2_tbt
 case "$(getprop ro.build.product 2>/dev/null)" in
     NEEV.*)
         VARIANT=neev
-        FILES=files_neev
         SUM_GPM_APK=2e9a5e738fffad4bca38421971a07364
         SUM_GPM_ODEX=6e67470f8ccd5afcd6c1408ac3fd9459
         SUM_DIPO_APK=1b080aa15a39acc19d04ff56d731f484
@@ -38,7 +38,6 @@ case "$(getprop ro.build.product 2>/dev/null)" in
         ;;
     DL3HEV.KOR.*)
         VARIANT=dl3hev
-        FILES=files_dl3hev
         SUM_GPM_APK=4805d9e0cafbbb4f0f622e033d4359c4
         SUM_GPM_ODEX=def8588772f648a6acedbed8ecdcd5d8
         SUM_DIPO_APK=ad9859a698f0ac3fbc1093ac21f61dbf
