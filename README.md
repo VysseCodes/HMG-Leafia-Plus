@@ -63,6 +63,10 @@ Make a recipe from a stock/patched pair:
 tools/mkrecipe.py <id> /system/lib/libX.so stock.so patched.so --desc "what it does"
 ```
 
+## Support the project
+
+HMG Leafia Plus is free. If it saved you a dealer visit or made your drives nicer, you can chip in through [GitHub Sponsors](https://github.com/sponsors/VysseCodes) or [Ko-fi](https://ko-fi.com/vyssecodes).
+
 ## Credits and licences
 
 - HMG Leafia Plus is GPL-3.0 (see `LICENSE`).
