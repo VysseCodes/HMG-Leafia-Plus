@@ -25,13 +25,13 @@
     },
     {
       "id": "hyundai-ioniq5-us-260507",
-      "name": "Hyundai Ioniq 5",
+      "name": "Hyundai Ioniq 5 (2022 and 2023)",
       "region": "US",
       "chip": "TCC803x",
-      "product_prefix": "NEEV.",
+      "product_prefix": ["NEEV.", "NEEV23."],
       "firmware": "V015.012.260507",
       "status": "supported",
-      "verified": ["Install verified on a real unit", "Same code as the EV6 build"],
+      "verified": ["Install verified on a real unit", "Same code as the EV6 build", "2023 (NEEV23) has identical projection apps"],
       "stock": {
         "/system/app/HKMC_GPM.apk": "2e9a5e738fffad4bca38421971a07364",
         "/system/app/HKMC_GPM.odex": "6e67470f8ccd5afcd6c1408ac3fd9459",

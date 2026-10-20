@@ -41,7 +41,7 @@ function parse(text) {
 
 function findVariant(r) {
   const product = r.props["ro.build.product"] || "";
-  return DB.variants.find((v) => product.startsWith(v.product_prefix)) || null;
+  return DB.variants.find((v) => [].concat(v.product_prefix).some((p) => product.startsWith(p))) || null;
 }
 
 function filesMatch(r, v, list) {
