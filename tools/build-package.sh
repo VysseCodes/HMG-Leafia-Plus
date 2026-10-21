@@ -7,6 +7,13 @@ set -e
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 OUT=${1:-$ROOT/dist/HMG_Leafia_Plus_Wireless_CarPlay_AA.zip}
 case "$OUT" in /*) ;; *) OUT=$(pwd)/$OUT ;; esac
+# the HU's shell (mksh) has no printf, but the host shells the tests run in do;
+# the only allowed use is putline's host fallback
+if grep -rn --include='*.sh' 'printf' "$ROOT/packages/wireless-carplay-aa" \
+    | grep -vE ':[0-9]+:[[:space:]]*#' | grep -vF "printf '%s\n' \"\$1\""; then
+    echo "build-package: printf in package scripts (not on the head unit) - use echo or putline" >&2
+    exit 1
+fi
 STAGE=$(mktemp -d)
 cp -R "$ROOT/packages/wireless-carplay-aa/." "$STAGE/inner"
 rm -f "$STAGE/inner/README.md"

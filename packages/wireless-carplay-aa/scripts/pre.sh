@@ -6,7 +6,11 @@ for _p in $PARTS; do
     [ -d "comp/$_p/scripts" ] || { log "FAIL: payload part $_p missing"; exit 1; }
 done
 if ! _car=$(car_name); then
-    log "this package supports: $(while read -r _a _b _c; do case "$_a" in ''|\#*) ;; *) printf '%s; ' "$_c" ;; esac; done < patches/cars)"
+    _list=""
+    while read -r _a _b _c; do
+        case "$_a" in ''|\#*) ;; *) _list="$_list$_c; " ;; esac
+    done < patches/cars
+    log "this package supports: $_list"
     fail_unknown_unit "unsupported car/firmware $(getprop ro.build.product 2>/dev/null)"
     exit 1
 fi

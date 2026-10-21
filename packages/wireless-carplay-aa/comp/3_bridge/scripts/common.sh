@@ -39,14 +39,15 @@ if [ -z "$SUM_DIPO_APK" ] && [ -s "$BACKUP_DIR/sums" ]; then
     . "$BACKUP_DIR/sums"
 fi
 
+# no printf on the HU (mksh); the && chain keeps a failed write an error
 save_sums() {
     mkdir -p "$BACKUP_DIR" || return 1
-    printf 'SUM_TBT_DIPO_APK=%s
-SUM_TBT_IAP_APK=%s
-SUM_DIPO_APK=%s
-SUM_IAP_APK=%s
-' \
-        "$SUM_TBT_DIPO_APK" "$SUM_TBT_IAP_APK" "$SUM_DIPO_APK" "$SUM_IAP_APK" > "$BACKUP_DIR/sums"
+    {
+        echo "SUM_TBT_DIPO_APK=$SUM_TBT_DIPO_APK" &&
+        echo "SUM_TBT_IAP_APK=$SUM_TBT_IAP_APK" &&
+        echo "SUM_DIPO_APK=$SUM_DIPO_APK" &&
+        echo "SUM_IAP_APK=$SUM_IAP_APK"
+    } > "$BACKUP_DIR/sums"
 }
 
 log() {

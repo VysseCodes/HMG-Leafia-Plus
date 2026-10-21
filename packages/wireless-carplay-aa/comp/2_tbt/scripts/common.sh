@@ -314,6 +314,14 @@ restore_all() {
     local _odex
     local _bak_apk
     local _bak_odex
+    # a failed install's rollback already restored this part and removed the
+    # snapshot; that is only fine if the live files are this car's stock files
+    if [ ! -d "$BACKUP_DIR" ]; then
+        log "no snapshot - checking the live files are stock"
+        check_sums || return 1
+        log "already stock - nothing to restore"
+        return 0
+    fi
     if ! sys_rw; then
         log "FAIL: remount /system rw"
         return 1
