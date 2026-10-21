@@ -519,6 +519,12 @@ apply_all() {
 restore_all() {
     local _rc=0
     local _fx=""
+    # no snapshot at all: never applied, or a failed install's rollback already
+    # restored it and removed the snapshot (this part only edits flags/config)
+    if [ ! -d "$BACKUP_DIR" ]; then
+        log "WARN: no snapshot - nothing to restore (not installed, or already undone)"
+        return 0
+    fi
     if [ ! -s "$BACKUP_DIR/saved" ]; then
         log "FAIL: no snapshot to restore"
         return 1
