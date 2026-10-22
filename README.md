@@ -39,14 +39,15 @@ See the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/). The
 |---|---|---|
 | `kits/fingerprint` | Anyone: check compatibility | `LEAFIA-REPORT.txt`. No personal data and no OEM code, safe to post. |
 | `kits/deep` | Only when a maintainer asks, to port a new head unit | `NEMESIS-deep/`. `share/` holds stock system files; `PRIVATE/` holds firmware key files. **Send privately.** |
+| `kits/support` | Anyone with a problem: attach to an issue ([form](../../issues/new?template=problem.yml)) | `LEAFIA-SUPPORT/`. `public/` (firmware ids, NEMESIS and package state, our install logs, checksums) is safe to post; `private/` (Android/kernel logs, NEMESIS's own log, crash dumps) can hold phone names or Bluetooth addresses. **Send privately, only when asked.** |
 
-Both kits are read-only.
+All kits are read-only.
 
 ### Data policy
 
-- **Public** (issues, this repo): fingerprint reports, recipes, checksums, compatibility data.
+- **Public** (issues, this repo): fingerprint reports, the support kit's `public/` folder, recipes, checksums, compatibility data.
 - **Private only** (never committed here): stock firmware files, firmware key files from deep collections, and full modified app builds. The repo holds only patch sets that rebuild them from a unit's own stock files.
-- **Never collected:** anything under `/data` (accounts, paired phones, Wi-Fi passwords), the vehicle security partition (modem and connected-service certificates), the VIN and serial numbers.
+- **Never collected:** anything under `/data` except NEMESIS's own folder and crash logs (support kit) — so no accounts, paired phones or Wi-Fi passwords — the vehicle security partition (modem and connected-service certificates), the VIN and serial numbers.
 
 ## Building
 
@@ -56,6 +57,10 @@ tools/lpatch/build.sh
 
 ```
 tools/build-kit.sh docs/downloads/leafia-fingerprint-kit.zip
+```
+
+```
+tools/build-kit.sh support docs/downloads/leafia-support-kit.zip
 ```
 
 ```

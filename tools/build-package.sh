@@ -22,6 +22,8 @@ cp "$ROOT/tools/lpatch/lpatch" "$STAGE/inner/tools/lpatch"
 cp "$ROOT"/recipes/*.recipe "$STAGE/inner/recipes/"
 cp -R "$ROOT/patches" "$STAGE/inner/patches"
 rm -f "$STAGE/inner/patches/README.md"
+# which source this package was built from; logged at install, read by the support kit
+echo "$(git -C "$ROOT" describe --always --dirty 2>/dev/null || echo unknown) $(date -u +%Y-%m-%d)" > "$STAGE/inner/BUILD"
 mkdir -p "$STAGE/outer/packages"
 (cd "$STAGE/inner" && zip -qrX "$STAGE/outer/packages/wireless.carplay.aa.zip" .)
 printf '[nemesis]\nversion=1.0\ntype=install\npath=packages/wireless.carplay.aa.zip\n' > "$STAGE/outer/NEMESIS.data"

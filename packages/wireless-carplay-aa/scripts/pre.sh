@@ -1,6 +1,7 @@
 #!/system/bin/sh
 . ./scripts/common.sh
 log "preinstall wireless.carplay.aa"
+[ -f BUILD ] && log "build $(cat BUILD)"
 [ -x /system/xbin/nemesis ] || { log "FAIL: /system/xbin/nemesis missing"; exit 1; }
 for _p in $PARTS; do
     [ -d "comp/$_p/scripts" ] || { log "FAIL: payload part $_p missing"; exit 1; }

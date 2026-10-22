@@ -24,7 +24,7 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 | `recipes/` | Hash-only native-library patches (libCarPlayCore Wi-Fi sessions, libCarPlayAudio formats, libCarPlayUtils converter). Make with `tools/mkrecipe.py`. |
 | `patches/` | Per-car delta sets for the projection apps + `cars` table + `<car>/stock` checksums + `<car>/manifest` expected results. See `patches/README.md`. |
 | `packages/wireless-carplay-aa/` | NEMESIS package source: parts `1_projection` (feature flags, hotspot only), `2_tbt` (turn-by-turn), `3_bridge` (CarPlay Bluetooth bridge), `4_audio`. `scripts/build.sh` rebuilds the apps on the unit from stock files before any part runs. |
-| `kits/fingerprint`, `kits/deep` | Read-only USB kits. Fingerprint report is public-safe; deep kit output goes privately (its `PRIVATE/` has firmware key files). |
+| `kits/fingerprint`, `kits/deep`, `kits/support` | Read-only USB kits (`tools/build-kit.sh [kit]`). Fingerprint report is public-safe; deep kit output goes privately (its `PRIVATE/` has firmware key files); support kit splits `public/` (attach to the issue form) from `private/` (logs that can hold phone names/BT addresses). Packages carry a `BUILD` stamp (commit + date) that the install log and support kit show. |
 | `docs/` | GitHub Pages compatibility checker (`docs/data/compat.json`; status `supported`/`testing`/`in-progress`; `product_prefix` may be a list). |
 | `tools/build-package.sh` | Builds `dist/HMG_Leafia_Plus_Wireless_CarPlay_AA.zip` from the repo alone. |
 | `tools/port.py` | Ports the app changes to a new car from its deep-kit collection (class-by-class compare, auto-merge, reference/framework checks, writes the patch set and `cars` line). |
