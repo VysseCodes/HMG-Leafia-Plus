@@ -47,7 +47,7 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 - Every outgoing SMS on these units needs `android.permission.TMSC_SEND` (Mobis) as well as `SEND_SMS`. Only system-uid callers pass: `nemesis root 1000 -c 'service call isms 5 s16 android s16 <number> i32 -1 s16 <text> i32 0 i32 0'`.
 - CarPlay first-connect notice: DiPO looks it up by the phone's Bluetooth address before iAP2 identification, but saved it under the iPhone serial. The bridge build now saves both (`i/e.ev6LastBtId` + `service/aa`).
 - CarPlay turn-by-turn maneuver index fix (Isaac Wisdom): `e/u.d(Object)` wrote into a clone of the index array.
-- DiPO wireless reconnect crash (stock bug): an iAP2 drop clears the phone's iAP2 Bluetooth address (`e/b.aw`, read by `K()`), and a wireless session can restart before iAP2 is back; `service/q.a` (onSessionDetails) called `K().toUpperCase()` unchecked. The bridge build now falls back to the session's own id, or keeps the stored address. Every other `K()` caller already checks for null.
+- DiPO wireless reconnect crash (stock bug): an iAP2 drop clears the phone's iAP2 Bluetooth address (`e/b.aw`, read by `K()`), and a wireless session can restart before iAP2 is back; `service/q.a` (onSessionDetails) called `K().toUpperCase()` unchecked. The bridge build now falls back to the session's own id, or keeps the stored address. Every other `K()` caller already checks for null. Same method on all four sets (K5/Korean Ioniq 5 only rename DipoService accessors).
 - The bridge's `EV6CPWL` log lines may not show in logcat even while it runs; don't read their absence as the bridge being dead.
 - No `tail` on the unit; use shell loops. Remount only through `nemesis remount rw|ro`: toolbox `mount -o remount` is refused even as root (NEMESIS before 1.15 could also EPERM until reboot; 1.15 fixed it and puts a `mount` wrapper first on hook PATH). Featurexml region comes from `ro.mobis.targetdir`.
 - Toast: `am broadcast -a com.hkmc.intent.action.TOAST -e com.hkmc.intent.extra.TOAST_MESSAGE "..." --ez com.hkmc.intent.extra.TOAST_POPUPSHOWING true`.
@@ -62,8 +62,9 @@ Telematics lives in `HKMC_TAppService` (system uid). Remote commands arrive over
 
 ## Open threads
 
-- Real-car tests pending: on-unit build package (all cars), CarPlay notice fix, K5 and Korean Ioniq 5 first installs, DiPO reconnect null check (ev6/neev).
-- DiPO reconnect null check still to port to `dl3hev` and `neev_kr` (needs their stock DiPO odex). Also seen on the US Ioniq 5: Iap2ServerApp `InitSupportLanguage` index out of range on iAP2 disconnect; `/system` left mounted rw after install (`nemesis remount ro` got EBUSY and the parts ignore it).
+- Real-car tests pending: on-unit build package (all cars), CarPlay notice fix, K5 and Korean Ioniq 5 first installs, DiPO reconnect null check (all four sets).
+- Reassemble deodexed apps with `smali a -j 1 --api 18`: with more threads smali writes a different (equivalent) dex each run.
+- Also seen on the US Ioniq 5: Iap2ServerApp `InitSupportLanguage` index out of range on iAP2 disconnect; `/system` left mounted rw after install (`nemesis remount ro` got EBUSY and the parts ignore it).
 - NEMESIS 1.15 (2026-10-21): checked against its zip/INI code and hook environment; its `carplay.session` package conflicts with ours (in `LEGACY`).
 - Modem test plan for a volunteer (read-only identity/APN/SMS-in/wake tests).
 - Possible: install guide on the site; changelog describing fixes in plain words.
