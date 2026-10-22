@@ -7,6 +7,7 @@ One folder per car, plus `common/`. The head unit rebuilds the modified projecti
 | `ev6/` | Kia EV6 (`CVEV.*`) | 260507 |
 | `neev/` | Hyundai Ioniq 5 (`NEEV.*`) | 260507 |
 | `dl3hev/` | Kia K5 Hybrid, Korea (`DL3HEV.KOR.*`) | 260902 |
+| `neev_kr/` | Hyundai Ioniq 5, Korea (`NEEV.KOR.*`) | 260902 |
 | `common/` | `libautoreceiver_infobank.so`, same on every supported car | |
 
 `cars` maps a firmware product id prefix (`ro.build.product`) to a folder and a car name. The installer reads it, so adding a car needs no script changes.

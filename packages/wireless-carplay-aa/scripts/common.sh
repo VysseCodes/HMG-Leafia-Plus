@@ -11,7 +11,7 @@
 # car data (projection.cardata, EV-specific) - that installs separately on top of this.
 # Uninstall undoes the parts in reverse order, back to stock.
 # Supported: Kia EV6 (CVEV) and Hyundai Ioniq 5 (NEEV) on 260507 firmware,
-# Kia K5 Hybrid Korea (DL3HEV.KOR) on 260902 firmware.
+# Kia K5 Hybrid Korea (DL3HEV.KOR) and Hyundai Ioniq 5 Korea (NEEV.KOR) on 260902 firmware.
 # Each part also checks the exact stock checksums before writing anything.
 export PATH=/data/nemesis/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
 LOG=/data/nemesis/wireless.carplay.aa.log

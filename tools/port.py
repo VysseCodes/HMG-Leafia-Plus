@@ -289,7 +289,9 @@ def main():
         for p, s in sorted(stock.items()): f.write('%s %s\n' % (os.path.basename(p), s))
     cars = os.path.join(a.patches, 'cars')
     lines = [l for l in (open(cars).read().splitlines() if os.path.exists(cars) else []) if l.split()[1:2] != [a.variant]]
-    lines.append('%s %s %s' % (a.prefix, a.variant, a.name))
+    # the installer takes the first matching prefix, so go above any shorter one that also matches
+    at = next((i for i, l in enumerate(lines) if l and not l.startswith('#') and a.prefix.startswith(l.split()[0])), len(lines))
+    lines.insert(at, '%s %s %s' % (a.prefix, a.variant, a.name))
     open(cars, 'w').write('\n'.join(lines) + '\n')
     log('\n'.join(report))
     log('OK: patches/%s written and %s added to patches/cars' % (a.variant, a.name))
