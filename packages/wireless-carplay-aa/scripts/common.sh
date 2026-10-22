@@ -17,12 +17,25 @@ export PATH=/data/nemesis/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/system
 LOG=/data/nemesis/wireless.carplay.aa.log
 PARTS="1_projection 2_tbt 3_bridge 4_audio"
 PARTS_REV="4_audio 3_bridge 2_tbt 1_projection"
-# the separate packages this replaces - they must be uninstalled first
-LEGACY="wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio carplay.debuglog"
+# separate packages that change the same files (the ones this replaces, and
+# NEMESIS's own carplay.session) - they must be uninstalled first
+LEGACY="wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio carplay.debuglog carplay.session"
 # optional add-ons that sit on top of this package - uninstall them before this one
 ADDONS="projection.cardata"
 
 log() { echo "$1"; mkdir -p /data/nemesis 2>/dev/null; echo "$1" >> "$LOG" 2>/dev/null; true; }
+
+# NEMESIS Manager's Logs > Copy to USB takes /data/nemesis/logs, so keep a copy of ours there
+LOGS_DIR=/data/nemesis/logs/wireless.carplay.aa
+mirror_logs() {
+    local _l
+    mkdir -p "$LOGS_DIR" 2>/dev/null || return 0
+    for _l in wireless.carplay.aa wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio; do
+        [ -f "/data/nemesis/$_l.log" ] && cp "/data/nemesis/$_l.log" "$LOGS_DIR/$_l.log" 2>/dev/null
+    done
+    true
+}
+trap mirror_logs EXIT
 
 CARS_DIR=patches
 . ./scripts/cars.sh

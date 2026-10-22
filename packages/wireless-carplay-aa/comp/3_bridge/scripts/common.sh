@@ -57,18 +57,13 @@ log() {
     echo "$_msg" >> "$LOG" 2>/dev/null || true
 }
 
+# toolbox `mount -o remount` is refused on these units even as root; only NEMESIS can remount
 sys_rw() {
-    /system/xbin/nemesis remount rw >/dev/null 2>&1 && return 0
-    mount -o remount,rw /system 2>/dev/null && return 0
-    mount -o rw,remount /system 2>/dev/null && return 0
-    mount -o rw,remount / 2>/dev/null && return 0
-    return 1
+    /system/xbin/nemesis remount rw >/dev/null 2>&1
 }
 
 sys_ro() {
     /system/xbin/nemesis remount ro >/dev/null 2>&1 || true
-    mount -o remount,ro /system 2>/dev/null || true
-    mount -o ro,remount /system 2>/dev/null || true
 }
 
 file_md5() {
