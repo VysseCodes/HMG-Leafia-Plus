@@ -8,7 +8,8 @@
 #   private/  Android and kernel logs, NEMESIS's own log, other packages'
 #             logs, crash dumps. These can hold phone names, Bluetooth
 #             addresses or commands you ran: only send them privately, when asked.
-# Never collected: /data contents beyond NEMESIS's own folder, accounts,
+# From /data only NEMESIS's own folder and the crash records (tombstones,
+# ANR traces, dropbox crash entries) are read. Never collected: accounts,
 # Wi-Fi passwords, the vehicle security partition, VIN or serial numbers.
 export PATH=/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
 export LD_LIBRARY_PATH=/vendor/lib:/system/lib
@@ -20,7 +21,7 @@ PRIV=$OUT/private
 N=/data/nemesis
 PKG=wireless.carplay.aa
 rm -r "$OUT" 2>/dev/null
-mkdir -p "$PUB/logs" "$PRIV/nemesis-logs" || exit 1
+mkdir -p "$PUB/logs" "$PRIV/nemesis-logs" "$PRIV/tombstones" "$PRIV/dropbox" || exit 1
 SUM=$PUB/summary.txt
 : > "$SUM" || exit 1
 
@@ -104,6 +105,12 @@ pm list features 2>/dev/null | while IFS= read -r _l; do
     case "$_l" in *wifi*|*wireless*|*carplay*|*androidauto*|*hotspot*) echo "feature ${_l#feature:}" >> "$SUM" ;; esac
 done
 
+section "crash records (names only; contents go to private/)"
+ls -l /data/tombstones >> "$SUM" 2>&1
+for _f in /data/system/dropbox/*; do
+    case "${_f##*/}" in *crash@*|*anr@*|*TOMBSTONE@*|*watchdog@*) say "${_f##*/}" ;; esac
+done
+
 section "system"
 grep -E ' /system | /data ' /proc/mounts >> "$SUM" 2>/dev/null
 df /system /data >> "$SUM" 2>&1
@@ -130,8 +137,18 @@ logcat -d -v time -s TccCarPlay:V CarPlay_:V DiPOManager:V Iap2Server:V iAP2:V G
     PhoneProjection:V BTCMStateMachine:I EV6AAC:V AndroidRuntime:V DEBUG:V ActivityManager:W \
     PackageManager:W > "$PRIV/logcat-projection.txt" 2>&1
 logcat -d -v time '*:W' > "$PRIV/logcat-warnings.txt" 2>&1
+# the tags above are best guesses; the full buffers catch whatever they miss
+logcat -d -v time > "$PRIV/logcat-full.txt" 2>&1
+logcat -d -v time -b events > "$PRIV/logcat-events.txt" 2>&1
 dmesg > "$PRIV/dmesg.txt" 2>&1
-ls -l /data/tombstones > "$PRIV/tombstones.txt" 2>&1
+# native crash dumps (backtraces for libCarPlay*, libautoreceiver_infobank, ...)
+for _f in /data/tombstones/*; do
+    copy_file "$_f" "$PRIV/tombstones/${_f##*/}"
+done
+# crash and ANR history; unlike logcat it survives the car turning off
+for _f in /data/system/dropbox/*; do
+    case "${_f##*/}" in *crash@*|*anr@*|*TOMBSTONE@*|*watchdog@*) copy_file "$_f" "$PRIV/dropbox/${_f##*/}" ;; esac
+done
 copy_file /data/anr/traces.txt "$PRIV/anr-traces.txt"
 
 say ""

@@ -3,7 +3,8 @@ HMG Leafia Plus support kit (read-only) - for reporting a problem
 1. Copy NEMESIS.data and NEMESIS.sh to the root of an exFAT/FAT32 USB drive.
    No other NEMESIS files on the drive.
 2. If the problem is with CarPlay or Android Auto, try it once just before,
-   so the logs have something in them.
+   so the logs have something in them. If it crashed, run the kit before
+   turning the car off: the Android log is lost when the car powers down.
 3. Car on, plug in the drive, tap Yes. Wait for the success message.
 4. Zip LEAFIA-SUPPORT/public and attach it to your GitHub issue.
 5. LEAFIA-SUPPORT/private holds Android logs that can include phone names,
