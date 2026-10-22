@@ -141,7 +141,9 @@ logcat -d -v time '*:W' > "$PRIV/logcat-warnings.txt" 2>&1
 logcat -d -v time > "$PRIV/logcat-full.txt" 2>&1
 logcat -d -v time -b events > "$PRIV/logcat-events.txt" 2>&1
 dmesg > "$PRIV/dmesg.txt" 2>&1
-# native crash dumps (backtraces for libCarPlay*, libautoreceiver_infobank, ...)
+# native crash dumps (backtraces for libCarPlay*, libautoreceiver_infobank, ...);
+# the copies get new dates, so keep the original listing for the crash times
+ls -l /data/tombstones > "$PRIV/tombstones/listing.txt" 2>&1
 for _f in /data/tombstones/*; do
     copy_file "$_f" "$PRIV/tombstones/${_f##*/}"
 done
