@@ -47,12 +47,12 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 - Every outgoing SMS on these units needs `android.permission.TMSC_SEND` (Mobis) as well as `SEND_SMS`. Only system-uid callers pass: `nemesis root 1000 -c 'service call isms 5 s16 android s16 <number> i32 -1 s16 <text> i32 0 i32 0'`.
 - CarPlay first-connect notice: DiPO looks it up by the phone's Bluetooth address before iAP2 identification, but saved it under the iPhone serial. The bridge build now saves both (`i/e.ev6LastBtId` + `service/aa`).
 - CarPlay turn-by-turn maneuver index fix (Isaac Wisdom): `e/u.d(Object)` wrote into a clone of the index array.
-- No `tail` on the unit; use shell loops. Remount can EPERM until reboot. Featurexml region comes from `ro.mobis.targetdir`.
+- No `tail` on the unit; use shell loops. Remount only through `nemesis remount rw|ro`: toolbox `mount -o remount` is refused even as root (NEMESIS before 1.15 could also EPERM until reboot; 1.15 fixed it and puts a `mount` wrapper first on hook PATH). Featurexml region comes from `ro.mobis.targetdir`.
 - Toast: `am broadcast -a com.hkmc.intent.action.TOAST -e com.hkmc.intent.extra.TOAST_MESSAGE "..." --ez com.hkmc.intent.extra.TOAST_POPUPSHOWING true`.
 
 ## Testing without a car
 
-Mock head-unit sandbox: rewrite the package scripts' `/system`, `/data`, `/storage` paths into a temp root, stub `getprop`/`setprop`/`am`/`settings`/`md5`/`chown`, a fake `dexopt` (copies apk to odex), and run `lpatch` through `qemu-arm-static` via `LPATCH=<wrapper>`. Run `pre.sh`, `post.sh`, `preun.sh`; the system tree must be byte-identical to stock after uninstall. Stock trees and full builds can't live in this repo; contributors keep their own copies privately (deep kit output, NEMESIS backups).
+Mock head-unit sandbox: rewrite the package scripts' `/system`, `/data`, `/storage` paths into a temp root, stub `getprop`/`setprop`/`am`/`settings`/`md5`/`chown`, a fake `dexopt` (copies apk to odex), and run `lpatch` through `qemu-arm-static` via `LPATCH=<wrapper>`. Run `pre.sh`, `post.sh`, `preun.sh`; the system tree must be byte-identical to stock after uninstall. Also run the hooks under `mksh` (the unit's shell; the host shell has builtins the unit lacks, like `printf`) and once with `am`/`settings` failing: NEMESIS 1.15 installs without asking while Android is down. Stock trees and full builds can't live in this repo; contributors keep their own copies privately (deep kit output, NEMESIS backups).
 
 ## Kia Connect (research summary, read-only)
 
@@ -60,6 +60,7 @@ Telematics lives in `HKMC_TAppService` (system uid). Remote commands arrive over
 
 ## Open threads
 
-- Real-car tests pending: on-unit build package (all cars), CarPlay notice fix, K5 first install.
+- Real-car tests pending: on-unit build package (all cars), CarPlay notice fix, K5 and Korean Ioniq 5 first installs.
+- NEMESIS 1.15 (2026-10-21): checked against its zip/INI code and hook environment; its `carplay.session` package conflicts with ours (in `LEGACY`).
 - Modem test plan for a volunteer (read-only identity/APN/SMS-in/wake tests).
 - Possible: install guide on the site; changelog describing fixes in plain words.

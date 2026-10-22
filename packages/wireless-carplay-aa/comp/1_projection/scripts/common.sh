@@ -30,18 +30,13 @@ putline() {
     printf '%s\n' "$1"
 }
 
+# toolbox `mount -o remount` is refused on these units even as root; only NEMESIS can remount
 sys_rw() {
-    /system/xbin/nemesis remount rw >/dev/null 2>&1 && return 0
-    mount -o remount,rw /system 2>/dev/null && return 0
-    mount -o rw,remount /system 2>/dev/null && return 0
-    mount -o rw,remount / 2>/dev/null && return 0
-    return 1
+    /system/xbin/nemesis remount rw >/dev/null 2>&1
 }
 
 sys_ro() {
     /system/xbin/nemesis remount ro >/dev/null 2>&1 || true
-    mount -o remount,ro /system 2>/dev/null || true
-    mount -o ro,remount /system 2>/dev/null || true
 }
 
 remove_backup_dir() {
@@ -278,17 +273,25 @@ restore_getprop() {
 
 snap_setting() {
     local _v
-    if [ -s "$BACKUP_DIR/wifi_on" ] || [ -s "$BACKUP_DIR/wifi_on.unset" ]; then
+    if [ -s "$BACKUP_DIR/wifi_on" ] || [ -s "$BACKUP_DIR/wifi_on.unset" ] || [ -s "$BACKUP_DIR/wifi_on.unknown" ]; then
         log "snapshot exists for wifi_on - keeping original"
         return 0
     fi
-    _v=$(settings get global wifi_on 2>/dev/null) || _v=""
+    # `settings` needs Android; NEMESIS also installs while Android is down
+    if ! _v=$(settings get global wifi_on 2>/dev/null); then
+        _v="?"
+    fi
     case "$_v" in
-        ""|null)
+        null)
             putline unset > "$BACKUP_DIR/wifi_on.unset" || return 1
             ;;
-        *)
+        [0-9]|[0-9][0-9])
             putline "$_v" > "$BACKUP_DIR/wifi_on" || return 1
+            ;;
+        *)
+            # not readable now: we never change it, so uninstall leaves it alone
+            putline unknown > "$BACKUP_DIR/wifi_on.unknown" || return 1
+            log "wifi_on not readable (Android down?) - left as is"
             ;;
     esac
     return 0
@@ -305,6 +308,10 @@ restore_setting() {
     if [ -s "$BACKUP_DIR/wifi_on.unset" ]; then
         settings delete global wifi_on 2>/dev/null || true
         log "cleared wifi_on (unset at install)"
+        return 0
+    fi
+    if [ -s "$BACKUP_DIR/wifi_on.unknown" ]; then
+        log "wifi_on was not readable at install - left as is"
         return 0
     fi
     log "FAIL: no wifi_on snapshot"
