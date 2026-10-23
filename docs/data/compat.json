@@ -53,7 +53,7 @@
       "product_prefix": ["NEEV.USA.", "NEEV23.USA."],
       "firmware": "V015.012.260507",
       "status": "supported",
-      "verified": ["Install verified on a real unit", "Same code as the EV6 build", "2023 (NEEV23) has identical projection apps"],
+      "verified": ["Install verified on a real unit", "Wireless Android Auto and turn-by-turn on cluster and HUD (Waze) verified on a 2022 car", "Same code as the EV6 build", "2023 (NEEV23) has identical projection apps"],
       "stock": {
         "/system/app/HKMC_GPM.apk": "2e9a5e738fffad4bca38421971a07364",
         "/system/app/HKMC_GPM.odex": "6e67470f8ccd5afcd6c1408ac3fd9459",
