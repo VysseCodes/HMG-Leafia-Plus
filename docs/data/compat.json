@@ -50,7 +50,7 @@
       "name": "Hyundai Ioniq 5 (2022 and 2023)",
       "region": "US",
       "chip": "TCC803x",
-      "product_prefix": ["NEEV.", "NEEV23."],
+      "product_prefix": ["NEEV.USA.", "NEEV23.USA."],
       "firmware": "V015.012.260507",
       "status": "supported",
       "verified": ["Install verified on a real unit", "Same code as the EV6 build", "2023 (NEEV23) has identical projection apps"],
