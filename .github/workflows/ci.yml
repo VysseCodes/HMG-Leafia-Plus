@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-lpatch:
+    name: Build Lpatch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Build lpatch
+        run: |
+          ./tools/lpatch/build.sh
+
+      - name: Test lpatch
+        run: |
+          ./tools/lpatch/test.sh
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: lpatch
+          path: ./tools/lpatch/
+
+  build-buildkit:
+    name: Build Build-kit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Build buildkit
+        run: |
+          ./tools/build-kit.sh docs/downloads/leafia-fingerprint-kit.zip
+
+
+      - name: Build support buildkit
+        run: |
+          ./tools/build-kit.sh support docs/downloads/leafia-fingerprint-kit.zip
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: buildkit
+          path: ./dist/*.zip
+
+  build-package:
+    name: Build Wireless Carplay/AA Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Build package
+        run: |
+          ./tools/build-package.sh
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: wireless-carplay-aa
+          path: ./dist/*.zip
