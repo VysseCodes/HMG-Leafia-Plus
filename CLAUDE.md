@@ -25,7 +25,7 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 | `recipes/` | Hash-only native-library patches (libCarPlayCore Wi-Fi sessions, libCarPlayAudio formats, libCarPlayUtils converter). Make with `tools/mkrecipe.py`. |
 | `patches/` | Per-car delta sets for the projection apps + `cars` table + `<car>/stock` checksums + `<car>/manifest` expected results. See `patches/README.md`. |
 | `packages/wireless-carplay-aa/` | NEMESIS package source: parts `1_projection` (feature flags, hotspot only), `2_tbt` (turn-by-turn), `3_bridge` (CarPlay Bluetooth bridge), `4_audio`. `scripts/build.sh` rebuilds the apps on the unit from stock files before any part runs. |
-| `kits/fingerprint`, `kits/deep`, `kits/support` | Read-only USB kits (`tools/build-kit.sh [kit]`). Fingerprint report is public-safe; deep kit output goes privately (its `PRIVATE/` has firmware key files); support kit splits `public/` (attach to the issue form) from `private/` (logs that can hold phone names/BT addresses). Packages carry a `BUILD` stamp (commit + date) that the install log and support kit show. |
+| `kits/leafia` | The one read-only USB kit (`tools/build-kit.sh`; published as `docs/downloads/leafia-kit.zip`, with the old fingerprint/support/deep zip names kept as copies, checked by `tools/check-downloads.sh`). Writes `LEAFIA/public/` (LEAFIA-REPORT.txt for the compatibility page, summary.txt, our install logs: safe to post) and `LEAFIA/private/` (`logs/`, `stock/` for porting, `keys/` firmware key files: only privately, when a maintainer asks). Packages carry a `BUILD` stamp (commit + date) that the install log and the kit show. |
 | `docs/` | GitHub Pages compatibility checker (`docs/data/compat.json`; status `supported`/`testing`/`in-progress`; `product_prefix` may be a list). |
 | `tools/build-package.sh` | Builds `dist/HMG_Leafia_Plus_Wireless_CarPlay_AA.zip` from the repo alone. |
 | `tools/port.py` | Ports the app changes to a new car from its deep-kit collection (class-by-class compare, auto-merge, reference/framework checks, writes the patch set and `cars` line). |
@@ -38,7 +38,7 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 | `CVEV.` | ev6 | Kia EV6 260507 | reference car |
 | `NEEV.USA.` / `NEEV23.USA.` | neev | Hyundai Ioniq 5 US 2022/2023 | app code identical to EV6, different APK wrappers |
 | `DL3HEV.KOR.` / `DL3HEV22.KOR.` | dl3hev | Kia K5 Hybrid Korea 260902 (2022 has identical projection apps) | TCC897x; native Wi-Fi CarPlay + converters; 3 classes merged; not yet tested on a real car |
-| `NEEV.KOR.` | neev_kr | Hyundai Ioniq 5 Korea 260902 | ported automatically from the deep kit; native Wi-Fi CarPlay + converters; listed first among the Ioniq 5 lines in `cars` (first match wins); not yet tested on a real car |
+| `NEEV.KOR.` | neev_kr | Hyundai Ioniq 5 Korea 260902 | ported automatically from an owner's kit; native Wi-Fi CarPlay + converters; listed first among the Ioniq 5 lines in `cars` (first match wins); not yet tested on a real car |
 
 ## Gotchas learned the hard way
 
@@ -55,7 +55,7 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 
 ## Testing without a car
 
-Mock head-unit sandbox: rewrite the package scripts' `/system`, `/data`, `/storage` paths into a temp root, stub `getprop`/`setprop`/`am`/`settings`/`md5`/`chown`, a fake `dexopt` (copies apk to odex), and run `lpatch` through `qemu-arm-static` via `LPATCH=<wrapper>`. Run `pre.sh`, `post.sh`, `preun.sh`; the system tree must be byte-identical to stock after uninstall. Also run the hooks under `mksh` (the unit's shell; the host shell has builtins the unit lacks, like `printf`) and once with `am`/`settings` failing: NEMESIS 1.15 installs without asking while Android is down. Stock trees and full builds can't live in this repo; contributors keep their own copies privately (deep kit output, NEMESIS backups).
+Mock head unit: `tools/mock/install-test.sh <zip> <ro.build.product> <region dir> <stock system dir>` installs and uninstalls the package against a copy of a stock `/system` (a kit's `LEAFIA/private/stock/` works), stubbing `getprop`/`setprop`/`am`/`settings`/`md5`/`chown`/`dexopt` and running `lpatch` under `qemu-arm-static`; it passes only if uninstall leaves `/system` byte-identical. `tools/mock/matrix.sh <zip>` runs every car in the git-ignored `tools/mock/cars.local`. Use `MOCK_SH=mksh` (the unit's shell lacks `printf`, `tail`, ...), `MOCK_NEMESIS=1.15`, `MOCK_ANDROID_DOWN=1` (NEMESIS 1.15 installs without asking while Android is down) and `MOCK_USB_DESCRIPTOR=1`. Stock trees and full builds can't live in this repo; contributors keep their own copies privately.
 
 ## Kia Connect (research summary, read-only)
 

@@ -30,13 +30,13 @@ Cars without a patch set yet get **basic mode**: only the wireless projection pa
 ## Install
 
 1. Install [NEMESIS](https://github.com/xwtk/hmg_nemesis) **1.15 or newer** on the head unit.
-2. Check your car on the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/) with the fingerprint kit.
+2. Check your car on the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/) with the Leafia kit.
 3. Get the package: build it with `tools/build-package.sh`, or download the `wireless-carplay-aa` artifact from the latest CI run on `main` (needs a GitHub login).
 4. Unzip it onto the root of an empty exFAT or FAT32 USB drive (`NEMESIS.data` and `packages/`).
 5. Car on, plug in the drive and confirm the install. The head unit restarts when it's done; remove the drive. The installer renames `NEMESIS.data` to `NEMESIS.data.installed` so it can't run again by accident.
 6. **Uninstall** any time from NEMESIS Manager (Packages → Uninstall), then restart: every file goes back to stock.
 
-Something wrong? Open an issue with the [problem form](../../issues/new?template=problem.yml); it walks you through the support kit.
+Something wrong? Open an issue with the [problem form](../../issues/new?template=problem.yml); it walks you through the Leafia kit.
 
 ## Packages
 
@@ -46,21 +46,22 @@ Something wrong? Open an issue with the [problem form](../../issues/new?template
 
 See the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/). The data lives in `docs/data/compat.json`.
 
-## Kits (run from a USB drive through NEMESIS)
+## The Leafia kit (run from a USB drive through NEMESIS)
 
-| Kit | Use | Output |
+One read-only kit (`kits/leafia`, download: [leafia-kit.zip](https://vyssecodes.github.io/HMG-Leafia-Plus/downloads/leafia-kit.zip)) covers checking a car, reporting a problem and porting to a new car. It writes `LEAFIA/` on the drive:
+
+| Folder | Contents | Share |
 |---|---|---|
-| `kits/fingerprint` | Anyone: check compatibility | `LEAFIA-REPORT.txt`. No personal data and no OEM code, safe to post. |
-| `kits/deep` | Only when a maintainer asks, to port a new head unit | `NEMESIS-deep/`. `share/` holds stock system files; `PRIVATE/` holds firmware key files. **Send privately.** |
-| `kits/support` | Anyone with a problem: attach to an issue ([form](../../issues/new?template=problem.yml)) | `LEAFIA-SUPPORT/`. `public/` (firmware ids, NEMESIS and package state, our install logs, checksums) is safe to post; `private/` (Android/kernel logs, NEMESIS's own log, crash dumps) can hold phone names or Bluetooth addresses. **Send privately, only when asked.** |
-
-All kits are read-only.
+| `public/` | `LEAFIA-REPORT.txt` (firmware ids, checksums, patch checks: drop it on the compatibility page), `summary.txt` (NEMESIS and package state, hotspot, crash record names), our install logs | Safe to post on an issue |
+| `private/logs/` | Android and kernel logs, NEMESIS logs, crash dumps, network state; can include phone names or Bluetooth addresses | **Privately, only when asked** |
+| `private/stock/` | Stock framework, CarPlay/projection apps and libraries (Hyundai/Kia files), used to port the package | **Privately, only when asked** |
+| `private/keys/` | Firmware key files | **Privately, only when asked; never posted** |
 
 ### Data policy
 
-- **Public** (issues, this repo): fingerprint reports, the support kit's `public/` folder, recipes, checksums, compatibility data.
-- **Private only** (never committed here): stock firmware files, firmware key files from deep collections, and full modified app builds. The repo holds only patch sets that rebuild them from a unit's own stock files.
-- **Never collected:** anything under `/data` except NEMESIS's own folder and crash logs (support kit) — so no accounts, paired phones or Wi-Fi passwords — the vehicle security partition (modem and connected-service certificates), the VIN and serial numbers.
+- **Public** (issues, this repo): the kit's `public/` folder, recipes, checksums, compatibility data.
+- **Private only** (never committed here): the kit's `private/` folder (logs, stock firmware files, firmware key files) and full modified app builds. The repo holds only patch sets that rebuild them from a unit's own stock files.
+- **Never collected:** anything under `/data` except NEMESIS's own folder, crash logs and the hotspot's address leases — so no accounts, paired phones or Wi-Fi passwords — the vehicle security partition (modem and connected-service certificates), the VIN and serial numbers.
 
 ## Contributing
 

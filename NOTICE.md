@@ -12,7 +12,7 @@ The Wireless CarPlay/AA package builds on these NEMESIS community packages. Thei
 
 ## Original HMG Leafia Plus work (GPL-3.0)
 
-`lpatch`, the recipes and recipe tooling, the fingerprint and deep kits, the compatibility site, the CarPlay Bluetooth bridge, the CarPlay Wi-Fi/audio patches and the `libev6aac.so` audio converter.
+`lpatch`, the recipes and recipe tooling, the Leafia kit, the compatibility site, the CarPlay Bluetooth bridge, the CarPlay Wi-Fi/audio patches and the `libev6aac.so` audio converter.
 
 ## Community contributions
 

@@ -23,10 +23,10 @@ An `.lpd` holds the md5 of the exact stock file it needs and of the result. `lpa
 
 ## Adding a car
 
-Run the deep kit on the new car (it collects the stock projection apps and the framework), then:
+Have the owner run the Leafia kit on the new car and send its `LEAFIA/private` folder privately (`stock/` holds the projection apps and the framework), then:
 
 ```
-tools/port.py --variant <name> --prefix <product prefix> --name "<car name>" --new-stock <dir> --new-fw <NEMESIS-deep/share/framework> --ref-stock <EV6 stock dir> --ref-fw <EV6 framework> --ref-builds <builds dir> --out-builds <dir>
+tools/port.py --variant <name> --prefix <product prefix> --name "<car name>" --new-stock <dir> --new-fw <LEAFIA/private/stock/framework> --ref-stock <EV6 stock dir> --ref-fw <EV6 framework> --ref-builds <builds dir> --out-builds <dir>
 ```
 
 `<dir>` holds the new car's `app/<App>.apk`, `app/<App>.odex` and `lib/libautoreceiver_infobank.so`.

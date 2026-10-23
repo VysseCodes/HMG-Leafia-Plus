@@ -3,4 +3,4 @@ blank_issues_enabled: true
 contact_links:
   - name: Check if your car is supported
     url: https://vyssecodes.github.io/HMG-Leafia-Plus/
-    about: Run the fingerprint kit and drop the report on the compatibility page; it files a report issue for you.
+    about: Run the Leafia kit and drop its LEAFIA-REPORT.txt on the compatibility page; it files a report issue for you.
