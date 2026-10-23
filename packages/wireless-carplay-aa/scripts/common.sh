@@ -150,25 +150,79 @@ retire_usb_descriptor() {
 
 REPORT_NAME=NEMESIS-report-wireless.carplay.aa
 
-# fail_unknown_unit <reason>: grab the report, tell the user, never touches /system
-fail_unknown_unit() {
-    local _usb _out _where
-    log "FAIL: $1"
+# collect_report <reason>: save the head unit report (USB drive if possible) and
+# set REPORT_WHERE; read only, never touches /system
+collect_report() {
+    local _usb _out
     if _usb=$(find_usb); then
         _out="$_usb/$REPORT_NAME"
-        _where="USB drive: $REPORT_NAME"
+        REPORT_WHERE="USB drive: $REPORT_NAME"
     else
         _out="/data/nemesis/reports/$REPORT_NAME"
-        _where="$_out (no USB drive found)"
+        REPORT_WHERE="$_out (no USB drive found)"
     fi
     log "collecting a head unit report into $_out"
     if /system/bin/sh ./scripts/report.sh "$_out" "$1" >/dev/null 2>&1; then
-        log "report saved: $_where"
+        log "report saved: $REPORT_WHERE"
     else
         log "WARN: report could not be written to $_out"
     fi
-    toast "Install failed, likely an undocumented head unit. Check your logs and see if there are files you can provide so this can work on more units. Report saved to $_where"
+}
+
+# fail_unknown_unit <reason>: grab the report, tell the user, never touches /system
+fail_unknown_unit() {
+    log "FAIL: $1"
+    collect_report "$1"
+    toast "Install failed, likely an undocumented head unit. Check your logs and see if there are files you can provide so this can work on more units. Report saved to $REPORT_WHERE"
     return 1
+}
+
+# ---- basic mode: a car or firmware this package has no build for still gets the
+# wireless projection flags (part 1: wireless Android Auto). That part only
+# snapshots and edits this unit's own files, so it needs no per-car patch set.
+# Turn-by-turn and the CarPlay bridge (parts 2-4) need a build made from the
+# car's stock apps; the report saved alongside is what makes that build.
+BASIC_PARTS="1_projection"
+# the parts actually installed, so uninstall undoes exactly those
+PARTS_FILE=/data/nemesis/wireless.carplay.aa.parts
+
+has_wifi_module() {
+    [ -f /system/etc/permissions/com.hkmc.software.wifi.module.xml ]
+}
+
+# decide_mode: MODE=full or basic (MODE_WHY says why); sets PARTS/PARTS_REV.
+# Full mode leaves the rebuilt apps in the build dir for the parts.
+decide_mode() {
+    MODE=full
+    MODE_WHY=""
+    if ! car_name >/dev/null; then
+        MODE_WHY="no build for this car/firmware yet ($(getprop ro.build.product 2>/dev/null))"
+    elif ! check_cluster_api; then
+        MODE_WHY="cluster API missing for turn-by-turn"
+    else
+        . ./scripts/build.sh
+        if ! build_payloads; then
+            clean_build
+            MODE_WHY="stock apps do not match this package's patches"
+        fi
+    fi
+    if [ -n "$MODE_WHY" ]; then
+        MODE=basic
+        PARTS=$BASIC_PARTS
+        PARTS_REV=$BASIC_PARTS
+    fi
+}
+
+# installed_parts_rev: the installed parts, newest first (all parts for installs
+# made before the parts file existed)
+installed_parts_rev() {
+    local _p _rev=""
+    if [ -s "$PARTS_FILE" ]; then
+        for _p in $(cat "$PARTS_FILE"); do _rev="$_p $_rev"; done
+        echo "$_rev"
+    else
+        echo "$PARTS_REV"
+    fi
 }
 
 # uninstall_parts <list>: undo parts in the given order, stop at the first failure
