@@ -1,0 +1,10 @@
+# Scripts run on the head unit's shell, which breaks on CRLF line endings:
+# keep every text file LF, whatever the contributor's OS.
+* text=auto eol=lf
+
+# binaries: never touch line endings or show text diffs
+*.so      binary
+*.lpd     binary
+*.zip     binary
+*.png     binary
+tools/lpatch/lpatch binary
