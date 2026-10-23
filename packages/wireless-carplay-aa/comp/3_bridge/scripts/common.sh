@@ -321,7 +321,7 @@ apply_all() {
             log "FAIL: missing $_src"
             return 1
         fi
-        cp -f "$_src" "$_live" || return 1
+        put_lib "$_src" "$_live" || return 1
         chmod 644 "$_live" 2>/dev/null || true
         chown_system "$_live"
         if [ -x /system/bin/restorecon ]; then
@@ -377,8 +377,8 @@ restore_all() {
             sys_ro
             return 1
         fi
-        cp -f "$_bak_apk" "$_live" || { sys_ro; return 1; }
-        cp -f "$_bak_odex" "$_odex" || { sys_ro; return 1; }
+        put_lib "$_bak_apk" "$_live" || { sys_ro; return 1; }
+        put_lib "$_bak_odex" "$_odex" || { sys_ro; return 1; }
         chmod 644 "$_live" "$_odex" 2>/dev/null || true
         chown_system "$_live"
         chown_system "$_odex"
@@ -468,7 +468,7 @@ snapshot_core() {
     return 0
 }
 
-# copy beside the target, then rename over it (new inode; running DiPO keeps the old mapping)
+# copy beside the target, then rename over it (new inode; a running app keeps the old mapping)
 put_lib() {
     local _src="$1"
     local _dst="$2"

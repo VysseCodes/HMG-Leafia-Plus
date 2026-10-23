@@ -148,7 +148,7 @@ apply_lib() {
         log "FAIL: payload receiver has no navbridge marker"
         return 1
     fi
-    cp -f "$_src" "$LIB_LIVE" || return 1
+    put_lib "$_src" "$LIB_LIVE" || return 1
     chmod 644 "$LIB_LIVE" 2>/dev/null || true
     chown_system "$LIB_LIVE"
     if [ -x /system/bin/restorecon ]; then
@@ -162,11 +162,33 @@ apply_lib() {
     return 0
 }
 
+# copy beside the target, then rename over it (new inode; a running app keeps the old mapping)
+put_lib() {
+    local _src="$1"
+    local _dst="$2"
+    local _tmp="${_dst}.ev6tmp"
+    rm -f "$_tmp" 2>/dev/null || true
+    cp -f "$_src" "$_tmp" || { rm -f "$_tmp" 2>/dev/null; return 1; }
+    if ! cmp "$_src" "$_tmp" >/dev/null 2>&1; then
+        rm -f "$_tmp" 2>/dev/null || true
+        return 1
+    fi
+    chmod 644 "$_tmp" 2>/dev/null || true
+    chown_system "$_tmp"
+    mv "$_tmp" "$_dst" || { rm -f "$_tmp" 2>/dev/null; return 1; }
+    chmod 644 "$_dst" 2>/dev/null || true
+    chown_system "$_dst"
+    if [ -x /system/bin/restorecon ]; then
+        restorecon "$_dst" 2>/dev/null || true
+    fi
+    cmp "$_src" "$_dst" >/dev/null 2>&1
+}
+
 restore_lib() {
     local _bak
     _bak="$BACKUP_DIR/$LIB_BASE"
     if [ -s "$_bak" ]; then
-        cp -f "$_bak" "$LIB_LIVE" || return 1
+        put_lib "$_bak" "$LIB_LIVE" || return 1
         chmod 644 "$LIB_LIVE" 2>/dev/null || true
         chown_system "$LIB_LIVE"
         if [ -x /system/bin/restorecon ]; then
@@ -279,7 +301,7 @@ apply_all() {
             log "FAIL: missing $_src"
             return 1
         fi
-        cp -f "$_src" "$_live" || return 1
+        put_lib "$_src" "$_live" || return 1
         chmod 644 "$_live" 2>/dev/null || true
         chown_system "$_live"
         if ! cmp "$_src" "$_live" >/dev/null 2>&1; then
@@ -335,8 +357,8 @@ restore_all() {
             sys_ro
             return 1
         fi
-        cp -f "$_bak_apk" "$_live" || { sys_ro; return 1; }
-        cp -f "$_bak_odex" "$_odex" || { sys_ro; return 1; }
+        put_lib "$_bak_apk" "$_live" || { sys_ro; return 1; }
+        put_lib "$_bak_odex" "$_odex" || { sys_ro; return 1; }
         chmod 644 "$_live" "$_odex" 2>/dev/null || true
         chown_system "$_live"
         chown_system "$_odex"
