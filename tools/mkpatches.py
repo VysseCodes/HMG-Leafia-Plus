@@ -27,6 +27,11 @@ def md5(p): return hashlib.md5(open(p, 'rb').read()).hexdigest()
 def run(*a): subprocess.run(a, check=True, stdout=subprocess.DEVNULL)
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] in ('-h', '--help'):
+        print(__doc__)
+        return
+    if len(sys.argv) != 5:
+        sys.exit(__doc__)
     var, stock, pay, out = sys.argv[1:5]
     fdir = FILES.get(var, 'files_' + var)
     os.makedirs(os.path.join(out, var), exist_ok=True)
