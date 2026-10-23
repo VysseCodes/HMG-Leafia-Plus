@@ -11,6 +11,11 @@ import hashlib, struct, sys, zlib
 import bsdiff4.core
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] in ('-h', '--help'):
+        print(__doc__)
+        return
+    if len(sys.argv) != 4:
+        sys.exit(__doc__)
     src, tgt, out = sys.argv[1:4]
     a, b = open(src, 'rb').read(), open(tgt, 'rb').read()
     ctrl, diff, extra = bsdiff4.core.diff(a, b)
