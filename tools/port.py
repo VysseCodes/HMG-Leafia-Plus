@@ -30,7 +30,7 @@ usage:
   out-builds where the new car's full builds go (keep them private)
 
 Needs baksmali and smali on PATH, the host lpatch (tools/lpatch/build.sh) and
-`pip install bsdiff4`.
+`pip install --require-hashes -r tools/requirements.txt`.
 """
 import argparse, filecmp, hashlib, os, re, shutil, subprocess, sys, tempfile, zipfile
 

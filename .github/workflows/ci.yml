@@ -13,19 +13,22 @@ concurrency:
 permissions:
   contents: read
 
+# Actions are pinned to full commit IDs (tags can be moved); the comment says which
+# release that is. Build artifacts are only uploaded for pushes to main, so nothing
+# built from a pull request's code is published as a download.
+
 jobs:
   build-lpatch:
     name: Build and Test Lpatch
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install pip dependencies
-        # NOTE: Set up either a pyproject.toml or requirements.txt for pip dependencies
         run: |
-          pip install bsdiff4
+          pip install --require-hashes -r tools/requirements.txt
 
       - name: Install qemu
         run: |
@@ -36,46 +39,72 @@ jobs:
         run: |
           ./tools/lpatch/test.sh
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: github.event_name == 'push'
         with:
           name: lpatch
           path: ./tools/lpatch/
 
-  build-buildkit:
-    name: Build Build-kit
-    runs-on: ubuntu-latest
+  verify-shipped:
+    name: Verify Shipped Binaries and Downloads
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install clang 18 and lld 18
+        # the toolchain the shipped libev6aac.so was built with (Ubuntu 24.04)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-18 lld-18
+
+      - name: libev6aac.so rebuilds byte for byte from src/ev6aac
+        run: |
+          CLANG=clang-18 ./src/ev6aac/build.sh "$RUNNER_TEMP/libev6aac.so"
+          cmp "$RUNNER_TEMP/libev6aac.so" packages/wireless-carplay-aa/comp/4_audio/files/libev6aac.so
+          echo "libev6aac.so matches its source"
+
+      - name: Website kit downloads match kits/
+        run: |
+          ./tools/check-downloads.sh
+
+  build-buildkit:
+    name: Build Build-kit
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Build fingerprint kit
         run: |
           ./tools/build-kit.sh fingerprint
 
-
       - name: Build support kit
         run: |
           ./tools/build-kit.sh support
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: github.event_name == 'push'
         with:
           name: buildkits
           path: ./dist/*.zip
 
   build-package:
     name: Build Wireless Carplay/AA Package
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Build package
         run: |
           ./tools/build-package.sh
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: github.event_name == 'push'
         with:
           name: wireless-carplay-aa
           path: ./dist/*.zip
