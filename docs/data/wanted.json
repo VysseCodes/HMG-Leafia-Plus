@@ -30,7 +30,8 @@
     "US"
    ],
    "firmware": "260507",
-   "priority": true
+   "priority": true,
+   "note": "2020–2021: Gen5W on the Electric only; other versions have an older head unit"
   },
   {
    "brand": "Hyundai",
@@ -228,7 +229,8 @@
     "US"
    ],
    "firmware": "260507",
-   "priority": false
+   "priority": false,
+   "note": "2021: Gen5W on the N only; other versions have an older head unit"
   },
   {
    "brand": "Hyundai",
@@ -255,7 +257,8 @@
     "US"
    ],
    "firmware": "260507",
-   "priority": false
+   "priority": false,
+   "note": "2020: Gen5W on later cars only; earlier ones have an older head unit"
   },
   {
    "brand": "Kia",

@@ -183,6 +183,7 @@ function renderWanted(w) {
     const cells = [["", c.brand + " " + c.model], ["Variants", (c.variants || []).join(", ") || "–"], ["Years", c.years || "–"],
       ["Regions", c.regions.join(", ")], ["Firmware", c.firmware]];
     for (const [label, t] of cells) { const td = document.createElement("td"); td.textContent = t; if (label) td.dataset.label = label; tr.append(td); }
+    if (c.note) { const n = document.createElement("small"); n.textContent = c.note; tr.firstChild.append(document.createElement("br"), n); }
     const td = document.createElement("td");
     if (c.priority) { td.append(chip("build")); td.lastChild.textContent = "Priority"; }
     tr.append(td); tb.append(tr);
