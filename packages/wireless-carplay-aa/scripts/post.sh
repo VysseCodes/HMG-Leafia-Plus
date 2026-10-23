@@ -41,6 +41,8 @@ clean_build
 sync
 if [ -n "$EV6_TEST_ROOT" ]; then log "test mode - not rebooting"; exit 0; fi
 log "all parts installed - rebooting"
+retire_usb_descriptor
+toast "Installed. Restarting now - you can remove the USB drive."
 mirror_logs
 exec /system/bin/reboot
 log "FAIL: reboot returned"

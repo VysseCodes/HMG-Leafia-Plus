@@ -129,6 +129,25 @@ find_usb() {
     return 1
 }
 
+# NEMESIS 1.15 force-updates an installed package from the USB drive while
+# Android is down, and we reboot after installing: with the drive left in,
+# every boot reinstalls and reboots again. Rename our install descriptor
+# (NEMESIS.data -> NEMESIS.data.installed) so the next boot leaves it alone.
+retire_usb_descriptor() {
+    local _d
+    for _d in /storage/usb0 /storage/usb1 /storage/usb2 /mnt/media_rw/usb0 /mnt/media_rw/usb1 /mnt/media_rw/usb2; do
+        [ -f "$_d/NEMESIS.data" ] || continue
+        grep -q '^type=install' "$_d/NEMESIS.data" 2>/dev/null || continue
+        grep -q 'wireless\.carplay\.aa\.zip' "$_d/NEMESIS.data" 2>/dev/null || continue
+        if mv "$_d/NEMESIS.data" "$_d/NEMESIS.data.installed" 2>/dev/null; then
+            log "renamed $_d/NEMESIS.data to NEMESIS.data.installed so the next boot does not reinstall"
+        else
+            log "WARN: could not rename $_d/NEMESIS.data - remove the USB drive before the head unit restarts"
+        fi
+    done
+    true
+}
+
 REPORT_NAME=NEMESIS-report-wireless.carplay.aa
 
 # fail_unknown_unit <reason>: grab the report, tell the user, never touches /system
