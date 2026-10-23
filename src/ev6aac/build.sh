@@ -34,6 +34,6 @@ cp "$HERE/ev6aac.c" "$W/ev6aac_v.c"
 # -ffreestanding keeps memcpy/memset as plain calls (not __aeabi_memcpy/__aeabi_memclr),
 # as in the shipped build
 (cd "$W" && "$CLANG" $T -Os -fPIC -ffreestanding -fno-exceptions -fno-asynchronous-unwind-tables \
-    -shared -nostdlib -fuse-ld=lld -Wl,-z,now -Wl,--hash-style=sysv -Wl,--build-id=none \
+    -shared -nostdlib -fuse-ld=lld -Wl,-z,now -Wl,--no-rosegment -Wl,--hash-style=sysv -Wl,--build-id=none \
     -Wl,-soname,libev6aac.so -o "$OUT" ev6aac_v.c libc.so libdl.so liblog.so)
 echo "$OUT"
