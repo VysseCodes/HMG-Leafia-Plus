@@ -8,6 +8,7 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 - Anything that writes to `/system` ships as a NEMESIS package with a stock checksum gate, a backup, and an uninstall that restores the exact stock bytes.
 - Test packages on the mock head unit (below) before anyone runs them on a car, and say which cars a change was tested on.
 - Commits: describe the change in plain words. Don't rewrite or force-push shared history without the maintainer's OK.
+- No links to Claude chats or sessions in commits, PR descriptions or comments: no `Claude-Session:` trailers and no claude.ai session URLs. A `Co-Authored-By: Claude` line is fine.
 
 ## Hard rules
 
