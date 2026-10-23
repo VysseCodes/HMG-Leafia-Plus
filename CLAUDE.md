@@ -36,9 +36,9 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 | Prefix | Set | Car | Notes |
 |---|---|---|---|
 | `CVEV.` | ev6 | Kia EV6 260507 | reference car |
-| `NEEV.` / `NEEV23.` | neev | Hyundai Ioniq 5 2022/2023 | app code identical to EV6, different APK wrappers |
+| `NEEV.USA.` / `NEEV23.USA.` | neev | Hyundai Ioniq 5 US 2022/2023 | app code identical to EV6, different APK wrappers |
 | `DL3HEV.KOR.` / `DL3HEV22.KOR.` | dl3hev | Kia K5 Hybrid Korea 260902 (2022 has identical projection apps) | TCC897x; native Wi-Fi CarPlay + converters; 3 classes merged; not yet tested on a real car |
-| `NEEV.KOR.` | neev_kr | Hyundai Ioniq 5 Korea 260902 | ported automatically from the deep kit; native Wi-Fi CarPlay + converters; listed above `NEEV.` in `cars` (first match wins); not yet tested on a real car |
+| `NEEV.KOR.` | neev_kr | Hyundai Ioniq 5 Korea 260902 | ported automatically from the deep kit; native Wi-Fi CarPlay + converters; listed first among the Ioniq 5 lines in `cars` (first match wins); not yet tested on a real car |
 
 ## Gotchas learned the hard way
 

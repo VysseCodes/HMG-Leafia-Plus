@@ -113,7 +113,7 @@ function verdict(r) {
   else if (allGood && v && v.status === "testing") overall = ["ok", "Build ready, awaiting its first real-car test. You can install the package; uninstall puts everything back to stock."];
   else if (v && v.status === "in-progress") overall = ["build", "Support for " + v.name + " is in progress. Share your report to help."];
   else if (!hasWifi) overall = ["no", "This unit has no Wi-Fi module, so wireless projection isn't possible."];
-  else overall = ["build", "Not supported yet. Share your report so a build can be made for this head unit."];
+  else overall = ["build", "Basic support: the package installs wireless Android Auto on this unit now. Turn-by-turn and wireless CarPlay need a build for it: share your report (the installer also saves one to the USB drive)."];
   return { v, parts, overall };
 }
 
