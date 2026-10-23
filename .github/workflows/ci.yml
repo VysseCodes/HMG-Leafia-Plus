@@ -15,16 +15,12 @@ permissions:
 
 jobs:
   build-lpatch:
-    name: Build Lpatch
+    name: Build and Test Lpatch
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
-
-      - name: Build lpatch
-        run: |
-          ./tools/lpatch/build.sh
 
       - name: Install pip dependencies
         # NOTE: Set up either a pyproject.toml or requirements.txt for pip dependencies
