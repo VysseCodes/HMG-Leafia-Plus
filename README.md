@@ -25,6 +25,19 @@ Firmware differs between models, regions and versions, so whole-file checksums r
 | CarPlay Bluetooth bridge | Starts wireless CarPlay over Bluetooth/iAP2 | Rebuilt on the unit from its stock apps (`patches/<car>`) |
 | Turn-by-turn | Projection navigation on the cluster and HUD | Rebuilt on the unit from its stock apps (`patches/<car>`). Uses only the standard cluster calls, so cars without a HUD are fine. The installer refuses if the firmware lacks any call it needs. |
 
+Cars without a patch set yet get **basic mode**: only the wireless projection part, which gives wireless Android Auto on any Gen5W unit with a Wi-Fi module. The installer also saves a report so a full build can be made for that car.
+
+## Install
+
+1. Install [NEMESIS](https://github.com/xwtk/hmg_nemesis) **1.15 or newer** on the head unit.
+2. Check your car on the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/) with the fingerprint kit.
+3. Get the package: build it with `tools/build-package.sh`, or download the `wireless-carplay-aa` artifact from the latest CI run on `main` (needs a GitHub login).
+4. Unzip it onto the root of an empty exFAT or FAT32 USB drive (`NEMESIS.data` and `packages/`).
+5. Car on, plug in the drive and confirm the install. The head unit restarts when it's done; remove the drive. The installer renames `NEMESIS.data` to `NEMESIS.data.installed` so it can't run again by accident.
+6. **Uninstall** any time from NEMESIS Manager (Packages → Uninstall), then restart: every file goes back to stock.
+
+Something wrong? Open an issue with the [problem form](../../issues/new?template=problem.yml); it walks you through the support kit.
+
 ## Packages
 
 - **`packages/wireless-carplay-aa`:** the Wireless CarPlay/AA NEMESIS package source. Nothing modified is shipped: native libraries are patched on the head unit with `lpatch` recipes, and the projection apps are rebuilt on the unit from its own stock files with the patch sets in `patches/`.
@@ -49,29 +62,9 @@ All kits are read-only.
 - **Private only** (never committed here): stock firmware files, firmware key files from deep collections, and full modified app builds. The repo holds only patch sets that rebuild them from a unit's own stock files.
 - **Never collected:** anything under `/data` except NEMESIS's own folder and crash logs (support kit) — so no accounts, paired phones or Wi-Fi passwords — the vehicle security partition (modem and connected-service certificates), the VIN and serial numbers.
 
-## Building
+## Contributing
 
-```
-tools/lpatch/build.sh
-```
-
-```
-tools/build-kit.sh docs/downloads/leafia-fingerprint-kit.zip
-```
-
-```
-tools/build-kit.sh support docs/downloads/leafia-support-kit.zip
-```
-
-```
-tools/build-package.sh
-```
-
-Make a recipe from a stock/patched pair:
-
-```
-tools/mkrecipe.py <id> /system/lib/libX.so stock.so patched.so --desc "what it does"
-```
+Reports from new cars, real-car tests and code are all welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) for setup, building, testing on the mock head unit, adding a car, and the project rules. Security issues: [SECURITY.md](SECURITY.md).
 
 ## Credits and licences
 
