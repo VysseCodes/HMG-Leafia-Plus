@@ -62,8 +62,18 @@ jobs:
       - name: libev6aac.so rebuilds byte for byte from src/ev6aac
         run: |
           CLANG=clang-18 ./src/ev6aac/build.sh "$RUNNER_TEMP/libev6aac.so"
-          cmp "$RUNNER_TEMP/libev6aac.so" packages/wireless-carplay-aa/comp/4_audio/files/libev6aac.so
-          echo "libev6aac.so matches its source"
+          shipped=packages/wireless-carplay-aa/comp/4_audio/files/libev6aac.so
+          if cmp "$RUNNER_TEMP/libev6aac.so" "$shipped"; then
+            echo "libev6aac.so matches its source"
+          else
+            echo "--- section sizes (shipped vs rebuilt):"
+            paste <(readelf -SW "$shipped" | sed -n 's/^ *\[ *[0-9]*\] //p' | awk '{print $1, $5}') \
+                  <(readelf -SW "$RUNNER_TEMP/libev6aac.so" | sed -n 's/^ *\[ *[0-9]*\] //p' | awk '{print $1, $5}')
+            echo "--- strings that differ:"
+            diff <(strings -n 4 "$shipped" | sort) <(strings -n 4 "$RUNNER_TEMP/libev6aac.so" | sort) || true
+            clang-18 --version | head -1
+            exit 1
+          fi
 
       - name: Website kit downloads match kits/
         run: |
