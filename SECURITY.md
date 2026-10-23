@@ -28,13 +28,13 @@ Vulnerabilities in NEMESIS itself belong to [xwtk/hmg_nemesis](https://github.co
   own stock files, and only when those match the expected checksums byte for byte.
 - Every write to `/system` keeps a backup, and uninstall restores the exact stock bytes.
 - The shipped binaries are checked by CI: `lpatch` is built and tested from `tools/lpatch/lpatch.c`,
-  `libev6aac.so` must rebuild byte for byte from `src/ev6aac/`, and the kits on the website must match
-  `kits/`.
+  `libev6aac.so` must rebuild byte for byte from `src/ev6aac/`, and the kit on the website must match
+  `kits/leafia`.
 - CI actions and Python packages are pinned to exact commits and hashes; workflow runs from outside
   contributors need maintainer approval, and pull-request builds are never published as downloads.
 - No vehicle commands are sent except through the stock services, each with its own review; no raw CAN.
 
 ## Sensitive data
 
-Never post firmware key files, deep-kit output, a support kit's `private` folder, VINs, serial numbers or
+Never post the kit's `private` folder (logs, stock files, firmware key files), VINs, serial numbers or
 phone details in an issue. Maintainers will ask for them privately when they're needed.

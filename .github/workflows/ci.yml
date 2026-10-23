@@ -75,30 +75,26 @@ jobs:
             exit 1
           fi
 
-      - name: Website kit downloads match kits/
+      - name: Website kit downloads match kits/leafia
         run: |
           ./tools/check-downloads.sh
 
   build-buildkit:
-    name: Build Build-kit
+    name: Build Kit
     runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Build fingerprint kit
+      - name: Build the Leafia kit
         run: |
-          ./tools/build-kit.sh fingerprint
-
-      - name: Build support kit
-        run: |
-          ./tools/build-kit.sh support
+          ./tools/build-kit.sh
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: github.event_name == 'push'
         with:
-          name: buildkits
+          name: leafia-kit
           path: ./dist/*.zip
 
   build-package:
