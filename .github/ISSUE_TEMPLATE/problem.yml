@@ -5,14 +5,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting! The **support kit** collects everything we need in about a minute and changes nothing on the car:
+        Thanks for reporting! The **Leafia kit** collects everything we need in 1–2 minutes and changes nothing on the car:
 
-        1. Download the [support kit](https://vyssecodes.github.io/HMG-Leafia-Plus/downloads/leafia-support-kit.zip) and unzip it to the root of a USB drive.
+        1. Download the [Leafia kit](https://vyssecodes.github.io/HMG-Leafia-Plus/downloads/leafia-kit.zip) and unzip it to the root of a USB drive with at least 200 MB free.
         2. If the problem is with CarPlay or Android Auto, try it once first so the logs have something in them. If it crashed, run the kit **before turning the car off**: the Android log is lost when the car powers down.
         3. Car on, plug in the drive, tap **Yes**, and wait for the success message.
-        4. Zip `LEAFIA-SUPPORT/public` and attach it below.
+        4. Zip `LEAFIA/public` and attach it below.
 
-        **Don't attach `LEAFIA-SUPPORT/private`.** It can hold phone names and Bluetooth addresses; we'll ask for it privately if we need it.
+        **Don't attach `LEAFIA/private`.** It holds logs that can include phone names and Bluetooth addresses, Hyundai/Kia system files and firmware key files; we'll ask for it privately if we need it.
   - type: input
     id: car
     attributes:
@@ -25,7 +25,7 @@ body:
     id: firmware
     attributes:
       label: Firmware
-      description: "`ro.build.product` from the support kit's summary.txt (or your fingerprint report)."
+      description: "`ro.build.product` from `LEAFIA/public/summary.txt` or `LEAFIA-REPORT.txt`."
       placeholder: CVEV.USA.0000.V015.012.260507
     validations:
       required: true
@@ -57,7 +57,7 @@ body:
     id: attach
     attributes:
       label: Support kit
-      description: Drag the zipped `LEAFIA-SUPPORT/public` folder here.
+      description: Drag the zipped `LEAFIA/public` folder here.
     validations:
       required: true
   - type: checkboxes

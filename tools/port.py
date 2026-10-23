@@ -25,7 +25,7 @@ usage:
           --out-builds DIR [--patches DIR] [--work DIR]
 
   *-stock    app/<App>.apk + app/<App>.odex + lib/libautoreceiver_infobank.so
-  *-fw       the car's /system/framework (deep kit: NEMESIS-deep/share/framework)
+  *-fw       the car's /system/framework (kit: LEAFIA/private/stock/framework)
   ref-builds 2_tbt/<files>/<App>.apk and 3_bridge/<files>/<App>.apk
   out-builds where the new car's full builds go (keep them private)
 

@@ -118,15 +118,15 @@ code { font: 13px var(--mono); background: var(--bg); border: 1px solid var(--li
 
   <section>
     <div class="step">STEP 1</div>
-    <h2>Run the fingerprint kit</h2>
+    <h2>Run the Leafia kit</h2>
     <p class="sub">Needs <a href="https://github.com/xwtk/hmg_nemesis">NEMESIS</a> on the head unit. The kit only reads; nothing on the car changes.</p>
     <ol class="steps">
       <li>Unzip the kit to the root of an exFAT or FAT32 USB drive.</li>
       <li>With the car on, plug in the drive and tap <b>Yes</b> when NEMESIS asks to run it.</li>
-      <li>When it reports success, take <code>LEAFIA-REPORT.txt</code> from the drive.</li>
+      <li>When it reports success (1–2 minutes), take <code>LEAFIA/public/LEAFIA-REPORT.txt</code> from the drive.</li>
     </ol>
-    <a class="btn" href="downloads/leafia-fingerprint-kit.zip" download>Download the fingerprint kit</a>
-    <p class="note">The report contains firmware IDs, checksums and patch-spot checks only: no VIN, serial numbers, phone or Wi-Fi names, accounts, keys or Kia/Hyundai code.</p>
+    <a class="btn" href="downloads/leafia-kit.zip" download>Download the Leafia kit</a>
+    <p class="note">One kit for everything. Its <code>LEAFIA/public</code> folder (this report, plus a problem summary) is safe to share: firmware IDs, checksums and patch-spot checks, no VIN, serial numbers, phone or Wi-Fi names, accounts, keys or Kia/Hyundai code. <code>LEAFIA/private</code> holds logs, stock system files and key files for porting and debugging: never post it; send it privately only if a maintainer asks.</p>
   </section>
 
   <section>
@@ -167,7 +167,7 @@ code { font: 13px var(--mono); background: var(--bg); border: 1px solid var(--li
   <section>
     <div class="step">WANTED</div>
     <h2>Help add your car</h2>
-    <p class="sub">Gen5W cars we have no full build for yet (<span id="wantedScope">US and Canada</span>). On any of them the package already installs wireless Android Auto (basic mode). Turn-by-turn and wireless CarPlay need one owner's files: run the fingerprint kit above and share your report, and we may ask you to run the deep kit. Cars marked <b>Priority</b> help the most people.</p>
+    <p class="sub">Gen5W cars we have no full build for yet (<span id="wantedScope">US and Canada</span>). On any of them the package already installs wireless Android Auto (basic mode). Turn-by-turn and wireless CarPlay need one owner's files: run the Leafia kit above and share your report, and we may ask you privately for its <code>private</code> folder. Cars marked <b>Priority</b> help the most people.</p>
     <div class="scroll"><table class="compat"><thead><tr><th>Car</th><th>Years</th><th>Regions</th><th>Newest firmware</th><th></th></tr></thead><tbody id="wanted"></tbody></table></div>
   </section>
 

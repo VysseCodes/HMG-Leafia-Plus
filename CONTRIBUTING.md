@@ -2,11 +2,11 @@
 
 Thanks for helping! You don't need to write code to contribute:
 
-- **Report your car.** Run the fingerprint kit and drop the report on the
+- **Report your car.** Run the Leafia kit and drop its report on the
   [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/); it files the issue for you. Cars in the
   page's "Help add your car" list are the most wanted.
 - **Test a build** on your car and tell us how it went, especially for cars marked *testing*.
-- **Report a problem** with the issue form: it walks you through the support kit.
+- **Report a problem** with the issue form: it walks you through the Leafia kit.
 - **Code:** read on.
 
 Security problems go through [SECURITY.md](SECURITY.md), not public issues.
@@ -30,7 +30,7 @@ Security problems go through [SECURITY.md](SECURITY.md), not public issues.
 | `recipes/` | Byte-checked native-library patches applied by `lpatch`. |
 | `tools/lpatch/` | `lpatch`, the small static ARM tool that patches on the head unit. |
 | `src/ev6aac/` | `libev6aac.so`, the AAC/Opus audio converter for wireless CarPlay. |
-| `kits/` | Read-only USB kits (fingerprint, deep, support). |
+| `kits/leafia/` | The read-only USB kit: compatibility report, problem summary, and private logs, stock files and keys. |
 | `docs/` | The compatibility website (GitHub Pages). |
 | `tools/` | Builders, the porting tool, and the mock head unit. |
 
@@ -38,7 +38,7 @@ Security problems go through [SECURITY.md](SECURITY.md), not public issues.
 
 ```sh
 tools/build-package.sh                       # dist/HMG_Leafia_Plus_Wireless_CarPlay_AA.zip
-tools/build-kit.sh support                   # dist/leafia-support-kit.zip (also: fingerprint, deep)
+tools/build-kit.sh                           # dist/leafia-kit.zip
 tools/lpatch/build.sh                        # lpatch (ARM) and lpatch-host
 src/ev6aac/build.sh                          # libev6aac.so (CLANG=clang-18 for a byte-identical build)
 ```
@@ -57,12 +57,12 @@ tools/check-downloads.sh                     # the website's kit zips match kits
 ```
 
 **Mock head unit.** `tools/mock/install-test.sh` installs and uninstalls the package against a copy of a car's
-stock `/system` on your computer, and passes only if uninstall restores it byte for byte. A deep kit's
-`NEMESIS-deep/share/` folder works as the stock tree:
+stock `/system` on your computer, and passes only if uninstall restores it byte for byte. The kit's
+`LEAFIA/private/stock/` folder works as the stock tree:
 
 ```sh
 MOCK_SH=mksh MOCK_NEMESIS=1.15 tools/mock/install-test.sh dist/HMG_Leafia_Plus_Wireless_CarPlay_AA.zip \
-    CVEV.USA.0000.V015.012.260507 cvev_us /path/to/NEMESIS-deep/share
+    CVEV.USA.0000.V015.012.260507 cvev_us /path/to/LEAFIA/private/stock
 ```
 
 List your test cars in `tools/mock/cars.local` (git-ignored) and run them all with
@@ -71,7 +71,7 @@ unit's shell lacks commands your desktop shell has (`printf`, `tail`, ...).
 
 ## Adding a car
 
-1. The owner runs the deep kit and sends `NEMESIS-deep` privately.
+1. The owner runs the Leafia kit and sends its `LEAFIA/private` folder privately.
 2. `tools/port.py` ports the app changes to it and writes `patches/<car>/` plus its `cars` line
    (`tools/port.py --help`).
 3. Mock-test it with the owner's `share/` folder.
@@ -100,7 +100,7 @@ These keep cars safe and the project legal:
 - Branch from `main`; `main` only changes through pull requests.
 - Describe the change in plain words, and say what you tested: which cars, mock or real.
 - CI must pass. For a first-time contributor, a maintainer approves the workflow run.
-- If you change a kit, rebuild its zip in `docs/downloads/` (`tools/check-downloads.sh` tells you which).
+- If you change the kit, rebuild it: `tools/build-kit.sh docs/downloads/leafia-kit.zip && tools/check-downloads.sh --fix`.
 - Don't put links to AI chat sessions in commits or PR descriptions.
 
 By contributing you agree your work is licensed under the project's [GPL-3.0](LICENSE).

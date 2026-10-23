@@ -7,7 +7,7 @@
 #   ro.build.product    the product id to pretend to be, e.g. CVEV.USA.0000.V015.012.260507
 #   region dir          the onebin folder name, e.g. cvev_us (any name works)
 #   stock system dir    a stock /system tree: app/, lib/, framework/, etc/permissions/,
-#                       build.prop. A deep kit's NEMESIS-deep/share/ folder works as is.
+#                       build.prop. The kit's LEAFIA/private/stock/ folder works as is.
 #
 # Passes (exit 0) when the install completes and uninstall leaves /system
 # byte-identical to stock. Prints the sandbox folder with all logs either way.
