@@ -115,6 +115,17 @@ section "system"
 grep -E ' /system | /data ' /proc/mounts >> "$SUM" 2>/dev/null
 df /system /data >> "$SUM" 2>&1
 
+# wireless projection runs over the car's hotspot; phones leave it after ~60 s
+# when nothing hands out addresses (dnsmasq is started by Android tethering)
+section "hotspot"
+for _p in hostapd dnsmasq; do
+    if ps 2>/dev/null | grep -q "$_p\$"; then say "$_p running"; else say "$_p not running"; fi
+done
+say "--- ndc tether status"
+ndc tether status >> "$SUM" 2>&1
+say "--- ndc tether interface list"
+ndc tether interface list >> "$SUM" 2>&1
+
 # our own logs: install steps, file names and checksums only
 for _l in $PKG wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio; do
     copy_file "$N/$_l.log" "$PUB/logs/$_l.log"
@@ -141,6 +152,13 @@ logcat -d -v time '*:W' > "$PRIV/logcat-warnings.txt" 2>&1
 logcat -d -v time > "$PRIV/logcat-full.txt" 2>&1
 logcat -d -v time -b events > "$PRIV/logcat-events.txt" 2>&1
 dmesg > "$PRIV/dmesg.txt" 2>&1
+# hotspot: interface addresses, address leases (phone hardware addresses and
+# names) and the tethering/Wi-Fi log. Never the hotspot config: it holds the password.
+netcfg > "$PRIV/network.txt" 2>&1
+copy_file /data/misc/dhcp/dnsmasq.leases "$PRIV/dnsmasq.leases"
+logcat -d -v time -s Tethering:V WifiStateMachine:V SoftApStateMachine:V WifiService:V WifiManager:V \
+    ConnectivityService:V NetworkManagementService:V NetdConnector:V netd:V dnsmasq:V hostapd:I \
+    > "$PRIV/logcat-network.txt" 2>&1
 # native crash dumps (backtraces for libCarPlay*, libautoreceiver_infobank, ...);
 # the copies get new dates, so keep the original listing for the crash times
 ls -l /data/tombstones > "$PRIV/tombstones/listing.txt" 2>&1
