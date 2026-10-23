@@ -175,11 +175,25 @@ function renderCompat() {
   }
 }
 
+function renderWanted(w) {
+  const tb = $("wanted"); tb.textContent = "";
+  if (w.scope) $("wantedScope").textContent = w.scope;
+  for (const c of w.cars) {
+    const tr = document.createElement("tr");
+    const cells = [["", c.brand + " " + c.model], ["Years", c.years || "–"], ["Regions", c.regions.join(", ")], ["Firmware", c.firmware]];
+    for (const [label, t] of cells) { const td = document.createElement("td"); td.textContent = t; if (label) td.dataset.label = label; tr.append(td); }
+    const td = document.createElement("td");
+    if (c.priority) { td.append(chip("build")); td.lastChild.textContent = "Priority"; }
+    tr.append(td); tb.append(tr);
+  }
+}
+
 function readFile(f) { const fr = new FileReader(); fr.onload = () => render(String(fr.result)); fr.readAsText(f); }
 
 async function init() {
   DB = await (await fetch("data/compat.json")).json();
   renderCompat();
+  try { renderWanted(await (await fetch("data/wanted.json")).json()); } catch (e) { /* the list is optional */ }
   const drop = $("drop");
   ["dragenter", "dragover"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.add("over"); }));
   ["dragleave", "drop"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.remove("over"); }));
