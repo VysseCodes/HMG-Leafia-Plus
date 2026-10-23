@@ -31,7 +31,7 @@ Cars without a patch set yet get **basic mode**: only the wireless projection pa
 
 1. Install [NEMESIS](https://github.com/xwtk/hmg_nemesis) **1.15 or newer** on the head unit.
 2. Check your car on the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/) with the Leafia kit.
-3. Get the package: build it with `tools/build-package.sh`, or download the `wireless-carplay-aa` artifact from the latest CI run on `main` (needs a GitHub login).
+3. Download **HMG_Leafia_Plus_Wireless_CarPlay_AA-<version>.zip** from the [latest release](../../releases/latest) (or build it yourself with `tools/build-package.sh`). Each release lists SHA256 checksums.
 4. Unzip it onto the root of an empty exFAT or FAT32 USB drive (`NEMESIS.data` and `packages/`).
 5. Car on, plug in the drive and confirm the install. The head unit restarts when it's done; remove the drive. The installer renames `NEMESIS.data` to `NEMESIS.data.installed` so it can't run again by accident.
 6. **Uninstall** any time from NEMESIS Manager (Packages → Uninstall), then restart: every file goes back to stock.

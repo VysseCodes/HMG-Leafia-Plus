@@ -1,0 +1,67 @@
+name: Release
+
+# Publishes a GitHub Release when a version tag is pushed:
+#   git tag -a v1.2.0 -m "v1.2.0" && git push origin v1.2.0
+# CI runs in full first; nothing is published unless every check passes. The
+# release carries the installable package, the Leafia kit and SHA256SUMS, all
+# built from exactly the tagged commit.
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    name: Publish release
+    needs: ci
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write   # create the release; the only job that can write
+
+    steps:
+      - name: Checkout the tagged commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0   # tags and history, so the package's BUILD stamp names the version
+
+      - name: Tag must be on main
+        run: |
+          git fetch origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || {
+            echo "$GITHUB_REF_NAME is not on main; releases are only made from main"; exit 1; }
+
+      - name: Build the package and the kit
+        run: |
+          mkdir -p release
+          ./tools/build-package.sh "release/HMG_Leafia_Plus_Wireless_CarPlay_AA-$GITHUB_REF_NAME.zip"
+          ./tools/build-kit.sh "release/leafia-kit-$GITHUB_REF_NAME.zip"
+          unzip -p "release/HMG_Leafia_Plus_Wireless_CarPlay_AA-$GITHUB_REF_NAME.zip" packages/wireless.carplay.aa.zip \
+            | python3 -c "import io,sys,zipfile; print('package BUILD:', zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())).read('BUILD').decode().strip())"
+          (cd release && sha256sum -- *.zip > SHA256SUMS)
+          cat release/SHA256SUMS
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > notes.md <<EOF
+          ## Install
+
+          1. Install [NEMESIS](https://github.com/xwtk/hmg_nemesis) 1.15 or newer on the head unit.
+          2. Unzip **HMG_Leafia_Plus_Wireless_CarPlay_AA-$GITHUB_REF_NAME.zip** onto the root of an empty exFAT or FAT32 USB drive.
+          3. Car on, plug in the drive and confirm the install. The head unit restarts when it's done; remove the drive.
+
+          Check your car first on the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/). Something wrong? Run **leafia-kit-$GITHUB_REF_NAME.zip** and open an issue with the problem form. Uninstall any time from NEMESIS Manager; every file goes back to stock.
+
+          Verify downloads with \`sha256sum -c SHA256SUMS\`.
+          EOF
+          gh release create "$GITHUB_REF_NAME" release/* \
+            --verify-tag --title "HMG Leafia Plus $GITHUB_REF_NAME" \
+            --notes-file notes.md --generate-notes

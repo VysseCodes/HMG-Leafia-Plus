@@ -5,6 +5,8 @@ on:
     branches: [main]
   push:
     branches: [main]
+  # the release workflow runs all of CI first
+  workflow_call:
 
 concurrency:
   group: ci-${{ github.ref }}

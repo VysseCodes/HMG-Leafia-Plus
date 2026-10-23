@@ -103,4 +103,17 @@ These keep cars safe and the project legal:
 - If you change the kit, rebuild it: `tools/build-kit.sh docs/downloads/leafia-kit.zip && tools/check-downloads.sh --fix`.
 - Don't put links to AI chat sessions in commits or PR descriptions.
 
+## Releases
+
+CI (`.github/workflows/ci.yml`) builds and tests every push and pull request; its downloads are temporary.
+A **release** is the permanent, public download users install from. To make one, tag a commit on `main`:
+
+```sh
+git tag -a v1.2.0 -m "v1.2.0" && git push origin v1.2.0
+```
+
+`.github/workflows/release.yml` then runs all of CI and, only if everything passes, publishes a GitHub
+Release with the package, the Leafia kit and `SHA256SUMS`, built from exactly that commit (the package's
+build stamp names the version). Tags not on `main` are refused.
+
 By contributing you agree your work is licensed under the project's [GPL-3.0](LICENSE).
