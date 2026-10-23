@@ -31,6 +31,11 @@ jobs:
         run: |
           pip install bsdiff4
 
+      - name: Install qemu
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static
+
       - name: Test lpatch
         run: |
           ./tools/lpatch/test.sh
