@@ -26,6 +26,11 @@ jobs:
         run: |
           ./tools/lpatch/build.sh
 
+      - name: Install pip dependencies
+        # NOTE: Set up either a pyproject.toml or requirements.txt for pip dependencies
+        run: |
+          pip install bsdiff4
+
       - name: Test lpatch
         run: |
           ./tools/lpatch/test.sh
@@ -43,18 +48,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Build buildkit
+      - name: Build fingerprint kit
         run: |
-          ./tools/build-kit.sh docs/downloads/leafia-fingerprint-kit.zip
+          ./tools/build-kit.sh fingerprint
 
 
-      - name: Build support buildkit
+      - name: Build support kit
         run: |
-          ./tools/build-kit.sh support docs/downloads/leafia-fingerprint-kit.zip
+          ./tools/build-kit.sh support
 
       - uses: actions/upload-artifact@v7
         with:
-          name: buildkit
+          name: buildkits
           path: ./dist/*.zip
 
   build-package:
