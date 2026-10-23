@@ -1,22 +1,16 @@
 {
  "updated": "2026-10-23",
- "scope": "US and Canada, Gen5W head units",
+ "scope": "US and Canada, Gen5W head units (ccNC models excluded)",
  "cars": [
   {
    "brand": "Hyundai",
    "model": "Ioniq 6",
-   "years": "2023–2025",
-   "regions": [
-    "CA"
+   "variants": [
+    "Standard"
    ],
-   "firmware": "260206",
-   "priority": true
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Ioniq 6",
    "years": "2023–2026",
    "regions": [
+    "CA",
     "US"
    ],
    "firmware": "260507",
@@ -24,8 +18,27 @@
   },
   {
    "brand": "Hyundai",
-   "model": "Tucson",
-   "years": "2022",
+   "model": "Kona",
+   "variants": [
+    "Standard",
+    "Electric",
+    "N"
+   ],
+   "years": "2020–2023",
+   "regions": [
+    "CA",
+    "US"
+   ],
+   "firmware": "260507",
+   "priority": true
+  },
+  {
+   "brand": "Hyundai",
+   "model": "Palisade",
+   "variants": [
+    "Standard"
+   ],
+   "years": "2020–2023",
    "regions": [
     "CA",
     "US"
@@ -36,59 +49,12 @@
   {
    "brand": "Hyundai",
    "model": "Tucson",
-   "years": "2023",
-   "regions": [
-    "US"
+   "variants": [
+    "Standard",
+    "Hybrid",
+    "Plug-in Hybrid"
    ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Tucson Hybrid",
-   "years": "2022",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Tucson Hybrid",
-   "years": "2023",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Tucson Plug-in Hybrid",
-   "years": "2022",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Tucson Plug-in Hybrid",
-   "years": "2023",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Sportage",
-   "years": "2023",
+   "years": "2022–2023",
    "regions": [
     "CA",
     "US"
@@ -98,19 +64,14 @@
   },
   {
    "brand": "Kia",
-   "model": "Sportage Hybrid",
-   "years": "2023",
-   "regions": [
-    "CA",
-    "US"
+   "model": "Niro",
+   "variants": [
+    "Standard",
+    "Hybrid",
+    "Plug-in Hybrid",
+    "Electric"
    ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Sportage Plug-in hybrid",
-   "years": "2023",
+   "years": "2020–2026",
    "regions": [
     "CA",
     "US"
@@ -121,7 +82,12 @@
   {
    "brand": "Kia",
    "model": "Sorento",
-   "years": "2021",
+   "variants": [
+    "Standard",
+    "Hybrid",
+    "Plug-in Hybrid"
+   ],
+   "years": "2021–2022",
    "regions": [
     "CA",
     "US"
@@ -131,19 +97,13 @@
   },
   {
    "brand": "Kia",
-   "model": "Sorento Hybrid",
-   "years": "2021",
-   "regions": [
-    "CA",
-    "US"
+   "model": "Sportage",
+   "variants": [
+    "Standard",
+    "Hybrid",
+    "Plug-in Hybrid"
    ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Sorento Plug-in Hybrid",
-   "years": "2022",
+   "years": "2023",
    "regions": [
     "CA",
     "US"
@@ -154,180 +114,10 @@
   {
    "brand": "Kia",
    "model": "Telluride",
-   "years": "2020–2021",
-   "regions": [
-    "CA",
-    "US"
+   "variants": [
+    "Standard"
    ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Telluride",
-   "years": "2023",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Palisade",
-   "years": "2020–2022",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Palisade",
-   "years": "2023",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Kona Electric",
-   "years": "2020–2021",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Kona Electric",
-   "years": "2022",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Kona Electric",
-   "years": "2023",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Niro",
-   "years": "2020–2021",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Niro Electric",
-   "years": "2020",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Niro Electric",
-   "years": "2023",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Niro Electric",
-   "years": "2025–2026",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Niro Hybrid",
-   "years": "2023",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Niro Hybrid",
-   "years": "2025–2026",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Niro Plug-in Hybrid",
-   "years": "2020–2021",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "260206",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Niro Plug-in Hybrid",
-   "years": "2021",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Niro Plug-in Hybrid",
-   "years": "2023",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": true
-  },
-  {
-   "brand": "Kia",
-   "model": "Niro Plugin Hybrid",
-   "years": "2025–2026",
+   "years": "2020–2023",
    "regions": [
     "CA",
     "US"
@@ -338,41 +128,12 @@
   {
    "brand": "Genesis",
    "model": "G70",
-   "years": "2022",
+   "variants": [
+    "Standard"
+   ],
+   "years": "2022–2026",
    "regions": [
     "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Genesis",
-   "model": "G70",
-   "years": "2025–2026",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "ELANTRA N",
-   "years": "2022",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "ELANTRA N",
-   "years": "2023",
-   "regions": [
     "US"
    ],
    "firmware": "260507",
@@ -381,47 +142,12 @@
   {
    "brand": "Hyundai",
    "model": "Elantra",
-   "years": "2021",
-   "regions": [
-    "CA"
+   "variants": [
+    "Standard",
+    "Hybrid",
+    "N"
    ],
-   "firmware": "260206",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Elantra",
-   "years": "2021–2022",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Elantra",
-   "years": "2023",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Elantra",
-   "years": "2024–2026",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Elantra Hybrid",
-   "years": "2021",
+   "years": "2021–2026",
    "regions": [
     "CA",
     "US"
@@ -431,143 +157,13 @@
   },
   {
    "brand": "Hyundai",
-   "model": "Elantra Hybrid",
-   "years": "2023",
-   "regions": [
-    "US"
+   "model": "Ioniq",
+   "variants": [
+    "Hybrid",
+    "Plug-in Hybrid",
+    "Electric"
    ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Elantra Hybrid",
-   "years": "2024–2026",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Elantra N",
-   "years": "2024–2026",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Elatra",
-   "years": "2024–2026",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "260206",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Ioniq Electric",
-   "years": "2020–2021",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Ioniq Hybrid",
-   "years": "2020–2021",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "260206",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Ioniq Hybrid",
    "years": "2020–2022",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Ioniq Plug-in Hybrid",
-   "years": "2020–2021",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "260206",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Ioniq Plug-in Hybrid",
-   "years": "2020–2022",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "KONA N",
-   "years": "2022",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "KONA N",
-   "years": "2023",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Kona",
-   "years": "2022",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Kona",
-   "years": "2023",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Santa Cruz",
-   "years": "2022",
    "regions": [
     "CA",
     "US"
@@ -578,17 +174,10 @@
   {
    "brand": "Hyundai",
    "model": "Santa Cruz",
-   "years": "2023",
-   "regions": [
-    "US"
+   "variants": [
+    "Standard"
    ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Santa Fe",
-   "years": "2021–2022",
+   "years": "2022–2023",
    "regions": [
     "CA",
     "US"
@@ -599,17 +188,12 @@
   {
    "brand": "Hyundai",
    "model": "Santa Fe",
-   "years": "2023",
-   "regions": [
-    "US"
+   "variants": [
+    "Standard",
+    "Hybrid",
+    "Plug-in Hybrid"
    ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Santa Fe Hybrid",
-   "years": "2021–2022",
+   "years": "2021–2023",
    "regions": [
     "CA",
     "US"
@@ -619,18 +203,12 @@
   },
   {
    "brand": "Hyundai",
-   "model": "Santa Fe Hybrid",
-   "years": "2023",
-   "regions": [
-    "US"
+   "model": "Sonata",
+   "variants": [
+    "Standard",
+    "Hybrid"
    ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Santa Fe Plug-in Hybrid",
-   "years": "2022",
+   "years": "2020–2023",
    "regions": [
     "CA",
     "US"
@@ -640,77 +218,10 @@
   },
   {
    "brand": "Hyundai",
-   "model": "Santa Fe Plug-in Hybrid",
-   "years": "2023",
-   "regions": [
-    "US"
+   "model": "Veloster",
+   "variants": [
+    "N"
    ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Sonata",
-   "years": "2020–2021",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "260206",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Sonata",
-   "years": "2020–2022",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Sonata",
-   "years": "2023",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Sonata Hybrid",
-   "years": "2020–2021",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "260206",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Sonata Hybrid",
-   "years": "2020–2022",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Sonata Hybrid",
-   "years": "2023",
-   "regions": [
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Veloster N",
    "years": "2021",
    "regions": [
     "CA",
@@ -722,29 +233,12 @@
   {
    "brand": "Hyundai",
    "model": "Venue",
-   "years": "2021–2022",
+   "variants": [
+    "Standard"
+   ],
+   "years": "2021–2026",
    "regions": [
     "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Venue",
-   "years": "2023",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "260206",
-   "priority": false
-  },
-  {
-   "brand": "Hyundai",
-   "model": "Venue",
-   "years": "2023–2026",
-   "regions": [
     "US"
    ],
    "firmware": "260507",
@@ -753,6 +247,9 @@
   {
    "brand": "Kia",
    "model": "Cadenza",
+   "variants": [
+    "Standard"
+   ],
    "years": "2020",
    "regions": [
     "US"
@@ -763,7 +260,10 @@
   {
    "brand": "Kia",
    "model": "Carnival",
-   "years": "2022",
+   "variants": [
+    "Standard"
+   ],
+   "years": "2022–2023",
    "regions": [
     "CA",
     "US"
@@ -773,39 +273,11 @@
   },
   {
    "brand": "Kia",
-   "model": "Carnival",
-   "years": "2023",
-   "regions": [
-    "US"
+   "model": "Forte",
+   "variants": [
+    "Standard"
    ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Kia",
-   "model": "Forte 4Door",
    "years": "2022",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Kia",
-   "model": "Forte 5Door",
-   "years": "2022",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "260206",
-   "priority": false
-  },
-  {
-   "brand": "Kia",
-   "model": "K5",
-   "years": "2021",
    "regions": [
     "CA",
     "US"
@@ -816,7 +288,10 @@
   {
    "brand": "Kia",
    "model": "K5",
-   "years": "2022",
+   "variants": [
+    "Standard"
+   ],
+   "years": "2021–2022",
    "regions": [
     "CA",
     "US"
@@ -827,29 +302,10 @@
   {
    "brand": "Kia",
    "model": "Seltos",
-   "years": "2021",
-   "regions": [
-    "CA",
-    "US"
+   "variants": [
+    "Standard"
    ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Kia",
-   "model": "Seltos",
-   "years": "2024",
-   "regions": [
-    "CA",
-    "US"
-   ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Kia",
-   "model": "Soul",
-   "years": "2020–2021",
+   "years": "2021–2024",
    "regions": [
     "CA",
     "US"
@@ -860,38 +316,11 @@
   {
    "brand": "Kia",
    "model": "Soul",
-   "years": "2023",
-   "regions": [
-    "CA",
-    "US"
+   "variants": [
+    "Standard",
+    "Electric"
    ],
-   "firmware": "260507",
-   "priority": false
-  },
-  {
-   "brand": "Kia",
-   "model": "Soul Electric",
-   "years": "2020–2021",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "260206",
-   "priority": false
-  },
-  {
-   "brand": "Kia",
-   "model": "Soul Electric",
-   "years": "2023",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "260206",
-   "priority": false
-  },
-  {
-   "brand": "Kia",
-   "model": "Stinger",
-   "years": "2022",
+   "years": "2020–2023",
    "regions": [
     "CA",
     "US"
@@ -902,8 +331,12 @@
   {
    "brand": "Kia",
    "model": "Stinger",
-   "years": "2023",
+   "variants": [
+    "Standard"
+   ],
+   "years": "2022–2023",
    "regions": [
+    "CA",
     "US"
    ],
    "firmware": "260507",

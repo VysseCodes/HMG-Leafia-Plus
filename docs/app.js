@@ -180,7 +180,8 @@ function renderWanted(w) {
   if (w.scope) $("wantedScope").textContent = w.scope;
   for (const c of w.cars) {
     const tr = document.createElement("tr");
-    const cells = [["", c.brand + " " + c.model], ["Years", c.years || "–"], ["Regions", c.regions.join(", ")], ["Firmware", c.firmware]];
+    const cells = [["", c.brand + " " + c.model], ["Variants", (c.variants || []).join(", ") || "–"], ["Years", c.years || "–"],
+      ["Regions", c.regions.join(", ")], ["Firmware", c.firmware]];
     for (const [label, t] of cells) { const td = document.createElement("td"); td.textContent = t; if (label) td.dataset.label = label; tr.append(td); }
     const td = document.createElement("td");
     if (c.priority) { td.append(chip("build")); td.lastChild.textContent = "Priority"; }
