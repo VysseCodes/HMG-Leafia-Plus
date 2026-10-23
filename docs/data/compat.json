@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-22",
+  "updated": "2026-10-23",
   "repo": "VysseCodes/HMG-Leafia-Plus",
   "variants": [
     {
@@ -68,10 +68,10 @@
     },
     {
       "id": "kia-k5-hev-kr-v039",
-      "name": "Kia K5 Hybrid (DL3)",
+      "name": "Kia K5 Hybrid (DL3, incl. 2022)",
       "region": "Korea",
       "chip": "TCC897x",
-      "product_prefix": "DL3HEV.KOR",
+      "product_prefix": ["DL3HEV.KOR", "DL3HEV22.KOR"],
       "firmware": "V039.001.260902",
       "status": "testing",
       "verified": ["Sandbox install and uninstall on this unit's own files"],
