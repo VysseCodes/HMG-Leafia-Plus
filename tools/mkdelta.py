@@ -5,7 +5,7 @@ usage: mkdelta.py <source> <target> <out.lpd>
 
 The delta stores the md5 of the source and of the target. On the head unit,
 `lpatch delta` rebuilds the target only from that exact source and only
-writes it if the result matches. Needs: pip install bsdiff4
+writes it if the result matches. Needs: pip install --require-hashes -r tools/requirements.txt
 """
 import hashlib, struct, sys, zlib
 import bsdiff4.core

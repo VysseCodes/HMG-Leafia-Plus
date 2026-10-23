@@ -43,7 +43,7 @@ Ported this way, the Ioniq 5 comes out byte for byte identical to its hand-made 
 
 ## Making a set by hand
 
-Needs the car's stock files (`app/<name>.apk`, `app/<name>.odex`, `lib/libautoreceiver_infobank.so`), the modified builds in the `2_tbt/<files>` and `3_bridge/<files>` layout, the host `lpatch` (`tools/lpatch/build.sh`) and `pip install bsdiff4`:
+Needs the car's stock files (`app/<name>.apk`, `app/<name>.odex`, `lib/libautoreceiver_infobank.so`), the modified builds in the `2_tbt/<files>` and `3_bridge/<files>` layout, the host `lpatch` (`tools/lpatch/build.sh`) and `pip install --require-hashes -r tools/requirements.txt`:
 
 ```
 tools/mkpatches.py <ev6|neev|dl3hev> <stock dir> <builds dir> patches

@@ -29,7 +29,7 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 | `docs/` | GitHub Pages compatibility checker (`docs/data/compat.json`; status `supported`/`testing`/`in-progress`; `product_prefix` may be a list). |
 | `tools/build-package.sh` | Builds `dist/HMG_Leafia_Plus_Wireless_CarPlay_AA.zip` from the repo alone. |
 | `tools/port.py` | Ports the app changes to a new car from its deep-kit collection (class-by-class compare, auto-merge, reference/framework checks, writes the patch set and `cars` line). |
-| `tools/mkpatches.py`, `tools/mkdelta.py` | Patch-set and single-delta makers (need `pip install bsdiff4`). |
+| `tools/mkpatches.py`, `tools/mkdelta.py` | Patch-set and single-delta makers (need `pip install --require-hashes -r tools/requirements.txt`). |
 
 ## Supported cars (patches/cars)
 
