@@ -190,6 +190,22 @@ has_wifi_module() {
     [ -f /system/etc/permissions/com.hkmc.software.wifi.module.xml ]
 }
 
+# wifi_hw: yes, no or unknown - whether the Wi-Fi chip itself works, from the
+# driver's own result (the feature file above is there even on units without
+# one). Korean K5 Hybrid units (TCC897x) have nothing on the Wi-Fi SDIO bus:
+# the driver powers the chip up four times, finds nothing and gives up.
+wifi_hw() {
+    local _i
+    for _i in /sys/class/net/wlan*; do
+        [ -e "$_i" ] && { echo yes; return; }
+    done
+    if dmesg 2>/dev/null | grep -q 'failed to power up DHD generic adapter, max retry reached'; then
+        echo no
+    else
+        echo unknown
+    fi
+}
+
 # decide_mode: MODE=full or basic (MODE_WHY says why); sets PARTS/PARTS_REV.
 # Full mode leaves the rebuilt apps in the build dir for the parts.
 decide_mode() {

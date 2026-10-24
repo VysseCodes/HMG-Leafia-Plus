@@ -109,6 +109,7 @@ function verdict(r) {
   const allGood = parts.every((p) => p.state === "ok" || p.state === "native");
   let overall;
   if (!r.valid) overall = ["no", "This doesn't look like an HMG Leafia Plus report."];
+  else if (v && v.status === "no-wifi") overall = ["no", "This head unit has no working Wi-Fi hardware, so wireless CarPlay and Android Auto aren't possible. Wired CarPlay and Android Auto still work."];
   else if (allGood && v && v.status === "supported") overall = ["ok", "Supported: install the Wireless CarPlay and Android Auto package."];
   else if (allGood && v && v.status === "testing") overall = ["ok", "Build ready, awaiting its first real-car test. You can install the package; uninstall puts everything back to stock."];
   else if (v && v.status === "in-progress") overall = ["build", "Support for " + v.name + " is in progress. Share your report to help."];
@@ -165,10 +166,11 @@ function renderCompat() {
     const cells = [["", v.name + " · " + v.region], ["Firmware", v.firmware], ["Chip", v.chip]];
     for (const [label, c] of cells) { const td = document.createElement("td"); td.textContent = c; if (label) td.dataset.label = label; tr.append(td); }
     const st = document.createElement("td");
-    st.append(chip(v.status === "supported" || v.status === "testing" ? "ok" : v.status === "in-progress" ? "build" : "unknown"));
+    st.append(chip(v.status === "supported" || v.status === "testing" ? "ok" : v.status === "in-progress" ? "build" : v.status === "no-wifi" ? "no" : "unknown"));
     if (v.status === "testing") st.lastChild.textContent = "Testing";
     if (v.status === "in-progress") st.lastChild.textContent = "In progress";
     if (v.status === "supported") st.lastChild.textContent = "Supported";
+    if (v.status === "no-wifi") st.lastChild.textContent = "No Wi-Fi";
     const notes = document.createElement("td");
     notes.textContent = v.notes || (v.verified || []).join("; ");
     tr.append(st, notes); tb.append(tr);

@@ -6,6 +6,13 @@ log "preinstall wireless.carplay.aa"
 for _p in $PARTS; do
     [ -d "comp/$_p/scripts" ] || { log "FAIL: payload part $_p missing"; exit 1; }
 done
+case "$(wifi_hw)" in
+    no)
+        log "FAIL: the Wi-Fi chip did not respond (kernel: failed to power up DHD generic adapter) - no Wi-Fi hardware on this unit"
+        toast "Not installed: this head unit's Wi-Fi hardware isn't responding, so wireless projection is not possible. Restart and try again; if this repeats, the unit has no Wi-Fi."
+        exit 1 ;;
+    unknown) log "Wi-Fi chip: not started yet (no wlan interface, no driver error)" ;;
+esac
 decide_mode
 if [ "$MODE" = basic ]; then
     log "basic mode: $MODE_WHY - installing wireless projection only (wireless Android Auto)"

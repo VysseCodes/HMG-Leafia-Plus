@@ -32,7 +32,7 @@
       "firmware": "V039.001.260902",
       "status": "testing",
       "verified": ["Sandbox install and uninstall on this unit's own files"],
-      "notes": "Build ready, awaiting the first real-car test. Native Wi-Fi CarPlay sessions and built-in AAC/Opus converters; turn-by-turn and bridge ported automatically (3 classes merged).",
+      "notes": "Installs, but on the first real car wireless CarPlay never connected: the unit showed no Wi-Fi interface at all. Checking whether Korean Ioniq 5 units have Wi-Fi hardware (the Korean K5 doesn't).",
       "stock": {
         "/system/app/HKMC_GPM.apk": "5fe8335cf37c21d35a177fe766ca4451",
         "/system/app/HKMC_GPM.odex": "c38a7fd61f90973625401501215375db",
@@ -73,9 +73,9 @@
       "chip": "TCC897x",
       "product_prefix": ["DL3HEV.KOR", "DL3HEV22.KOR"],
       "firmware": "V039.001.260902",
-      "status": "testing",
+      "status": "no-wifi",
       "verified": ["Sandbox install and uninstall on this unit's own files"],
-      "notes": "Build ready, awaiting the first real-car test. Native Wi-Fi CarPlay sessions and built-in AAC/Opus converters; bridge and turn-by-turn rebuilt for this firmware.",
+      "notes": "No wireless projection: this unit's Wi-Fi chip never appears on its bus (the driver powers it up and gives up), so there is no Wi-Fi hardware to use. Wired CarPlay and Android Auto are unaffected.",
       "stock": {
         "/system/app/HKMC_GPM.apk": "4805d9e0cafbbb4f0f622e033d4359c4",
         "/system/app/HKMC_GPM.odex": "def8588772f648a6acedbed8ecdcd5d8",

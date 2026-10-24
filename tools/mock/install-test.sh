@@ -20,6 +20,8 @@
 #   MOCK_USB_DESCRIPTOR=1   put our install descriptor on the mock USB drive
 #   MOCK_ADB_TCP=1          ADB over network on the stock way (as NEMESIS's Enable ADB
 #                           leaves it); checks the switch to persist.adb.tcp.port and back
+#   MOCK_NO_WIFI=1          a unit whose Wi-Fi chip never responds (no wlan0, driver
+#                           gives up): the install must be refused
 #
 # Needs: qemu-arm-static (runs the ARM lpatch), unzip, md5sum.
 set -e
@@ -33,7 +35,12 @@ done
 ZIP=$(cd "$(dirname "$1")" && pwd)/$(basename "$1"); PROD=$2; TD=$3; SRC=$4
 SH=${MOCK_SH:-/bin/sh}
 X=$(mktemp -d "${TMPDIR:-/tmp}/mock-hu.XXXX"); R=$X/root
-mkdir -p "$R/data/nemesis" "$R/storage/usb0" "$X/stub" "$X/pkg"
+mkdir -p "$R/data/nemesis" "$R/storage/usb0" "$R/sys/class/net" "$X/stub" "$X/pkg"
+if [ "$MOCK_NO_WIFI" = 1 ]; then
+    printf '#!/bin/sh\necho "<4>[   68.585868] failed to power up DHD generic adapter, max retry reached**"\n' > "$X/stub/dmesg"
+else
+    mkdir "$R/sys/class/net/wlan0"; printf '#!/bin/sh\nexit 0\n' > "$X/stub/dmesg"
+fi
 cp -r "$SRC" "$R/system"; mkdir -p "$R/system/bin" "$R/system/xbin" "$R/system/onebin/$TD"
 rm -f "$R/system/bin/sh"; ln -s "$SH" "$R/system/bin/sh"
 
@@ -88,7 +95,7 @@ chmod 755 "$X"/stub/*
 (cd "$X" && unzip -q "$ZIP" packages/wireless.carplay.aa.zip && unzip -q packages/wireless.carplay.aa.zip -d pkg)
 find "$X/pkg" -name '*.sh' | while read -r f; do
     sed -i -e "1s|^#!.*|#!/bin/sh|" -e "s|/system/|$R/system/|g" -e "s|/data/|$R/data/|g" \
-        -e "s|/storage/|$R/storage/|g" -e "s|/mnt/media_rw/|$R/mnt/media_rw/|g" \
+        -e "s|/storage/|$R/storage/|g" -e "s|/sys/class/|$R/sys/class/|g" -e "s|/mnt/media_rw/|$R/mnt/media_rw/|g" \
         -e "s|^export PATH=|export PATH=$X/stub:|" \
         -e "s|^export PATH=$X/stub:$R/data/nemesis/bin:|export PATH=$R/data/nemesis/bin:$X/stub:|" \
         -e "s|^\(export PATH=.*\)$|\1:/usr/bin:/bin|" "$f"

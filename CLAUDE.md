@@ -26,7 +26,7 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 | `patches/` | Per-car delta sets for the projection apps + `cars` table + `<car>/stock` checksums + `<car>/manifest` expected results. See `patches/README.md`. |
 | `packages/wireless-carplay-aa/` | NEMESIS package source: parts `1_projection` (feature flags, hotspot only), `2_tbt` (turn-by-turn), `3_bridge` (CarPlay Bluetooth bridge), `4_audio`. `scripts/build.sh` rebuilds the apps on the unit from stock files before any part runs. |
 | `kits/leafia` | The one read-only USB kit, in four sizes set by a `LEAFIA-LEVEL` file (`tools/build-kit.sh [quick|standard|port|full]`): `leafia-kit-quick.zip` (public only), `leafia-kit.zip` (standard: + private logs with the latest crash records, + keys), `leafia-kit-port.zip` (+ stock files), `leafia-kit-full.zip` (+ every crash record). The old fingerprint/support/deep zip names stay as copies of quick/standard/port; `tools/check-downloads.sh [--fix]` checks/rebuilds them all. Writes `LEAFIA/public/` (LEAFIA-REPORT.txt for the compatibility page, summary.txt, our install logs: safe to post) and `LEAFIA/private/` (`logs/`, `stock/` for porting, `keys/` firmware key files: only privately, when a maintainer asks). Packages carry a `BUILD` stamp (commit + date) that the install log and the kit show. |
-| `docs/` | GitHub Pages compatibility checker (`docs/data/compat.json`; status `supported`/`testing`/`in-progress`; `product_prefix` may be a list). |
+| `docs/` | GitHub Pages compatibility checker (`docs/data/compat.json`; status `supported`/`testing`/`in-progress`/`no-wifi`; `product_prefix` may be a list). |
 | `tools/build-package.sh` | Builds `dist/HMG_Leafia_Plus_Wireless_CarPlay_AA.zip` from the repo alone. |
 | `tools/port.py` | Ports the app changes to a new car from its deep-kit collection (class-by-class compare, auto-merge, reference/framework checks, writes the patch set and `cars` line). |
 | `tools/mkpatches.py`, `tools/mkdelta.py` | Patch-set and single-delta makers (need `pip install --require-hashes -r tools/requirements.txt`). |
@@ -37,8 +37,8 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 |---|---|---|---|
 | `CVEV.` | ev6 | Kia EV6 260507 | reference car |
 | `NEEV.USA.` / `NEEV23.USA.` | neev | Hyundai Ioniq 5 US 2022/2023 | app code identical to EV6, different APK wrappers |
-| `DL3HEV.KOR.` / `DL3HEV22.KOR.` | dl3hev | Kia K5 Hybrid Korea 260902 (2022 has identical projection apps) | TCC897x; native Wi-Fi CarPlay + converters; 3 classes merged; not yet tested on a real car |
-| `NEEV.KOR.` | neev_kr | Hyundai Ioniq 5 Korea 260902 | ported automatically from an owner's kit; native Wi-Fi CarPlay + converters; listed first among the Ioniq 5 lines in `cars` (first match wins); not yet tested on a real car |
+| `DL3HEV.KOR.` / `DL3HEV22.KOR.` | dl3hev | Kia K5 Hybrid Korea 260902 (2022 has identical projection apps) | TCC897x; **no Wi-Fi hardware** (see gotchas): wireless projection impossible, installer refuses; compat status `no-wifi` |
+| `NEEV.KOR.` | neev_kr | Hyundai Ioniq 5 Korea 260902 | ported automatically from an owner's kit; native Wi-Fi CarPlay + converters; first real car (#27) showed no `wlan0` and `wl` finds no adapter, kernel log still needed (TCC803x like the US cars); listed first among the Ioniq 5 lines in `cars` (first match wins); not yet tested on a real car |
 
 ## Gotchas learned the hard way
 
@@ -51,6 +51,7 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 - DiPO wireless reconnect crash (stock bug): an iAP2 drop clears the phone's iAP2 Bluetooth address (`e/b.aw`, read by `K()`), and a wireless session can restart before iAP2 is back; `service/q.a` (onSessionDetails) called `K().toUpperCase()` unchecked. The bridge build now falls back to the session's own id, or keeps the stored address. Every other `K()` caller already checks for null. Same method on all four sets (K5/Korean Ioniq 5 only rename DipoService accessors).
 - The bridge's `EV6CPWL` log lines may not show in logcat even while it runs; don't read their absence as the bridge being dead.
 - No `tail` on the unit; use shell loops. Remount only through `nemesis remount rw|ro`: toolbox `mount -o remount` is refused even as root (NEMESIS before 1.15 could also EPERM until reboot; 1.15 fixed it and puts a `mount` wrapper first on hook PATH). Featurexml region comes from `ro.mobis.targetdir`.
+- Korean K5 Hybrid (TCC897x) has no Wi-Fi: the kernel sets up only SDHC0/SDHC2, the driver raises WIFI_REG_ON and gives up (`failed to power up DHD generic adapter, max retry reached`). US TCC803x units show `mmc1: new ... SDIO card` and `Firmware up`. The feature file `com.hkmc.software.wifi.module.xml` is present either way; `wifi_hw` in `common.sh` uses the driver's result instead, and preinstall refuses on `no`.
 - Toast: `am broadcast -a com.hkmc.intent.action.TOAST -e com.hkmc.intent.extra.TOAST_MESSAGE "..." --ez com.hkmc.intent.extra.TOAST_POPUPSHOWING true`.
 
 ## Testing without a car
