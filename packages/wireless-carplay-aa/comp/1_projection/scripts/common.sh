@@ -16,6 +16,7 @@ LOG=/data/nemesis/wireless.projection.log
 WIFI_XML=android.hardware.wifi.xml
 AA_XML=com.hkmc.software.connectivity.androidauto_wireless.xml
 CP_XML=com.hkmc.software.connectivity.carplay_wireless.xml
+HOTSPOT_XML=com.hkmc.software.wifihotspot.xml
 
 log() {
     local _msg="$1"
@@ -357,7 +358,8 @@ rewrite_featurexml() {
             \#*)
                 putline "$_line" >> "$_tmp" || return 1
                 ;;
-            *androidauto_wireless.xml*|*carplay_wireless.xml*)  # also matches CRLF lines
+            # Korean firmware also removes the hotspot feature, so nothing ever starts Wi-Fi
+            *androidauto_wireless.xml*|*carplay_wireless.xml*|*wifihotspot.xml*)  # also matches CRLF lines
                 putline "#${_line}" >> "$_tmp" || return 1
                 _n=$((_n + 1))
                 ;;
@@ -436,6 +438,12 @@ apply_perm() {
     return 0
 }
 
+# the stock featurexml.cfg removed the hotspot feature at boot (an active
+# "-.../com.hkmc.software.wifihotspot.xml" line; US firmware has it commented out)
+hotspot_was_removed() {
+    [ -s "$BACKUP_DIR/featurexml.cfg" ] && grep -q '^-.*wifihotspot\.xml' "$BACKUP_DIR/featurexml.cfg"
+}
+
 kick_apps() {
     am force-stop com.daudio.app.phoneprojection 2>/dev/null || true
     am force-stop com.daudio.app.dipo 2>/dev/null || true
@@ -484,6 +492,7 @@ snapshot_all() {
     snap_file "$PERM/$WIFI_XML" "$BACKUP_DIR/perm.$WIFI_XML" "$BACKUP_DIR/perm.$WIFI_XML.absent" || return 1
     snap_file "$PERM/$AA_XML" "$BACKUP_DIR/perm.$AA_XML" "$BACKUP_DIR/perm.$AA_XML.absent" || return 1
     snap_file "$PERM/$CP_XML" "$BACKUP_DIR/perm.$CP_XML" "$BACKUP_DIR/perm.$CP_XML.absent" || return 1
+    snap_file "$PERM/$HOTSPOT_XML" "$BACKUP_DIR/perm.$HOTSPOT_XML" "$BACKUP_DIR/perm.$HOTSPOT_XML.absent" || return 1
     putline 1 > "$BACKUP_DIR/saved" || return 1
     log "snapshotted live unit to $BACKUP_DIR"
     return 0
@@ -515,6 +524,13 @@ apply_all() {
     fi
     apply_perm "$AA_XML" || return 1
     apply_perm "$CP_XML" || return 1
+    # Firmware that removed the hotspot feature (Korean) also lacks the Wi-Fi feature
+    # files: add the missing ones there, so the hotspot (and the Wi-Fi chip) can start.
+    # US units already have both, and are left as they are.
+    if hotspot_was_removed; then
+        [ -f "$BACKUP_DIR/perm.$HOTSPOT_XML.absent" ] && { apply_perm "$HOTSPOT_XML" || return 1; }
+        [ -f "$BACKUP_DIR/perm.$WIFI_XML.absent" ] && { apply_perm "$WIFI_XML" || return 1; }
+    fi
     setprop persist.ium.support carplay 2>/dev/null || log "WARN: setprop persist.ium.support failed"
     kick_apps
     rm -f "$BACKUP_DIR/rewrite.tmp" 2>/dev/null || true
@@ -557,6 +573,10 @@ restore_all() {
     restore_owned_file "$PERM/$WIFI_XML" "$BACKUP_DIR/perm.$WIFI_XML" "$BACKUP_DIR/perm.$WIFI_XML.absent" || _rc=1
     restore_owned_file "$PERM/$AA_XML" "$BACKUP_DIR/perm.$AA_XML" "$BACKUP_DIR/perm.$AA_XML.absent" || _rc=1
     restore_owned_file "$PERM/$CP_XML" "$BACKUP_DIR/perm.$CP_XML" "$BACKUP_DIR/perm.$CP_XML.absent" || _rc=1
+    # snapshots made before this file was handled have neither; nothing of ours to undo then
+    if [ -f "$BACKUP_DIR/perm.$HOTSPOT_XML" ] || [ -f "$BACKUP_DIR/perm.$HOTSPOT_XML.absent" ]; then
+        restore_owned_file "$PERM/$HOTSPOT_XML" "$BACKUP_DIR/perm.$HOTSPOT_XML" "$BACKUP_DIR/perm.$HOTSPOT_XML.absent" || _rc=1
+    fi
     restore_getprop persist.ium.support "$BACKUP_DIR/gp.persist.ium.support" || _rc=1
     restore_getprop persist.wifi.state "$BACKUP_DIR/gp.persist.wifi.state" || _rc=1
     restore_setting || _rc=1

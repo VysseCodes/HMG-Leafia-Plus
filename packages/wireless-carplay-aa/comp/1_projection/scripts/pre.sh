@@ -11,7 +11,7 @@ if [ ! -f "$BP" ]; then
     log "FAIL: $BP missing"
     exit 1
 fi
-for _n in "$WIFI_XML" "$AA_XML" "$CP_XML"; do
+for _n in "$WIFI_XML" "$AA_XML" "$CP_XML" "$HOTSPOT_XML"; do
     if [ ! -f "files/permissions/$_n" ]; then
         log "FAIL: missing files/permissions/$_n"
         exit 1

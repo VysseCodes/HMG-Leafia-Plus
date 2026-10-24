@@ -16,7 +16,7 @@ if [ -f "$OVERLAY" ]; then
     echo "overlay:"
     grep '^p2p_no_go_freq=' "$OVERLAY" 2>/dev/null || echo "p2p_no_go_freq=absent"
 fi
-for _n in "$WIFI_XML" "$AA_XML" "$CP_XML"; do
+for _n in "$WIFI_XML" "$AA_XML" "$CP_XML" "$HOTSPOT_XML"; do
     if [ -f "$PERM/$_n" ]; then
         echo "perm=present $_n"
     else
