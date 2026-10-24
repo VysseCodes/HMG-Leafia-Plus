@@ -18,10 +18,63 @@ permissions:
 # Actions are pinned to full commit IDs (tags can be moved); the comment says which
 # release that is. Build artifacts are only uploaded for pushes to main, so nothing
 # built from a pull request's code is published as a download.
+#
+# Each check runs only when something it covers changed (see the "changes" job);
+# a docs-only change runs no checks. Releases, changes to this workflow and pushes
+# whose previous commit is unknown run everything.
 
 jobs:
+  changes:
+    name: What changed
+    runs-on: ubuntu-24.04
+    outputs:
+      lpatch: ${{ steps.f.outputs.lpatch }}
+      ev6aac: ${{ steps.f.outputs.ev6aac }}
+      kits: ${{ steps.f.outputs.kits }}
+      package: ${{ steps.f.outputs.package }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Decide which checks to run
+        id: f
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          all=false
+          case "$GITHUB_REF" in refs/tags/*) all=true ;; esac
+          if [ $all = false ]; then
+            case "$EVENT" in
+              pull_request) range="$BASE...$GITHUB_SHA" ;;
+              push)
+                if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+                  range="$BEFORE..$GITHUB_SHA"
+                else
+                  all=true
+                fi ;;
+              *) all=true ;;
+            esac
+          fi
+          : > changed.txt
+          [ $all = false ] && git diff --name-only "$range" > changed.txt
+          echo "run everything: $all"; echo "changed files:"; sed 's/^/  /' changed.txt
+          always='^(\.github/workflows/|tools/requirements\.txt)'
+          hit() { [ $all = true ] || grep -q -E "$always|$1" changed.txt; }
+          out() { if hit "$2"; then v=true; else v=false; fi; echo "$1=$v" | tee -a "$GITHUB_OUTPUT"; }
+          out lpatch  '^(tools/lpatch/|recipes/|tools/mkdelta\.py|tools/mkrecipe\.py)'
+          out ev6aac  '^(src/ev6aac/|packages/wireless-carplay-aa/comp/4_audio/files/libev6aac\.so)'
+          out kits    '^(kits/|docs/downloads/|recipes/|tools/build-kit\.sh|tools/check-downloads\.sh|tools/lpatch/lpatch$)'
+          out package '^(packages/|patches/|recipes/|tools/build-package\.sh|tools/lpatch/lpatch$)'
+
   build-lpatch:
     name: Build and Test Lpatch
+    needs: changes
+    if: needs.changes.outputs.lpatch == 'true'
     runs-on: ubuntu-24.04
 
     steps:
@@ -47,8 +100,10 @@ jobs:
           name: lpatch
           path: ./tools/lpatch/
 
-  verify-shipped:
-    name: Verify Shipped Binaries and Downloads
+  verify-ev6aac:
+    name: Verify libev6aac.so
+    needs: changes
+    if: needs.changes.outputs.ev6aac == 'true'
     runs-on: ubuntu-24.04
 
     steps:
@@ -77,12 +132,10 @@ jobs:
             exit 1
           fi
 
-      - name: Website kit downloads match kits/leafia
-        run: |
-          ./tools/check-downloads.sh
-
-  build-buildkit:
+  build-kit:
     name: Build Kit
+    needs: changes
+    if: needs.changes.outputs.kits == 'true'
     runs-on: ubuntu-24.04
 
     steps:
@@ -93,6 +146,10 @@ jobs:
         run: |
           ./tools/build-kit.sh
 
+      - name: Website kit downloads match kits/leafia
+        run: |
+          ./tools/check-downloads.sh
+
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: github.event_name == 'push'
         with:
@@ -101,6 +158,8 @@ jobs:
 
   build-package:
     name: Build Wireless Carplay/AA Package
+    needs: changes
+    if: needs.changes.outputs.package == 'true'
     runs-on: ubuntu-24.04
 
     steps:

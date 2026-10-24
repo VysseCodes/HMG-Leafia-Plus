@@ -100,6 +100,7 @@ These keep cars safe and the project legal:
 - Branch from `main`; `main` only changes through pull requests.
 - Describe the change in plain words, and say what you tested: which cars, mock or real.
 - CI must pass. For a first-time contributor, a maintainer approves the workflow run.
+- CI only runs the checks for what you changed (lpatch, `libev6aac.so`, the kit, the package); a docs-only change runs none. Changing a workflow runs them all.
 - If you change the kit, rebuild it: `tools/build-kit.sh docs/downloads/leafia-kit.zip && tools/check-downloads.sh --fix`.
 - Don't put links to AI chat sessions in commits or PR descriptions.
 
