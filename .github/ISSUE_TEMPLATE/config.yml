@@ -1,6 +1,9 @@
 # blank issues stay on: the compatibility page files car reports through a prefilled issue link
 blank_issues_enabled: true
 contact_links:
+  - name: Browse feature ideas
+    url: https://github.com/VysseCodes/HMG-Leafia-Plus/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement
+    about: See what others have suggested and add a thumbs-up to the ones you'd use.
   - name: Check if your car is supported
     url: https://vyssecodes.github.io/HMG-Leafia-Plus/
     about: Run the Leafia kit and drop its LEAFIA-REPORT.txt on the compatibility page; it files a report issue for you.

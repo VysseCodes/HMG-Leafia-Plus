@@ -256,7 +256,7 @@ say "rsdb_mode: $(wl rsdb_mode 2>&1)"
 # whether the Wi-Fi chip shows up at all: SD host setup, card detection and the
 # driver's result (MAC addresses cut off)
 say "--- Wi-Fi hardware (kernel)"
-dmesg 2>/dev/null | grep -E 'tcc-sdhc: SDHC|SDIO card|DHD generic adapter|Firmware up|Dongle Host Driver|WIFI_REG_ON' \
+dmesg 2>/dev/null | grep -E 'tcc-sdhc: SDHC|SDIO card|DHD generic adapter|dhd_module_init|wifi_platform_set_power|Firmware up|Dongle Host Driver|WIFI_REG_ON' \
     | while read -r _l; do
         case "$_l" in *MAC=*) echo "${_l%%MAC=*}MAC=(left out)" ;; *) echo "$_l" ;; esac
     done >> "$SUM"

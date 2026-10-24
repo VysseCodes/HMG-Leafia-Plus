@@ -74,6 +74,8 @@ It writes `LEAFIA/` on the drive:
 
 ## Contributing
 
+Have an idea for a feature? [Suggest it here](../../issues/new?template=feature.yml), or add a 👍 to the [ideas already suggested](../../issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement).
+
 Reports from new cars, real-car tests and code are all welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) for setup, building, testing on the mock head unit, adding a car, and the project rules. Security issues: [SECURITY.md](SECURITY.md).
 
 ## Credits and licences

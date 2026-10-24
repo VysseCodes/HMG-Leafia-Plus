@@ -1,0 +1,51 @@
+name: Feature idea
+description: Suggest something new for HMG Leafia Plus, or a change to something that already exists.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea! Rough ideas are welcome too: you don't need to know how it would work.
+
+        Already asked? Search the [open feature ideas](https://github.com/VysseCodes/HMG-Leafia-Plus/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) first, and add a 👍 to the ones you'd use. That's how we see what people want most.
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: What would you like the head unit to do?
+      placeholder: For example, "Let me assign battery preconditioning to the star button."
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: How you'd use it
+      description: When would this help you? What do you do today instead?
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Wireless CarPlay
+        - Android Auto
+        - Turn-by-turn on the cluster / HUD
+        - Star buttons and shortcuts
+        - Battery and EV features
+        - Head unit screens and settings
+        - Install, uninstall or the Leafia kit
+        - The website
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: car
+    attributes:
+      label: Your car (optional)
+      description: Make, model, year and country, if the idea is about a particular car.
+      placeholder: Hyundai Ioniq 5 2023, US
+  - type: markdown
+    attributes:
+      value: |
+        Good to know: anything that controls the car itself (climate, charging, doors and so on) only goes through the car's own built-in services, and each one gets its own careful review before it ships. So those ideas are welcome, but take longer.
