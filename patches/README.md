@@ -47,15 +47,6 @@ Fixes that aren't tied to one car's projection apps, listed in `common/optional`
 
 - `HKMC_BtSettings.menu.<stock md5 prefix>.lpd` (part `5_menu`), one per stock version of the Bluetooth settings app: with our wireless features on, Settings > Phone Projection would open the wireless projection page, which has no CarPlay split-screen option and lists no phones paired through our bridge. On US/Canada units this keeps it on Device Connections, as on stock US firmware. Make one for a car with `tools/mkmenu.py <stock dir>` (it adds the line here); the unit uses the first line whose stock file it has.
 
-## Stock files from an official update
-
-A port kit's `private/stock/` has the files a car's patches are made from. When a feature needs a stock file the kits didn't collect, it can come from the car's official update instead (the same public download the Navigation Updater uses):
-
-1. Download the model's `system_package_*.tar` (from its update package).
-2. `tools/fw-extract.sh <system_package_*.tar> <keys dir> <out dir>` decrypts its system image with the model's key files from a kit's `private/keys/` (`image.dat`, `iv.dat`) and writes a stock tree laid out like `private/stock/`, framework included.
-
-Update packages and key files stay private: never commit or post them.
-
 ## Making a set by hand
 
 Needs the car's stock files (`app/<name>.apk`, `app/<name>.odex`, `lib/libautoreceiver_infobank.so`), the modified builds in the `2_tbt/<files>` and `3_bridge/<files>` layout, the host `lpatch` (`tools/lpatch/build.sh`) and `pip install --require-hashes -r tools/requirements.txt`:

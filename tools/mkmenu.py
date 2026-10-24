@@ -3,8 +3,8 @@
 
 usage: mkmenu.py <stock dir> [--framework DIR] [--patches DIR] [--work DIR]
 
-  <stock dir>  a stock tree (a port kit's LEAFIA/private/stock/, or tools/fw-extract.sh
-               output) with app/HKMC_BtSettings.apk, app/HKMC_BtSettings.odex and
+  <stock dir>  a stock tree (a port kit's LEAFIA/private/stock/) with
+               app/HKMC_BtSettings.apk, app/HKMC_BtSettings.odex and
                framework/*.odex from the same firmware (or give --framework)
 
 With the wireless CarPlay/AA features on, HKMC_BtSettings sends Settings > Phone
