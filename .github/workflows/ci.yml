@@ -29,7 +29,8 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       lpatch: ${{ steps.f.outputs.lpatch }}
-      ev6aac: ${{ steps.f.outputs.ev6aac }}
+      libleafia: ${{ steps.f.outputs.libleafia }}
+      leafiabridge: ${{ steps.f.outputs.leafiabridge }}
       kits: ${{ steps.f.outputs.kits }}
       package: ${{ steps.f.outputs.package }}
 
@@ -67,7 +68,8 @@ jobs:
           hit() { [ $all = true ] || grep -q -E "$always|$1" changed.txt; }
           out() { if hit "$2"; then v=true; else v=false; fi; echo "$1=$v" | tee -a "$GITHUB_OUTPUT"; }
           out lpatch  '^(tools/lpatch/|recipes/|tools/mkdelta\.py|tools/mkrecipe\.py)'
-          out ev6aac  '^(src/ev6aac/|packages/wireless-carplay-aa/comp/4_audio/files/libev6aac\.so)'
+          out libleafia '^(src/libleafia/|packages/wireless-carplay-aa/comp/4_audio/files/libleafia\.so)'
+          out leafiabridge '^(apps/leafiabridge/|packages/wireless-carplay-aa/comp/5_leafiabridge/files/)'
           out kits    '^(kits/|docs/downloads/|recipes/|tools/build-kit\.sh|tools/check-downloads\.sh|tools/lpatch/lpatch$)'
           out package '^(packages/|patches/|recipes/|tools/build-package\.sh|tools/lpatch/lpatch$)'
 
@@ -100,10 +102,10 @@ jobs:
           name: lpatch
           path: ./tools/lpatch/
 
-  verify-ev6aac:
-    name: Verify libev6aac.so
+  verify-libleafia:
+    name: Verify libleafia.so
     needs: changes
-    if: needs.changes.outputs.ev6aac == 'true'
+    if: needs.changes.outputs.libleafia == 'true'
     runs-on: ubuntu-24.04
 
     steps:
@@ -111,26 +113,43 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install clang 18 and lld 18
-        # the toolchain the shipped libev6aac.so was built with (Ubuntu 24.04)
+        # the toolchain the shipped libleafia.so was built with (Ubuntu 24.04)
         run: |
           sudo apt-get update
           sudo apt-get install -y clang-18 lld-18
 
-      - name: libev6aac.so rebuilds byte for byte from src/ev6aac
+      - name: libleafia.so rebuilds byte for byte from src/libleafia
         run: |
-          CLANG=clang-18 ./src/ev6aac/build.sh "$RUNNER_TEMP/libev6aac.so"
-          shipped=packages/wireless-carplay-aa/comp/4_audio/files/libev6aac.so
-          if cmp "$RUNNER_TEMP/libev6aac.so" "$shipped"; then
-            echo "libev6aac.so matches its source"
+          CLANG=clang-18 ./src/libleafia/build.sh "$RUNNER_TEMP/libleafia.so"
+          shipped=packages/wireless-carplay-aa/comp/4_audio/files/libleafia.so
+          if cmp "$RUNNER_TEMP/libleafia.so" "$shipped"; then
+            echo "libleafia.so matches its source"
           else
             echo "--- sections: name address offset size alignment (shipped | rebuilt):"
             paste <(readelf -SW "$shipped" | sed -n 's/^ *\[ *[0-9]*\] //p' | awk '{print $1, $3, $4, $5, $NF}') \
-                  <(readelf -SW "$RUNNER_TEMP/libev6aac.so" | sed -n 's/^ *\[ *[0-9]*\] //p' | awk '{print $1, $3, $4, $5, $NF}')
+                  <(readelf -SW "$RUNNER_TEMP/libleafia.so" | sed -n 's/^ *\[ *[0-9]*\] //p' | awk '{print $1, $3, $4, $5, $NF}')
             echo "--- strings that differ:"
-            diff <(strings -n 4 "$shipped" | sort) <(strings -n 4 "$RUNNER_TEMP/libev6aac.so" | sort) || true
+            diff <(strings -n 4 "$shipped" | sort) <(strings -n 4 "$RUNNER_TEMP/libleafia.so" | sort) || true
             clang-18 --version | head -1
             exit 1
           fi
+
+  verify-leafiabridge:
+    name: Verify LeafiaBridge.apk
+    needs: changes
+    if: needs.changes.outputs.leafiabridge == 'true'
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: LeafiaBridge.apk's code and manifest rebuild byte for byte from apps/leafiabridge
+        # the runner's JDK 17; d8, aapt2 and android.jar are fetched at pinned SHA-256
+        run: |
+          javac -version
+          ./apps/leafiabridge/build.sh --check packages/wireless-carplay-aa/comp/5_leafiabridge/files/LeafiaBridge.apk
+          jarsigner -verify -certs packages/wireless-carplay-aa/comp/5_leafiabridge/files/LeafiaBridge.apk | tail -3
 
   build-kit:
     name: Build Kit

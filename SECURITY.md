@@ -28,7 +28,7 @@ Vulnerabilities in NEMESIS itself belong to [xwtk/hmg_nemesis](https://github.co
   own stock files, and only when those match the expected checksums byte for byte.
 - Every write to `/system` keeps a backup, and uninstall restores the exact stock bytes.
 - The shipped binaries are checked by CI: `lpatch` is built and tested from `tools/lpatch/lpatch.c`,
-  `libev6aac.so` must rebuild byte for byte from `src/ev6aac/`, and the kit on the website must match
+  `libleafia.so` must rebuild byte for byte from `src/libleafia/`, and the kit on the website must match
   `kits/leafia`.
 - CI actions and Python packages are pinned to exact commits and hashes; workflow runs from outside
   contributors need maintainer approval, and pull-request builds are never published as downloads.

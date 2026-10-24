@@ -73,7 +73,8 @@ function verdict(r) {
       build: "This library differs at the patch spot, so it needs analysis.", no: "libCarPlayCore.so was not found.", unknown: "Not in this report." }[core] });
 
   const aud = recipeState(r, "carplay-audio-formats");
-  const conv = recipeState(r, "carplay-utils-converter");
+  // cars still on v1.0.0 have the converter under its old library name (libev6aac.so)
+  const conv = r.results["carplay-utils-converter-v1"]?.status === "APPLIED" ? "ok" : recipeState(r, "carplay-utils-converter");
   // a codec counts as missing only when the report says so (older reports did not list them)
   const codecs = !["/system/lib/libstagefright_soft_aacdec.so", "/system/lib/libopus.so"].some((f) => f in r.files && r.files[f] === null);
   let audioState, audioWhy;

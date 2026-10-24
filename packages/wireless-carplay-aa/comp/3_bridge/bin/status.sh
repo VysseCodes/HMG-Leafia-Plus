@@ -29,7 +29,7 @@ echo "libCarPlayCore=$(core_state) $(core_path 2>/dev/null)"
 for _prop in $PROPS; do
     echo "${_prop}=$(getprop "$_prop" 2>/dev/null)"
 done
-echo "persist.ev6.cpwl.enable=$(getprop persist.ev6.cpwl.enable 2>/dev/null)"
+echo "persist.leafia.cpwl.enable=$(getprop persist.leafia.cpwl.enable 2>/dev/null)"
 echo "wifi.interface=$(getprop wifi.interface 2>/dev/null)"
 if [ -d "$BACKUP_DIR" ]; then
     echo "backup=$BACKUP_DIR"

@@ -39,7 +39,7 @@ clean_build
 echo "$PARTS" > "$PARTS_FILE" || log "WARN: could not record installed parts in $PARTS_FILE"
 adb_net_fix
 sync
-if [ -n "$EV6_TEST_ROOT" ]; then log "test mode - not rebooting"; exit 0; fi
+if [ -n "$LEAFIA_TEST_ROOT" ]; then log "test mode - not rebooting"; exit 0; fi
 log "all parts installed ($MODE mode: $PARTS) - rebooting"
 retire_usb_descriptor
 if [ "$MODE" = basic ]; then

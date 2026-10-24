@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LeafiaBridge: HMG Leafia Plus features that run beside the stock apps.
+     The patched stock apps forward their data here; this app decides what to do.
+     This build is a dry run: it logs what it would do and sends nothing to the car. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="leafia.bridge">
+
+    <!-- only system apps (our patched DiPO runs as system) or apps signed with our
+         key may send route updates, so no other app can fake a trip -->
+    <permission
+        android:name="leafia.bridge.permission.FORWARD"
+        android:protectionLevel="signature|system" />
+
+    <application
+        android:label="LeafiaBridge"
+        android:allowBackup="false"
+        android:hasCode="true">
+
+        <!-- CarPlay route updates forwarded by the patched DiPO -->
+        <receiver
+            android:name=".RouteReceiver"
+            android:exported="true"
+            android:permission="leafia.bridge.permission.FORWARD">
+            <intent-filter>
+                <action android:name="leafia.bridge.ROUTE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- the dashboard and steering-wheel star keys (outside and during projection) -->
+        <receiver
+            android:name=".ShortcutReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.mobis.intent.action.CUSTOM_SHORTCUT" />
+                <action android:name="com.mobis.intent.action.SWRC_CUSTOM_SHORTCUT" />
+                <action android:name="com.hkmc.intent.action.DIPO_CUSTOM_SHORTCUT" />
+                <action android:name="com.hkmc.intent.action.GPM_CUSTOM_SHORTCUT" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

@@ -472,7 +472,7 @@ snapshot_core() {
 put_lib() {
     local _src="$1"
     local _dst="$2"
-    local _tmp="${_dst}.ev6tmp"
+    local _tmp="${_dst}.lftmp"
     rm -f "$_tmp" 2>/dev/null || true
     cp -f "$_src" "$_tmp" || { rm -f "$_tmp" 2>/dev/null; return 1; }
     if ! cmp "$_src" "$_tmp" >/dev/null 2>&1; then

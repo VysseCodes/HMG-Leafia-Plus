@@ -38,3 +38,7 @@ For files whose changes are too large for a recipe (the projection apps), `lpatc
 - `lpatch zipadd <src.apk> <classes.dex> <dst.apk>`: adds `classes.dex` (stored) to a stock APK that has none, keeping every original entry byte for byte. The output is deterministic, so its md5 can be checked.
 
 Deltas are made with `tools/mkdelta.py`; per-car sets live in `/patches`.
+
+## `legacy/`
+
+Recipes for earlier builds of a patch, under their own id (for example `carplay-utils-converter-v1`, the v1.0.0 converter that loaded `libev6aac.so`). Only the Leafia kit carries them, so a report from a car still running an older build reads `APPLIED` instead of `MISMATCH`. The package never applies them.

@@ -1,19 +1,19 @@
 #!/bin/sh
-# Build libev6aac.so (the AAC/Opus AudioConverter for wireless CarPlay audio).
-# usage: src/ev6aac/build.sh [output]   (default: ./libev6aac.so)
+# Build libleafia.so (the AAC/Opus AudioConverter for wireless CarPlay audio).
+# usage: src/libleafia/build.sh [output]   (default: ./libleafia.so)
 #
-# The shipped copy (packages/wireless-carplay-aa/comp/4_audio/files/libev6aac.so)
+# The shipped copy (packages/wireless-carplay-aa/comp/4_audio/files/libleafia.so)
 # was built with Ubuntu clang 18.1.3 + LLD 18 (Ubuntu 24.04). With that toolchain
 # this script reproduces it byte for byte, which CI checks; other clang versions
 # give a working library with small code differences.
-#   CLANG=clang-18 src/ev6aac/build.sh /tmp/libev6aac.so
+#   CLANG=clang-18 src/libleafia/build.sh /tmp/libleafia.so
 #
 # No libc or NDK is needed: the library only imports a few functions from the head
 # unit's libc.so, libdl.so and liblog.so, so tiny stub libraries with those names
 # are linked in to record them as dependencies.
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
-OUT=${1:-$(pwd)/libev6aac.so}
+OUT=${1:-$(pwd)/libleafia.so}
 case "$OUT" in /*) ;; *) OUT=$(pwd)/$OUT ;; esac
 CLANG=${CLANG:-clang}
 T="--target=armv7a-linux-androideabi -mthumb -march=armv7-a -mfloat-abi=softfp"
@@ -28,12 +28,10 @@ for s in c:libc dl:libdl log:liblog; do
     "$CLANG" $T -shared -nostdlib -fuse-ld=lld -Wl,-soname,${s#*:}.so -o "$W/${s#*:}.so" "$W/${s%%:*}.c"
 done
 
-# the shipped binary records its source file as ev6aac_v.c; keep that name so the
-# build is byte-identical
-cp "$HERE/ev6aac.c" "$W/ev6aac_v.c"
+cp "$HERE/leafia.c" "$W/leafia.c"
 # -ffreestanding keeps memcpy/memset as plain calls (not __aeabi_memcpy/__aeabi_memclr),
 # as in the shipped build
 (cd "$W" && "$CLANG" $T -Os -fPIC -ffreestanding -fno-exceptions -fno-asynchronous-unwind-tables \
     -shared -nostdlib -fuse-ld=lld -Wl,-z,now -Wl,--no-rosegment -Wl,--hash-style=sysv -Wl,--build-id=none \
-    -Wl,-soname,libev6aac.so -o "$OUT" ev6aac_v.c libc.so libdl.so liblog.so)
+    -Wl,-soname,libleafia.so -o "$OUT" leafia.c libc.so libdl.so liblog.so)
 echo "$OUT"

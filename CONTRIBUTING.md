@@ -15,7 +15,7 @@ Security problems go through [SECURITY.md](SECURITY.md), not public issues.
 
 | Need | For | Fedora / Ubuntu package |
 |---|---|---|
-| `clang`, `lld` | building `lpatch` and `libev6aac.so` | `clang lld` |
+| `clang`, `lld` | building `lpatch` and `libleafia.so` | `clang lld` |
 | `qemu-arm-static` | running the ARM `lpatch` in tests and the mock head unit | `qemu-user-static` |
 | Python 3 + `bsdiff4` | patch tools and tests | `pip install --require-hashes -r tools/requirements.txt` |
 | `mksh` (recommended) | testing scripts in the head unit's own shell | `mksh` |
@@ -29,7 +29,8 @@ Security problems go through [SECURITY.md](SECURITY.md), not public issues.
 | `patches/` | Per-car patch sets that rebuild the projection apps from the car's own stock files, and `cars` (which product id uses which set). See [patches/README.md](patches/README.md). |
 | `recipes/` | Byte-checked native-library patches applied by `lpatch`. |
 | `tools/lpatch/` | `lpatch`, the small static ARM tool that patches on the head unit. |
-| `src/ev6aac/` | `libev6aac.so`, the AAC/Opus audio converter for wireless CarPlay. |
+| `apps/leafiabridge/` | LeafiaBridge, our own app the patched apps forward data to (see its README). |
+| `src/libleafia/` | `libleafia.so`, the AAC/Opus audio converter for wireless CarPlay. |
 | `kits/leafia/` | The read-only USB kit: compatibility report, problem summary, and private logs, stock files and keys. |
 | `docs/` | The compatibility website (GitHub Pages). |
 | `tools/` | Builders, the porting tool, and the mock head unit. |
@@ -40,7 +41,7 @@ Security problems go through [SECURITY.md](SECURITY.md), not public issues.
 tools/build-package.sh                       # dist/HMG_Leafia_Plus_Wireless_CarPlay_AA.zip
 tools/build-kit.sh [quick|standard|port|full]  # dist/leafia-kit*.zip (default: standard)
 tools/lpatch/build.sh                        # lpatch (ARM) and lpatch-host
-src/ev6aac/build.sh                          # libev6aac.so (CLANG=clang-18 for a byte-identical build)
+src/libleafia/build.sh                          # libleafia.so (CLANG=clang-18 for a byte-identical build)
 ```
 
 Make a recipe from a stock/patched library pair:
@@ -100,7 +101,7 @@ These keep cars safe and the project legal:
 - Branch from `main`; `main` only changes through pull requests.
 - Describe the change in plain words, and say what you tested: which cars, mock or real.
 - CI must pass. For a first-time contributor, a maintainer approves the workflow run.
-- CI only runs the checks for what you changed (lpatch, `libev6aac.so`, the kit, the package); a docs-only change runs none. Changing a workflow runs them all.
+- CI only runs the checks for what you changed (lpatch, `libleafia.so`, the kit, the package); a docs-only change runs none. Changing a workflow runs them all.
 - If you change the kit, rebuild every published size: `tools/check-downloads.sh --fix`.
 - Don't put links to AI chat sessions in commits or PR descriptions.
 
