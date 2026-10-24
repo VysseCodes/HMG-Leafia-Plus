@@ -18,6 +18,8 @@
 #   MOCK_NEMESIS=1.15       NEMESIS 1.15 hook environment: its mount wrapper first on PATH
 #   MOCK_ANDROID_DOWN=1     am/settings fail, as in a NEMESIS install while Android is down
 #   MOCK_USB_DESCRIPTOR=1   put our install descriptor on the mock USB drive
+#   MOCK_ADB_TCP=1          ADB over network on the stock way (as NEMESIS's Enable ADB
+#                           leaves it); checks the switch to persist.adb.tcp.port and back
 #
 # Needs: qemu-arm-static (runs the ARM lpatch), unzip, md5sum.
 set -e
@@ -94,6 +96,8 @@ done
 [ "$MOCK_USB_DESCRIPTOR" = 1 ] && printf '[nemesis]\nversion=1.0\ntype=install\npath=packages/wireless.carplay.aa.zip\n' > "$R/storage/usb0/NEMESIS.data"
 
 (cd "$R" && find system -type f -exec md5sum {} \; | sort -k2) > "$X/before.md5"
+[ "$MOCK_ADB_TCP" = 1 ] && echo 1 > "$X/prop_persist.service.adb.tcp.enable"
+adb_props() { echo "enable=$(cat "$X/prop_persist.service.adb.tcp.enable" 2>/dev/null) port=$(cat "$X/prop_persist.adb.tcp.port" 2>/dev/null)"; }
 cd "$X/pkg"; export LPATCH="$X/stub/lpatch_q"
 ok=1
 if "$SH" scripts/pre.sh > "$X/pre.log" 2>&1; then
@@ -103,9 +107,15 @@ if "$SH" scripts/pre.sh > "$X/pre.log" 2>&1; then
     else
         echo "INSTALL FAILED"; grep -i 'fail' "$X/post.log" | head; ok=0
     fi
+    if [ "$MOCK_ADB_TCP" = 1 ]; then
+        _a=$(adb_props); echo "adb after install: $_a"; [ "$_a" = "enable=0 port=5555" ] || ok=0
+    fi
     [ "$MOCK_USB_DESCRIPTOR" = 1 ] && echo "usb drive after install: $(ls "$R/storage/usb0" | tr '\n' ' ')"
     "$SH" scripts/preun.sh > "$X/preun.log" 2>&1 || true
     (cd "$R" && find system -type f -exec md5sum {} \; | sort -k2) > "$X/after.md5"
+    if [ "$MOCK_ADB_TCP" = 1 ]; then
+        _a=$(adb_props); echo "adb after uninstall: $_a"; [ "$_a" = "enable=1 port=" ] || ok=0
+    fi
     if diff -q "$X/before.md5" "$X/after.md5" > /dev/null; then
         echo "UNINSTALL -> identical to stock"
     else

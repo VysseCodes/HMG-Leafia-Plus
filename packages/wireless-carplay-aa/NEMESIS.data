@@ -2,7 +2,7 @@
 version=1.0
 id=wireless.carplay.aa
 name=HMG Leafia Plus - Wireless CarPlay/AA
-types=application,service
+types=application
 preinstall=scripts/pre.sh
 postinstall=scripts/post.sh
 preuninstall=scripts/preun.sh
@@ -11,12 +11,3 @@ preuninstall=scripts/preun.sh
 kind=sh
 path=bin/status.sh
 uid=root
-
-# keeps the hotspot's route working when ADB over network gives eth0 an
-# address in the same range (see svc/hotspot-route.sh)
-[service.0]
-name=hotspot-route
-kind=sh
-path=svc/hotspot-route.sh
-uid=root
-mode=restart

@@ -237,3 +237,33 @@ uninstall_parts() {
     done
     return 0
 }
+
+# ADB over network the stock way (persist.service.adb.tcp.enable=1, set by e.g.
+# NEMESIS's Enable ADB) also runs `ifconfig eth0 192.168.0.123` at every boot.
+# That is the hotspot's range, eth0's route wins, phones never get an address
+# and wireless projection drops after ~60 s. adbd also reads persist.adb.tcp.port,
+# which gives the same ADB over network without touching eth0: switch to that.
+# What we changed is kept in $ADB_FILE so uninstall can put it back.
+ADB_FILE=/data/nemesis/wireless.carplay.aa.adb
+adb_net_fix() {
+    [ "$(getprop persist.service.adb.tcp.enable)" = 1 ] || return 0
+    echo enable > "$ADB_FILE"
+    if [ -z "$(getprop persist.adb.tcp.port)" ]; then
+        setprop persist.adb.tcp.port 5555
+        echo port >> "$ADB_FILE"
+    fi
+    setprop persist.service.adb.tcp.enable 0
+    log "ADB over network: switched to persist.adb.tcp.port=$(getprop persist.adb.tcp.port) (the stock switch puts eth0 in the hotspot's range and breaks wireless projection)"
+}
+adb_net_restore() {
+    local _k
+    [ -s "$ADB_FILE" ] || return 0
+    while read -r _k; do
+        case "$_k" in
+            port) setprop persist.adb.tcp.port "" ;;
+            enable) setprop persist.service.adb.tcp.enable 1 ;;
+        esac
+    done < "$ADB_FILE"
+    rm -f "$ADB_FILE"
+    log "ADB over network: put back the stock setting (persist.service.adb.tcp.enable=1)"
+}
