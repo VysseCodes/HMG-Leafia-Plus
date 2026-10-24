@@ -209,6 +209,35 @@ ndc tether status >> "$SUM" 2>&1
 say "--- ndc tether interface list"
 ndc tether interface list >> "$SUM" 2>&1
 
+# Turning on ADB over network (persist.service.adb.tcp.enable=1, e.g. the
+# NEMESIS "Enable ADB" package) makes the stock init give eth0 192.168.0.123,
+# inside the hotspot's 192.168.0.x range: replies to phones then leave through
+# eth0 and wireless CarPlay/Android Auto never get an address.
+section "network"
+say "persist.service.adb.tcp.enable=$(getprop persist.service.adb.tcp.enable 2>/dev/null)"
+say "service.adb.tcp.port=$(getprop service.adb.tcp.port 2>/dev/null)"
+say "--- interfaces (no hardware addresses; mobile data address left out)"
+_wl=""; _eth=""
+while read -r _if _st _ip _rest; do
+    case "$_if" in
+        ''|lo) ;;
+        rmnet*) say "$_if $_st (mobile data)" ;;
+        *) say "$_if $_st $_ip" ;;
+    esac
+    case "$_if" in wlan0) _wl=${_ip%%/*} ;; eth0) _eth=${_ip%%/*} ;; esac
+done <<NETEOF
+$(netcfg 2>/dev/null)
+NETEOF
+if [ -n "$_wl" ] && [ "$_wl" != 0.0.0.0 ] && [ -n "$_eth" ] && [ "$_eth" != 0.0.0.0 ] && [ "${_wl%.*}" = "${_eth%.*}" ]; then
+    say "WARNING: eth0 ($_eth) is in the hotspot's range ($_wl): phones may get no address from the hotspot. Usually caused by ADB over network (persist.service.adb.tcp.enable=1)."
+else
+    say "hotspot range clash: none"
+fi
+say "--- Wi-Fi chip (wl)"
+wl ver >> "$SUM" 2>&1
+say "cap: $(wl cap 2>&1)"
+say "rsdb_mode: $(wl rsdb_mode 2>&1)"
+
 # our own logs: install steps, file names and checksums only
 for _l in $PKG wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio; do
     copy_file "$N/$_l.log" "$PUB/logs/$_l.log"
@@ -240,6 +269,12 @@ dmesg > "$LOGS/dmesg.txt" 2>&1
 # hotspot: interface addresses, address leases (phone hardware addresses and
 # names) and the tethering/Wi-Fi log. Never the hotspot config: it holds the password.
 netcfg > "$LOGS/network.txt" 2>&1
+# routing and firewall state (which interface replies to hotspot clients leave through)
+ip addr > "$LOGS/ip-addr.txt" 2>&1
+ip route show table all > "$LOGS/ip-route.txt" 2>&1
+ip rule > "$LOGS/ip-rule.txt" 2>&1
+iptables -S > "$LOGS/iptables.txt" 2>&1
+iptables -t nat -S >> "$LOGS/iptables.txt" 2>&1
 copy_file /data/misc/dhcp/dnsmasq.leases "$LOGS/dnsmasq.leases"
 logcat -d -v time -s Tethering:V WifiStateMachine:V SoftApStateMachine:V WifiService:V WifiManager:V \
     ConnectivityService:V NetworkManagementService:V NetdConnector:V netd:V dnsmasq:V hostapd:I \
