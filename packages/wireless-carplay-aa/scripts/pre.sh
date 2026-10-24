@@ -33,5 +33,8 @@ run_part 1_projection pre || { fail_unknown_unit "$(part_name 1_projection) chec
 if [ "$MODE" = full ]; then
     run_part 2_tbt pre || { fail_unknown_unit "$(part_name 2_tbt) check failed"; exit 1; }
 fi
+if [ "$(getprop persist.service.adb.tcp.enable 2>/dev/null)" = 1 ]; then
+    log "note: ADB over network is on; the hotspot route guard keeps wireless projection working"
+fi
 log "preinstall ok ($MODE mode)"
 exit 0

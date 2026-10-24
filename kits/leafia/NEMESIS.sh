@@ -258,6 +258,9 @@ say "rsdb_mode: $(wl rsdb_mode 2>&1)"
 for _l in $PKG wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio; do
     copy_file "$N/$_l.log" "$PUB/logs/$_l.log"
 done
+# hotspot route guard service: route changes only
+copy_file "$N/logs/$PKG/hotspot-route.log" "$PUB/logs/hotspot-route.log"
+copy_file "$N/hotspot-route.removed" "$PUB/logs/hotspot-route.removed"
 
 
 if [ $LEVEL != quick ]; then
