@@ -8,7 +8,7 @@ One folder per car, plus `common/`. The head unit rebuilds the modified projecti
 | `neev/` | Hyundai Ioniq 5, US (`NEEV.USA.*`, `NEEV23.USA.*`) | 260507 |
 | `dl3hev/` | Kia K5 Hybrid, Korea (`DL3HEV.KOR.*`) | 260902 |
 | `neev_kr/` | Hyundai Ioniq 5, Korea (`NEEV.KOR.*`) | 260902 |
-| `common/` | `libautoreceiver_infobank.so`, same on every supported car | |
+| `common/` | `libautoreceiver_infobank.so`, same on every supported car; `optional`: fixes applied wherever the stock file matches | |
 
 `cars` maps a firmware product id prefix (`ro.build.product`) to a folder and a car name. The installer reads it, so adding a car needs no script changes.
 
@@ -40,6 +40,12 @@ It compares the new car's apps with the EV6's class by class:
 Every result is then checked: each reference inside the app must resolve, and every system call must exist in the new car's framework. If all checks pass, it writes `patches/<name>/` and adds the car to `cars`. The full builds in `--out-builds` stay private.
 
 Ported this way, the Ioniq 5 comes out byte for byte identical to its hand-made set, and the K5 Hybrid class for class identical.
+
+## Optional fixes (`common/optional`)
+
+Fixes that aren't tied to one car's projection apps, listed in `common/optional` in the manifest's line format. The head unit applies each one only when its stock file is the exact one the `.lpd` was made from; otherwise it logs a skip and the install carries on.
+
+- `HKMC_BtSettings.menu.lpd` (part `5_menu`): with our wireless features on, Settings > Phone Projection would open the wireless projection page, which has no CarPlay split-screen option and lists no phones paired through our bridge. On US/Canada units this keeps it on Device Connections, as on stock US firmware. Made from the EV6 260507 stock app: deodex `HKMC_BtSettings.odex` (`baksmali x -a 18`, colon-separated BOOTCLASSPATH), add the region check before the wireless-feature check in `BluetoothSettings`, `smali a --api 18 -j 1`, then `tools/mkdelta.py <stock odex> <new classes.dex> common/HKMC_BtSettings.menu.lpd`; the md5 is that of `lpatch zipadd <stock apk> <rebuilt dex>`.
 
 ## Making a set by hand
 

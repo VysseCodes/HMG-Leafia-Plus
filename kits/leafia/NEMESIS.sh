@@ -98,6 +98,7 @@ LP=$TMP/lpatch
 for _f in /system/app/HKMC_GPM.apk /system/app/HKMC_GPM.odex /system/app/HKMC_DiPO.apk /system/app/HKMC_DiPO.odex \
           /system/app/Iap2ServerApp.apk /system/app/Iap2ServerApp.odex /system/app/HKMC_Navi_ExSL.apk \
           /system/app/HKMC_Navi_ExSL.odex /system/app/PhoneProjection.apk /system/app/PhoneProjection.odex \
+          /system/app/HKMC_BtSettings.apk /system/app/HKMC_BtSettings.odex \
           /system/lib/libautoreceiver_infobank.so /system/lib/libCarPlayCore.so /system/lib/libCarPlayAudio.so \
           /system/lib/libCarPlayUtils.so /system/lib/libstagefright_soft_aacdec.so /system/lib/libopus.so \
           /system/framework/automotive.odex /system/framework/framework.odex; do
@@ -184,6 +185,7 @@ section "projection files"
 for _f in /system/app/HKMC_GPM.apk /system/app/HKMC_GPM.odex /system/app/HKMC_DiPO.apk /system/app/HKMC_DiPO.odex \
           /system/app/Iap2ServerApp.apk /system/app/Iap2ServerApp.odex /system/app/HKMC_Navi_ExSL.apk \
           /system/app/HKMC_Navi_ExSL.odex /system/app/PhoneProjection.apk /system/app/PhoneProjection.odex \
+          /system/app/HKMC_BtSettings.apk /system/app/HKMC_BtSettings.odex \
           /system/lib/libautoreceiver_infobank.so /system/lib/libCarPlayCore.so /system/lib/libCarPlayAudio.so \
           /system/lib/libCarPlayUtils.so /system/lib/libev6aac.so /system/lib/libstagefright_soft_aacdec.so \
           /system/lib/libopus.so /system/framework/automotive.odex /system/framework/framework.odex; do
@@ -262,7 +264,7 @@ dmesg 2>/dev/null | grep -E 'tcc-sdhc: SDHC|SDIO card|DHD generic adapter|dhd_mo
     done >> "$SUM"
 
 # our own logs: install steps, file names and checksums only
-for _l in $PKG wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio; do
+for _l in $PKG wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio projection.menu; do
     copy_file "$N/$_l.log" "$PUB/logs/$_l.log"
 done
 
@@ -385,7 +387,7 @@ for f in /system/lib/libCarPlay*.so /system/lib/libiap*.so /system/lib/libIap2*.
 done
 
 # projection apps (apk + odex)
-for n in HKMC_DiPO Iap2ServerApp HKMC_GPM HKMC_Navi_ExSL PhoneProjection; do
+for n in HKMC_DiPO Iap2ServerApp HKMC_GPM HKMC_Navi_ExSL PhoneProjection HKMC_BtSettings; do
     for e in apk odex; do [ -f "/system/app/$n.$e" ] && grab "/system/app/$n.$e" "$STOCK/app/"; done
 done
 ls -l /system/app > "$STOCK/app/listing.txt" 2>&1

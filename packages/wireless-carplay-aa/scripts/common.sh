@@ -7,6 +7,8 @@
 #   2 projection.tbt       turn-by-turn on the cluster/HUD (DiPO/Iap2 base for 4)
 #   3 wireless.carplay.bt  Bluetooth -> iAP2 bridge + Wi-Fi session patch for CarPlay
 #   4 carplay.wifi.audio   wireless CarPlay audio: AAC music, Opus Siri/calls/mic
+#   5 projection.menu      Settings > Phone Projection opens Device Connections again on
+#                          US/Canada units (optional: only where HKMC_BtSettings matches)
 # Not included: TCP ADB (adb.tcp), the temporary debug logging, and Android Auto
 # car data (projection.cardata, EV-specific) - that installs separately on top of this.
 # Uninstall undoes the parts in reverse order, back to stock.
@@ -15,8 +17,8 @@
 # Each part also checks the exact stock checksums before writing anything.
 export PATH=/data/nemesis/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
 LOG=/data/nemesis/wireless.carplay.aa.log
-PARTS="1_projection 2_tbt 3_bridge 4_audio"
-PARTS_REV="4_audio 3_bridge 2_tbt 1_projection"
+PARTS="1_projection 2_tbt 3_bridge 4_audio 5_menu"
+PARTS_REV="5_menu 4_audio 3_bridge 2_tbt 1_projection"
 # separate packages that change the same files (the ones this replaces, and
 # NEMESIS's own carplay.session) - they must be uninstalled first
 LEGACY="wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio carplay.debuglog carplay.session"
@@ -30,7 +32,7 @@ LOGS_DIR=/data/nemesis/logs/wireless.carplay.aa
 mirror_logs() {
     local _l
     mkdir -p "$LOGS_DIR" 2>/dev/null || return 0
-    for _l in wireless.carplay.aa wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio; do
+    for _l in wireless.carplay.aa wireless.projection projection.tbt wireless.carplay.bt carplay.wifi.audio projection.menu; do
         [ -f "/data/nemesis/$_l.log" ] && cp "/data/nemesis/$_l.log" "$LOGS_DIR/$_l.log" 2>/dev/null
     done
     true
@@ -46,6 +48,7 @@ part_name() {
         2_tbt) echo projection.tbt ;;
         3_bridge) echo wireless.carplay.bt ;;
         4_audio) echo carplay.wifi.audio ;;
+        5_menu) echo projection.menu ;;
     esac
 }
 

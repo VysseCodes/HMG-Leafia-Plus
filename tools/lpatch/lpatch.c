@@ -68,7 +68,7 @@ static void xexit(int c) { sys3(1, c, 0, 0); for (;;) ; }
 #endif
 
 #define MAXFILE (8u << 20)
-#define MAXOUT (6u << 20)
+#define MAXOUT (12u << 20)   /* an APK with its new classes.dex (HKMC_BtSettings is ~6 MB) */
 #define MAXDELTA (6u << 20)
 #define MAXRAW (16u << 20)
 #define MAXRECIPE (256u << 10)

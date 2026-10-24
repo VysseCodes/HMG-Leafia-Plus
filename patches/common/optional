@@ -1,0 +1,8 @@
+# Optional fixes for any car whose stock file matches the patch exactly (the .lpd
+# holds the stock md5). A unit with a different file just skips it; the rest of the
+# install carries on. Same line format as <car>/manifest.
+# HKMC_BtSettings: on US/Canada units, Settings > Phone Projection opens Device
+# Connections (CarPlay split screen, connected phones) as on stock US firmware,
+# instead of the wireless projection page our wireless features would switch it to.
+# Made from the EV6 260507 stock app.
+5_menu app HKMC_BtSettings common/HKMC_BtSettings.menu.lpd 93ecaa97597a79be2a10728e45c72b33
