@@ -24,5 +24,10 @@ problem, and helping port the package to a new car
                               package to your car
                     - keys/   firmware key files
 
+Crash records: by default only the latest are collected (up to 300 from the
+day before the newest one, and the newest day's crash dumps). If a
+maintainer asks for all of them, create an empty file named ALL-CRASHES
+next to NEMESIS.sh on the drive before running the kit.
+
 Nothing on the car is changed. Accounts, paired phone data, Wi-Fi passwords,
 the vehicle security partition, VIN and serial numbers are never collected.

@@ -279,16 +279,68 @@ copy_file /data/misc/dhcp/dnsmasq.leases "$LOGS/dnsmasq.leases"
 logcat -d -v time -s Tethering:V WifiStateMachine:V SoftApStateMachine:V WifiService:V WifiManager:V \
     ConnectivityService:V NetworkManagementService:V NetdConnector:V netd:V dnsmasq:V hostapd:I \
     > "$LOGS/logcat-network.txt" 2>&1
+# Crash records: only the latest by default (a crash loop leaves thousands, and
+# tombstones are ~1 MB each). An empty file named ALL-CRASHES next to this
+# script collects every one. The public summary still lists all their names.
+ALL_CRASHES=0
+[ -f "$KIT/ALL-CRASHES" ] && ALL_CRASHES=1
+is_crash() { case "$1" in *crash@*|*anr@*|*TOMBSTONE@*|*watchdog@*) return 0 ;; esac; return 1; }
+# a dropbox record's name is <tag>@<milliseconds>.txt[.gz]: _t gets its seconds
+# (parameter expansion only, no subshell per record: there can be thousands)
+
 # native crash dumps (backtraces for libCarPlay*, libautoreceiver_infobank, ...);
-# the copies get new dates, so keep the original listing for the crash times
+# the copies get new dates, so keep the original listing for the crash times.
+# Default: only those from the same day as the newest one.
 ls -l /data/tombstones > "$LOGS/tombstones/listing.txt" 2>&1
-for _f in /data/tombstones/*; do
-    copy_file "$_f" "$LOGS/tombstones/${_f##*/}"
-done
-# crash and ANR history; unlike logcat it survives the car turning off
+_newest=""
+while read -r _p _u _g _s _d _t _n; do
+    case "$_n" in tombstone_*) [[ "$_d $_t" > "$_newest" ]] && _newest="$_d $_t" ;; esac
+done < "$LOGS/tombstones/listing.txt"
+while read -r _p _u _g _s _d _t _n; do
+    case "$_n" in tombstone_*) ;; *) continue ;; esac
+    if [ $ALL_CRASHES = 1 ] || [ "$_d" = "${_newest%% *}" ]; then
+        copy_file "/data/tombstones/$_n" "$LOGS/tombstones/$_n"
+    fi
+done < "$LOGS/tombstones/listing.txt"
+
+# crash and ANR history; unlike logcat it survives the car turning off.
+# Default: the newest records, at most 300, from the 24 hours before the newest
+# one (measured from the records, so a wrong head unit clock doesn't matter).
+# Record times are read once into an array, then the window is binary-searched.
+set -A _times
+_n=0; _last=0
 for _f in /data/system/dropbox/*; do
-    case "${_f##*/}" in *crash@*|*anr@*|*TOMBSTONE@*|*watchdog@*) copy_file "$_f" "$LOGS/dropbox/${_f##*/}" ;; esac
+    is_crash "${_f##*/}" || continue
+    _t=${_f##*@}; _t=${_t%%.*}; _t=${_t%???}
+    _times[_n]=$_t; _n=$((_n + 1))
+    [ "$_t" -gt "$_last" ] 2>/dev/null && _last=$_t
 done
+in_window() {   # in_window <seconds>: how many records are that recent
+    local _c=0 _x
+    for _x in "${_times[@]}"; do [ "$_x" -ge $((_last - $1)) ] 2>/dev/null && _c=$((_c + 1)); done
+    echo $_c
+}
+_win=86400
+if [ $ALL_CRASHES = 0 ] && [ $_n -gt 300 ] && [ "$(in_window $_win)" -gt 300 ]; then
+    _lo=0; _hi=$_win
+    while [ $((_hi - _lo)) -gt 1 ]; do
+        _mid=$(((_lo + _hi) / 2))
+        if [ "$(in_window $_mid)" -le 300 ]; then _lo=$_mid; else _hi=$_mid; fi
+    done
+    _win=$_lo
+fi
+for _f in /data/system/dropbox/*; do
+    is_crash "${_f##*/}" || continue
+    _t=${_f##*@}; _t=${_t%%.*}; _t=${_t%???}
+    if [ $ALL_CRASHES = 1 ] || [ "$_t" -ge $((_last - _win)) ] 2>/dev/null; then
+        copy_file "$_f" "$LOGS/dropbox/${_f##*/}"
+    fi
+done
+if [ $ALL_CRASHES = 1 ]; then
+    echo "all crash records collected (ALL-CRASHES found)" > "$LOGS/crash-selection.txt"
+else
+    echo "crash records: dropbox from the $_win s before the newest record ($_last), tombstones from ${_newest%% *}; add an empty ALL-CRASHES file next to NEMESIS.sh for all of them" > "$LOGS/crash-selection.txt"
+fi
 copy_file /data/anr/traces.txt "$LOGS/anr-traces.txt"
 
 
