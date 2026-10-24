@@ -12,6 +12,8 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 
 ## Hard rules
 
+- Only each car's newest firmware is supported (260507 US/Canada, 260902 Korea). Don't port older firmware; ask the owner to update the head unit. On a known car with other firmware the installer falls back to basic mode and says to update (`MODE_UPDATE`).
+
 - Never flash MICOM, the bootloader, or modem firmware. Never flash firmware meant for another car.
 - No sending our own CAN frames without a separate review. Vehicle commands only through the stock services (BCMManager etc.), and each new one gets its own review.
 - Never collect or publish per-car secrets: `/data` contents, the telesecurity partition, certificates/keys, account tokens, VIN, serials, SIM/IMEI/phone numbers. Model-level firmware keys only privately, with consent.

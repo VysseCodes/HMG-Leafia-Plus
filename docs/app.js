@@ -109,6 +109,9 @@ function verdict(r) {
   const allGood = parts.every((p) => p.state === "ok" || p.state === "native");
   let overall;
   if (!r.valid) overall = ["no", "This doesn't look like an HMG Leafia Plus report."];
+  else if (v && !(r.props["ro.build.product"] || "").endsWith(v.firmware)) overall = ["build", "This head unit runs firmware "
+    + (r.props["ro.build.product"] || "?").split(".").pop() + ". We only support each car's newest firmware (" + v.firmware.split(".").pop()
+    + " for the " + v.name + "): update the head unit's software, then check again. Until then, the package installs wireless Android Auto (basic mode)."];
   else if (v && v.status === "no-wifi") overall = ["no", "This head unit has no working Wi-Fi hardware, so wireless CarPlay and Android Auto aren't possible. Wired CarPlay and Android Auto still work."];
   else if (allGood && v && v.status === "supported") overall = ["ok", "Supported: install the Wireless CarPlay and Android Auto package."];
   else if (allGood && v && v.status === "testing") overall = ["ok", "Build ready, awaiting its first real-car test. You can install the package; uninstall puts everything back to stock."];
@@ -159,36 +162,36 @@ function render(text) {
   $("result").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function renderCompat() {
-  const tb = $("compat"); tb.textContent = "";
-  for (const v of DB.variants) {
-    const tr = document.createElement("tr");
-    const cells = [["", v.name + " · " + v.region], ["Firmware", v.firmware], ["Chip", v.chip]];
-    for (const [label, c] of cells) { const td = document.createElement("td"); td.textContent = c; if (label) td.dataset.label = label; tr.append(td); }
-    const st = document.createElement("td");
-    st.append(chip(v.status === "supported" || v.status === "testing" ? "ok" : v.status === "in-progress" ? "build" : v.status === "no-wifi" ? "no" : "unknown"));
-    if (v.status === "testing") st.lastChild.textContent = "Testing";
-    if (v.status === "in-progress") st.lastChild.textContent = "In progress";
-    if (v.status === "supported") st.lastChild.textContent = "Supported";
-    if (v.status === "no-wifi") st.lastChild.textContent = "No Wi-Fi";
-    const notes = document.createElement("td");
-    notes.textContent = v.notes || (v.verified || []).join("; ");
-    tr.append(st, notes); tb.append(tr);
-  }
-}
+// one table: the cars we have a build for, then the ones we'd like to add
+const STATUS_ORDER = { supported: 0, testing: 1, "in-progress": 2, "no-wifi": 3 };
+const STATUS_CHIP = { supported: ["ok", "Supported"], testing: ["ok", "Testing"], "in-progress": ["build", "In progress"],
+  "no-wifi": ["no", "No Wi-Fi"], priority: ["build", "Wanted · Priority"], wanted: ["unknown", "Wanted"] };
 
-function renderWanted(w) {
-  const tb = $("wanted"); tb.textContent = "";
-  if (w.scope) $("wantedScope").textContent = w.scope;
-  for (const c of w.cars) {
+function renderCars(wanted) {
+  const tb = $("cars"); tb.textContent = "";
+  const rows = DB.variants.slice().sort((a, b) => (STATUS_ORDER[a.status] ?? 9) - (STATUS_ORDER[b.status] ?? 9)).map((v) => ({
+    car: v.name, sub: "", years: v.years || "–", regions: v.region, firmware: v.firmware.split(".").pop(),
+    status: v.status, notes: v.notes || (v.verified || []).join("; ") }));
+  if (wanted) {
+    if (wanted.scope) $("wantedScope").textContent = wanted.scope;
+    const cars = wanted.cars.slice().sort((a, b) => (b.priority ? 1 : 0) - (a.priority ? 1 : 0));
+    for (const c of cars) rows.push({ car: c.brand + " " + c.model, sub: [(c.variants || []).join(", "), c.note].filter(Boolean).join(" · "),
+      years: c.years || "–", regions: c.regions.join(", "), firmware: c.firmware, status: c.priority ? "priority" : "wanted",
+      notes: "Wireless Android Auto installs now (basic mode). Turn-by-turn and wireless CarPlay need one owner's report." });
+  }
+  for (const r of rows) {
     const tr = document.createElement("tr");
-    const cells = [["", c.brand + " " + c.model], ["Variants", (c.variants || []).join(", ") || "–"], ["Years", c.years || "–"],
-      ["Regions", c.regions.join(", ")], ["Firmware", c.firmware]];
-    for (const [label, t] of cells) { const td = document.createElement("td"); td.textContent = t; if (label) td.dataset.label = label; tr.append(td); }
-    if (c.note) { const n = document.createElement("small"); n.textContent = c.note; tr.firstChild.append(document.createElement("br"), n); }
-    const td = document.createElement("td");
-    if (c.priority) { td.append(chip("build")); td.lastChild.textContent = "Priority"; }
-    tr.append(td); tb.append(tr);
+    const car = document.createElement("td"); car.textContent = r.car;
+    if (r.sub) { const n = document.createElement("small"); n.textContent = r.sub; car.append(document.createElement("br"), n); }
+    tr.append(car);
+    for (const [label, t] of [["Years", r.years], ["Regions", r.regions], ["Firmware", r.firmware]]) {
+      const td = document.createElement("td"); td.textContent = t; td.dataset.label = label; tr.append(td);
+    }
+    const st = document.createElement("td");
+    const [state, label] = STATUS_CHIP[r.status] || ["unknown", r.status];
+    st.append(chip(state)); st.lastChild.textContent = label;
+    const notes = document.createElement("td"); notes.textContent = r.notes;
+    tr.append(st, notes); tb.append(tr);
   }
 }
 
@@ -196,8 +199,9 @@ function readFile(f) { const fr = new FileReader(); fr.onload = () => render(Str
 
 async function init() {
   DB = await (await fetch("data/compat.json")).json();
-  renderCompat();
-  try { renderWanted(await (await fetch("data/wanted.json")).json()); } catch (e) { /* the list is optional */ }
+  let wanted = null;
+  try { wanted = await (await fetch("data/wanted.json")).json(); } catch (e) { /* the wanted list is optional */ }
+  renderCars(wanted);
   const drop = $("drop");
   ["dragenter", "dragover"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.add("over"); }));
   ["dragleave", "drop"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.remove("over"); }));

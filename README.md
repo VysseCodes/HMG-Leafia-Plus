@@ -44,7 +44,9 @@ Something wrong? Open an issue with the [problem form](../../issues/new?template
 
 ## Supported head units
 
-See the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/). The data lives in `docs/data/compat.json`.
+See the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/). The data lives in `docs/data/compat.json` (cars with a build) and `docs/data/wanted.json` (Gen5W cars we'd like to add).
+
+**Newest firmware only.** We support each car's newest head unit software: currently **260507** in the US and Canada and **260902** in Korea. On older firmware the package installs wireless Android Auto only (basic mode) and asks you to update; use the free Hyundai, Kia or Genesis Navigation Updater, then install again.
 
 ## The Leafia kit (run from a USB drive through NEMESIS)
 

@@ -43,7 +43,11 @@ if [ -n "$EV6_TEST_ROOT" ]; then log "test mode - not rebooting"; exit 0; fi
 log "all parts installed ($MODE mode: $PARTS) - rebooting"
 retire_usb_descriptor
 if [ "$MODE" = basic ]; then
-    toast "Installed wireless Android Auto (basic mode). Turn-by-turn and wireless CarPlay need a build for this car: please share the report saved on the USB drive. Restarting now."
+    if [ -n "$MODE_UPDATE" ]; then
+        toast "Installed wireless Android Auto (basic mode). For turn-by-turn and wireless CarPlay, update the head unit to its newest software, then install again. Restarting now."
+    else
+        toast "Installed wireless Android Auto (basic mode). Turn-by-turn and wireless CarPlay need a build for this car: please share the report saved on the USB drive. Restarting now."
+    fi
 else
     toast "Installed. Restarting now - you can remove the USB drive."
 fi
