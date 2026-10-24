@@ -100,13 +100,18 @@ clean_build() {
 }
 
 # build_optional: the fixes in patches/common/optional, for units whose stock file
-# matches; anything else is skipped and its part has nothing to install
+# matches. A file can have one line per stock version: the first that fits is built
+# and the rest are passed over. Anything that fits no line is skipped, and its part
+# has nothing to install.
 build_optional() {
-    local _part _kind _name _patch _want
+    local _part _kind _name _patch _want _done=" "
     [ -s patches/common/optional ] || return 0
     while read -r _part _kind _name _patch _want; do
         case "$_part" in ''|\#*) continue ;; esac
-        if ! build_one "$_part" "$_kind" "$_name" "$_patch" "$_want" optional; then
+        case "$_done" in *" $_part/$_name "*) continue ;; esac
+        if build_one "$_part" "$_kind" "$_name" "$_patch" "$_want" optional; then
+            _done="$_done$_part/$_name "
+        else
             rm -f "$BUILD_DIR/$_part/$_name.apk" "$BUILD_DIR/$_part/$_name" 2>/dev/null
         fi
     done < patches/common/optional

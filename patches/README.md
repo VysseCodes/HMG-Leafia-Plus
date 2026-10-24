@@ -45,7 +45,16 @@ Ported this way, the Ioniq 5 comes out byte for byte identical to its hand-made 
 
 Fixes that aren't tied to one car's projection apps, listed in `common/optional` in the manifest's line format. The head unit applies each one only when its stock file is the exact one the `.lpd` was made from; otherwise it logs a skip and the install carries on.
 
-- `HKMC_BtSettings.menu.lpd` (part `5_menu`): with our wireless features on, Settings > Phone Projection would open the wireless projection page, which has no CarPlay split-screen option and lists no phones paired through our bridge. On US/Canada units this keeps it on Device Connections, as on stock US firmware. Made from the EV6 260507 stock app: deodex `HKMC_BtSettings.odex` (`baksmali x -a 18`, colon-separated BOOTCLASSPATH), add the region check before the wireless-feature check in `BluetoothSettings`, `smali a --api 18 -j 1`, then `tools/mkdelta.py <stock odex> <new classes.dex> common/HKMC_BtSettings.menu.lpd`; the md5 is that of `lpatch zipadd <stock apk> <rebuilt dex>`.
+- `HKMC_BtSettings.menu.<stock md5 prefix>.lpd` (part `5_menu`), one per stock version of the Bluetooth settings app: with our wireless features on, Settings > Phone Projection would open the wireless projection page, which has no CarPlay split-screen option and lists no phones paired through our bridge. On US/Canada units this keeps it on Device Connections, as on stock US firmware. Make one for a car with `tools/mkmenu.py <stock dir>` (it adds the line here); the unit uses the first line whose stock file it has.
+
+## Stock files from an official update
+
+A port kit's `private/stock/` has the files a car's patches are made from. When a feature needs a stock file the kits didn't collect, it can come from the car's official update instead (the same public download the Navigation Updater uses):
+
+1. Download the model's `system_package_*.tar` (from its update package).
+2. `tools/fw-extract.sh <system_package_*.tar> <keys dir> <out dir>` decrypts its system image with the model's key files from a kit's `private/keys/` (`image.dat`, `iv.dat`) and writes a stock tree laid out like `private/stock/`, framework included.
+
+Update packages and key files stay private: never commit or post them.
 
 ## Making a set by hand
 

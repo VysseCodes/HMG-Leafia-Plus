@@ -41,6 +41,8 @@ tools/build-package.sh                       # dist/HMG_Leafia_Plus_Wireless_Car
 tools/build-kit.sh [quick|standard|port|full]  # dist/leafia-kit*.zip (default: standard)
 tools/lpatch/build.sh                        # lpatch (ARM) and lpatch-host
 src/ev6aac/build.sh                          # libev6aac.so (CLANG=clang-18 for a byte-identical build)
+tools/fw-extract.sh <system_package tar> <keys dir> <out dir>   # stock tree from an official update (private)
+tools/mkmenu.py <stock dir>                  # the Phone Projection menu fix for one car
 ```
 
 Make a recipe from a stock/patched library pair:

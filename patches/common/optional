@@ -4,5 +4,5 @@
 # HKMC_BtSettings: on US/Canada units, Settings > Phone Projection opens Device
 # Connections (CarPlay split screen, connected phones) as on stock US firmware,
 # instead of the wireless projection page our wireless features would switch it to.
-# Made from the EV6 260507 stock app.
-5_menu app HKMC_BtSettings common/HKMC_BtSettings.menu.lpd 93ecaa97597a79be2a10728e45c72b33
+# One line per stock version (tools/mkmenu.py); the unit uses the first that fits.
+5_menu app HKMC_BtSettings common/HKMC_BtSettings.menu.9096dec5.lpd 93ecaa97597a79be2a10728e45c72b33
