@@ -48,7 +48,16 @@ See the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/). The
 
 ## The Leafia kit (run from a USB drive through NEMESIS)
 
-One read-only kit (`kits/leafia`, download: [leafia-kit.zip](https://vyssecodes.github.io/HMG-Leafia-Plus/downloads/leafia-kit.zip)) covers checking a car, reporting a problem and porting to a new car. It writes `LEAFIA/` on the drive:
+One read-only kit (`kits/leafia`) covers checking a car, reporting a problem and porting to a new car. It comes in four sizes, built from the same source; each download carries a `LEAFIA-LEVEL` file that sets how much it collects:
+
+| Download | Collects | Use it for |
+|---|---|---|
+| [leafia-kit-quick.zip](https://vyssecodes.github.io/HMG-Leafia-Plus/downloads/leafia-kit-quick.zip) | `public/` only | checking a car (seconds) |
+| [leafia-kit.zip](https://vyssecodes.github.io/HMG-Leafia-Plus/downloads/leafia-kit.zip) | + `private/logs` (latest crash records) and `private/keys` | reporting a problem |
+| [leafia-kit-port.zip](https://vyssecodes.github.io/HMG-Leafia-Plus/downloads/leafia-kit-port.zip) | + `private/stock` (~90 MB) | adding a new car |
+| [leafia-kit-full.zip](https://vyssecodes.github.io/HMG-Leafia-Plus/downloads/leafia-kit-full.zip) | + every crash record | deep debugging, when asked |
+
+It writes `LEAFIA/` on the drive:
 
 | Folder | Contents | Share |
 |---|---|---|

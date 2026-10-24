@@ -2,7 +2,13 @@
 # HMG Leafia Plus kit - READ ONLY. Changes nothing on the car.
 #
 # One kit for everything: checking compatibility, reporting a problem, and
-# porting the package to a new car. Writes LEAFIA/ on this USB drive:
+# porting the package to a new car. How much it collects is set by the file
+# LEAFIA-LEVEL next to this script (each download ships with one):
+#   quick     public/ only
+#   standard  + private/logs (latest crash records) and private/keys  (default)
+#   port      + private/stock
+#   full      + every crash record (as does an empty ALL-CRASHES file)
+# Writes LEAFIA/ on this USB drive:
 #
 #   public/          safe to post on a GitHub issue
 #     LEAFIA-REPORT.txt  firmware ids, checksums, patch checks (drop it on the
@@ -24,6 +30,9 @@ export PATH=/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
 export LD_LIBRARY_PATH=/vendor/lib:/system/lib
 
 KIT=$(pwd)
+LEVEL=standard
+[ -f "$KIT/LEAFIA-LEVEL" ] && read -r LEVEL < "$KIT/LEAFIA-LEVEL"
+case "$LEVEL" in quick|standard|port|full) ;; *) LEVEL=standard ;; esac
 OUT=$KIT/LEAFIA
 PUB=$OUT/public
 PRIV=$OUT/private
@@ -34,12 +43,18 @@ TMP=/data/nemesis/leafia-kit
 N=/data/nemesis
 PKG=wireless.carplay.aa
 rm -r "$OUT" 2>/dev/null
-mkdir -p "$PUB/logs" "$LOGS/nemesis-logs" "$LOGS/tombstones" "$LOGS/dropbox" "$KEYS" \
-    "$STOCK/framework" "$STOCK/lib" "$STOCK/app" "$STOCK/etc/permissions" "$STOCK/etc/wifi" "$STOCK/onebin" || exit 1
+mkdir -p "$PUB/logs" || exit 1
+if [ $LEVEL != quick ]; then
+    mkdir -p "$LOGS/nemesis-logs" "$LOGS/tombstones" "$LOGS/dropbox" "$KEYS" || exit 1
+fi
+if [ $LEVEL = port ] || [ $LEVEL = full ]; then
+    mkdir -p "$STOCK/framework" "$STOCK/lib" "$STOCK/app" "$STOCK/etc/permissions" "$STOCK/etc/wifi" "$STOCK/onebin" || exit 1
+fi
 REPORT=$PUB/LEAFIA-REPORT.txt
 SUM=$PUB/summary.txt
 COLLECT=$PRIV/collected.txt
-: > "$REPORT" && : > "$SUM" && : > "$COLLECT" || exit 1
+: > "$REPORT" && : > "$SUM" || exit 1
+[ $LEVEL != quick ] && { : > "$COLLECT" || exit 1; }
 
 rsay() { echo "$1" >> "$REPORT"; }
 say() { echo "$1" >> "$SUM"; }
@@ -123,6 +138,7 @@ rsay "end"
 
 # ===== public: problem summary
 say "leafia-support 1"
+say "kit level: $LEVEL"
 say "date $(date)"
 say "uptime $(cat /proc/uptime 2>/dev/null)"
 say "android_up sys.boot_completed=$(getprop sys.boot_completed 2>/dev/null)"
@@ -244,6 +260,7 @@ for _l in $PKG wireless.projection projection.tbt wireless.carplay.bt carplay.wi
 done
 
 
+if [ $LEVEL != quick ]; then
 # ===== private: logs first, while they still cover the problem
 # ---- private: may hold phone names, Bluetooth addresses or commands
 copy_file $N/nemesis.log "$LOGS/nemesis.log"
@@ -283,7 +300,7 @@ logcat -d -v time -s Tethering:V WifiStateMachine:V SoftApStateMachine:V WifiSer
 # tombstones are ~1 MB each). An empty file named ALL-CRASHES next to this
 # script collects every one. The public summary still lists all their names.
 ALL_CRASHES=0
-[ -f "$KIT/ALL-CRASHES" ] && ALL_CRASHES=1
+[ -f "$KIT/ALL-CRASHES" ] || [ $LEVEL = full ] && ALL_CRASHES=1
 is_crash() { case "$1" in *crash@*|*anr@*|*TOMBSTONE@*|*watchdog@*) return 0 ;; esac; return 1; }
 # a dropbox record's name is <tag>@<milliseconds>.txt[.gz]: _t gets its seconds
 # (parameter expansion only, no subshell per record: there can be thousands)
@@ -337,13 +354,16 @@ for _f in /data/system/dropbox/*; do
     fi
 done
 if [ $ALL_CRASHES = 1 ]; then
-    echo "all crash records collected (ALL-CRASHES found)" > "$LOGS/crash-selection.txt"
+    echo "all crash records collected (full kit or ALL-CRASHES file)" > "$LOGS/crash-selection.txt"
 else
     echo "crash records: dropbox from the $_win s before the newest record ($_last), tombstones from ${_newest%% *}; add an empty ALL-CRASHES file next to NEMESIS.sh for all of them" > "$LOGS/crash-selection.txt"
 fi
 copy_file /data/anr/traces.txt "$LOGS/anr-traces.txt"
 
 
+fi   # private logs
+
+if [ $LEVEL = port ] || [ $LEVEL = full ]; then
 # ===== private: stock files for porting, and key files
 echo "collected $(date) product=$(getprop ro.build.product) device=$(getprop ro.product.device)" >> "$COLLECT"
 # framework: needed to rebuild the projection apps safely for this firmware
@@ -373,12 +393,16 @@ grab /system/build.prop "$STOCK/"
 pm list features > "$STOCK/features.txt" 2>&1
 
 
+fi   # stock files
+
+if [ $LEVEL != quick ]; then
 # private/keys: firmware decryption key files (per model, not per car)
 for f in /system/etc/recovery-resource.dat /system/etc/image.dat /system/etc/iv.dat /etc/image.dat /etc/iv.dat; do
     [ -f "$f" ] && grab "$f" "$KEYS/"
 done
 
 echo "Firmware key files. Send them privately, only when a maintainer asks. Never post them." > "$KEYS/README.txt"
+fi   # key files
 
 say ""
 say "end"

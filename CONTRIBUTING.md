@@ -38,7 +38,7 @@ Security problems go through [SECURITY.md](SECURITY.md), not public issues.
 
 ```sh
 tools/build-package.sh                       # dist/HMG_Leafia_Plus_Wireless_CarPlay_AA.zip
-tools/build-kit.sh                           # dist/leafia-kit.zip
+tools/build-kit.sh [quick|standard|port|full]  # dist/leafia-kit*.zip (default: standard)
 tools/lpatch/build.sh                        # lpatch (ARM) and lpatch-host
 src/ev6aac/build.sh                          # libev6aac.so (CLANG=clang-18 for a byte-identical build)
 ```
@@ -71,7 +71,7 @@ unit's shell lacks commands your desktop shell has (`printf`, `tail`, ...).
 
 ## Adding a car
 
-1. The owner runs the Leafia kit and sends its `LEAFIA/private` folder privately.
+1. The owner runs the **port** kit (`leafia-kit-port.zip`) and sends its `LEAFIA/private` folder privately.
 2. `tools/port.py` ports the app changes to it and writes `patches/<car>/` plus its `cars` line
    (`tools/port.py --help`).
 3. Mock-test it with the owner's `share/` folder.
@@ -101,7 +101,7 @@ These keep cars safe and the project legal:
 - Describe the change in plain words, and say what you tested: which cars, mock or real.
 - CI must pass. For a first-time contributor, a maintainer approves the workflow run.
 - CI only runs the checks for what you changed (lpatch, `libev6aac.so`, the kit, the package); a docs-only change runs none. Changing a workflow runs them all.
-- If you change the kit, rebuild it: `tools/build-kit.sh docs/downloads/leafia-kit.zip && tools/check-downloads.sh --fix`.
+- If you change the kit, rebuild every published size: `tools/check-downloads.sh --fix`.
 - Don't put links to AI chat sessions in commits or PR descriptions.
 
 ## Releases
@@ -114,7 +114,7 @@ git tag -a v1.2.0 -m "v1.2.0" && git push origin v1.2.0
 ```
 
 `.github/workflows/release.yml` then runs all of CI and, only if everything passes, publishes a GitHub
-Release with the package, the Leafia kit and `SHA256SUMS`, built from exactly that commit (the package's
+Release with the package, the four Leafia kit sizes and `SHA256SUMS`, built from exactly that commit (the package's
 build stamp names the version). Tags not on `main` are refused.
 
 By contributing you agree your work is licensed under the project's [GPL-3.0](LICENSE).

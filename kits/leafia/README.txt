@@ -1,6 +1,10 @@
 HMG Leafia Plus kit (read-only) - one kit for checking your car, reporting a
 problem, and helping port the package to a new car
 
+This copy's size is in LEAFIA-LEVEL: quick (public report only), standard
+(+ logs and key files), port (+ stock system files, ~90 MB) or full (+ every
+crash record). Use the one a maintainer asked for.
+
 1. Copy everything in this zip to the root of an exFAT/FAT32 USB drive with
    at least 200 MB free. No other NEMESIS files on the drive.
 2. Reporting a problem? Make it happen once just before (for CarPlay or

@@ -7,7 +7,7 @@ body:
       value: |
         Thanks for reporting! The **Leafia kit** collects everything we need in 1–2 minutes and changes nothing on the car:
 
-        1. Download the [Leafia kit](https://vyssecodes.github.io/HMG-Leafia-Plus/downloads/leafia-kit.zip) and unzip it to the root of a USB drive with at least 200 MB free.
+        1. Download the [Leafia kit](https://vyssecodes.github.io/HMG-Leafia-Plus/downloads/leafia-kit.zip) (standard) and unzip it to the root of a USB drive.
         2. If the problem is with CarPlay or Android Auto, try it once first so the logs have something in them. If it crashed, run the kit **before turning the car off**: the Android log is lost when the car powers down.
         3. Car on, plug in the drive, tap **Yes**, and wait for the success message.
         4. Zip `LEAFIA/public` and attach it below.

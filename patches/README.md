@@ -23,7 +23,7 @@ An `.lpd` holds the md5 of the exact stock file it needs and of the result. `lpa
 
 ## Adding a car
 
-Have the owner run the Leafia kit on the new car and send its `LEAFIA/private` folder privately (`stock/` holds the projection apps and the framework), then:
+Have the owner run the **port** Leafia kit (`leafia-kit-port.zip`) on the new car and send its `LEAFIA/private` folder privately (`stock/` holds the projection apps and the framework), then:
 
 ```
 tools/port.py --variant <name> --prefix <product prefix> --name "<car name>" --new-stock <dir> --new-fw <LEAFIA/private/stock/framework> --ref-stock <EV6 stock dir> --ref-fw <EV6 framework> --ref-builds <builds dir> --out-builds <dir>

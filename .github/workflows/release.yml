@@ -3,7 +3,7 @@ name: Release
 # Publishes a GitHub Release when a version tag is pushed:
 #   git tag -a v1.2.0 -m "v1.2.0" && git push origin v1.2.0
 # CI runs in full first; nothing is published unless every check passes. The
-# release carries the installable package, the Leafia kit and SHA256SUMS, all
+# release carries the installable package, the four Leafia kit sizes and SHA256SUMS, all
 # built from exactly the tagged commit.
 
 on:
@@ -41,7 +41,10 @@ jobs:
         run: |
           mkdir -p release
           ./tools/build-package.sh "release/HMG_Leafia_Plus_Wireless_CarPlay_AA-$GITHUB_REF_NAME.zip"
-          ./tools/build-kit.sh "release/leafia-kit-$GITHUB_REF_NAME.zip"
+          for lv in quick standard port full; do
+            n=leafia-kit-$lv; [ $lv = standard ] && n=leafia-kit
+            ./tools/build-kit.sh $lv "release/$n-$GITHUB_REF_NAME.zip"
+          done
           unzip -p "release/HMG_Leafia_Plus_Wireless_CarPlay_AA-$GITHUB_REF_NAME.zip" packages/wireless.carplay.aa.zip \
             | python3 -c "import io,sys,zipfile; print('package BUILD:', zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())).read('BUILD').decode().strip())"
           (cd release && sha256sum -- *.zip > SHA256SUMS)
@@ -58,7 +61,7 @@ jobs:
           2. Unzip **HMG_Leafia_Plus_Wireless_CarPlay_AA-$GITHUB_REF_NAME.zip** onto the root of an empty exFAT or FAT32 USB drive.
           3. Car on, plug in the drive and confirm the install. The head unit restarts when it's done; remove the drive.
 
-          Check your car first on the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/). Something wrong? Run **leafia-kit-$GITHUB_REF_NAME.zip** and open an issue with the problem form. Uninstall any time from NEMESIS Manager; every file goes back to stock.
+          Check your car first on the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/). Something wrong? Run **leafia-kit-$GITHUB_REF_NAME.zip** and open an issue with the problem form. (Other kit sizes: **quick** to check a car, **port** to add a new car, **full** for every crash record.) Uninstall any time from NEMESIS Manager; every file goes back to stock.
 
           Verify downloads with \`sha256sum -c SHA256SUMS\`.
           EOF
