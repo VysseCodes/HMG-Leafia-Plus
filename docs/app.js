@@ -44,10 +44,15 @@ function findVariant(r) {
   return DB.variants.find((v) => [].concat(v.product_prefix).some((p) => product.startsWith(p))) || null;
 }
 
+// a file matches when it is the stock one, or what our package installs on this car
+// (an app we rebuilt gets its .odex written on the unit, so then any .odex goes)
+function isBuilt(r, v, f) { return !!(v && v.built && v.built[f] && v.built[f].includes(r.files[f])); }
 function filesMatch(r, v, list) {
   if (!v) return false;
-  return list.every((f) => v.stock[f] && r.files[f] === v.stock[f]);
+  return list.every((f) => (v.stock[f] && r.files[f] === v.stock[f]) || isBuilt(r, v, f)
+    || (f.endsWith(".odex") && isBuilt(r, v, f.replace(/\.odex$/, ".apk"))));
 }
+function leafiaInstalled(r, v) { return !!(v && v.built && Object.keys(v.built).some((f) => isBuilt(r, v, f))); }
 
 function recipeState(r, id) {
   const res = r.results[id];
@@ -109,6 +114,7 @@ function verdict(r) {
   const allGood = parts.every((p) => p.state === "ok" || p.state === "native");
   let overall;
   if (!r.valid) overall = ["no", "This doesn't look like an HMG Leafia Plus report."];
+  else if (allGood && leafiaInstalled(r, v)) overall = ["ok", "HMG Leafia Plus is already installed on this unit, with its build for the " + v.name + "."];
   else if (v && !(r.props["ro.build.product"] || "").endsWith(v.firmware)) overall = ["build", "This head unit runs firmware "
     + (r.props["ro.build.product"] || "?").split(".").pop() + ". We only support each car's newest firmware (" + v.firmware.split(".").pop()
     + " for the " + v.name + "): update the head unit's software, then check again. Until then, the package installs wireless Android Auto (basic mode)."];

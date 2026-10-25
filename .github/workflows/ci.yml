@@ -69,7 +69,7 @@ jobs:
           out lpatch  '^(tools/lpatch/|recipes/|tools/mkdelta\.py|tools/mkrecipe\.py)'
           out ev6aac  '^(src/ev6aac/|packages/wireless-carplay-aa/comp/4_audio/files/libev6aac\.so)'
           out kits    '^(kits/|docs/downloads/|recipes/|tools/build-kit\.sh|tools/check-downloads\.sh|tools/lpatch/lpatch$)'
-          out package '^(packages/|patches/|recipes/|tools/build-package\.sh|tools/lpatch/lpatch$)'
+          out package '^(packages/|patches/|recipes/|tools/build-package\.sh|tools/lpatch/lpatch$|tools/compat-built\.py|docs/data/compat\.json)'
 
   build-lpatch:
     name: Build and Test Lpatch
@@ -169,6 +169,10 @@ jobs:
       - name: Build package
         run: |
           ./tools/build-package.sh
+
+      - name: Compatibility page knows every installed build
+        # docs/data/compat.json "built" must match the patch manifests (tools/compat-built.py)
+        run: python3 tools/compat-built.py --check
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: github.event_name == 'push'
