@@ -41,6 +41,7 @@ The Korean sets (`patches/dl3hev`, `patches/neev_kr`) are kept but not in `cars`
 | Prefix | Set | Car | Notes |
 |---|---|---|---|
 | `CVEV.USA.` | ev6 | Kia EV6 US 260507 | reference car |
+| `CVEV.CAN.` | ev6_ca | Kia EV6 Canada 260206 | same projection code (every `.odex`, AA lib, CarPlay libs) as US 260507; only the DiPO/GPM APKs differ, so its manifest points at the `ev6/` patches; not yet tested on a real car |
 | `NEEV.USA.` / `NEEV23.USA.` | neev | Hyundai Ioniq 5 US 2022/2023 | app code identical to EV6, different APK wrappers |
 
 ## Gotchas learned the hard way

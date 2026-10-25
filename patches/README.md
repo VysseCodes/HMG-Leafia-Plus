@@ -5,6 +5,7 @@ One folder per car, plus `common/`. The head unit rebuilds the modified projecti
 | Folder | Car | Firmware |
 |---|---|---|
 | `ev6/` | Kia EV6, US (`CVEV.USA.*`) | 260507 |
+| `ev6_ca/` | Kia EV6, Canada (`CVEV.CAN.*`): same code as the US EV6, so its manifest uses the `ev6/` patches on Canada's own APKs | 260206 |
 | `neev/` | Hyundai Ioniq 5, US (`NEEV.USA.*`, `NEEV23.USA.*`) | 260507 |
 | `dl3hev/` | Kia K5 Hybrid, Korea: kept, not in `cars` (no Korean unit has shown Wi-Fi hardware) | 260902 |
 | `neev_kr/` | Hyundai Ioniq 5, Korea: kept, not in `cars` (as above) | 260902 |

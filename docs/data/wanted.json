@@ -289,19 +289,6 @@
   },
   {
    "brand": "Kia",
-   "model": "EV6",
-   "variants": [
-    "Standard"
-   ],
-   "years": "2022",
-   "regions": [
-    "CA"
-   ],
-   "firmware": "CA 260206",
-   "priority": false
-  },
-  {
-   "brand": "Kia",
    "model": "Forte",
    "variants": [
     "Standard"

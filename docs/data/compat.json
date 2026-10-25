@@ -31,7 +31,8 @@
       "built": {
         "/system/app/HKMC_BtSettings.apk": [
           "93ecaa97597a79be2a10728e45c72b33",
-          "cd98c36db6857ed174757c6010a36494"
+          "cd98c36db6857ed174757c6010a36494",
+          "e7c90e78f45f7e6b9c90ddd7a238b566"
         ],
         "/system/app/HKMC_DiPO.apk": [
           "c40739d474cd39ff3625ed73bfcd5b1c",
@@ -39,6 +40,55 @@
         ],
         "/system/app/HKMC_GPM.apk": [
           "329946b20cd51855d7da6056dbfbc4db"
+        ],
+        "/system/app/HKMC_Navi_ExSL.apk": [
+          "496ef30d2c7f8260f25bd14d62c646c2"
+        ],
+        "/system/app/Iap2ServerApp.apk": [
+          "75d7fea4d2009be6aa5c840118f58c94",
+          "7e90fa7d8a161ade71e11dc15e56c410"
+        ],
+        "/system/lib/libautoreceiver_infobank.so": [
+          "c08410a8d32a615b1aa805cd8a243d52"
+        ]
+      }
+    },
+    {
+      "id": "kia-ev6-ca-260206",
+      "name": "Kia EV6",
+      "region": "Canada",
+      "chip": "TCC803x",
+      "product_prefix": "CVEV.CAN.",
+      "years": "2022–2024",
+      "firmware": "V015.011.260206",
+      "status": "testing",
+      "verified": [
+        "Sandbox install and uninstall on this firmware's own files"
+      ],
+      "notes": "Canada's 260206 runs the same projection code as the US 260507, so it uses the EV6 build; awaiting the first real-car test.",
+      "stock": {
+        "/system/app/HKMC_DiPO.apk": "e804f5785698387e27fa8875d1db625f",
+        "/system/app/HKMC_DiPO.odex": "a565e180fdb0b73d6520f28c91cdba63",
+        "/system/app/HKMC_GPM.apk": "9e06512ccc9090338082ad38c74a223d",
+        "/system/app/HKMC_GPM.odex": "96cd7c27a9db19acb3900f21f57ea9f0",
+        "/system/app/HKMC_Navi_ExSL.apk": "19559e742b1d21550aa8f0324e8e6d36",
+        "/system/app/HKMC_Navi_ExSL.odex": "9cf41f78ce312b3762b354714d12eec3",
+        "/system/app/Iap2ServerApp.apk": "fde208439f993986a60396e759797a01",
+        "/system/app/Iap2ServerApp.odex": "03950e4b691f846e5478a5a69818c65e",
+        "/system/lib/libautoreceiver_infobank.so": "48ee793af8b86052503b8c952b034731"
+      },
+      "built": {
+        "/system/app/HKMC_BtSettings.apk": [
+          "93ecaa97597a79be2a10728e45c72b33",
+          "cd98c36db6857ed174757c6010a36494",
+          "e7c90e78f45f7e6b9c90ddd7a238b566"
+        ],
+        "/system/app/HKMC_DiPO.apk": [
+          "08b5e445074a8a752b81685ea26e2bd7",
+          "2305945c78c415995b44ba76a1467210"
+        ],
+        "/system/app/HKMC_GPM.apk": [
+          "00190bafc073e0a96e43fa87d9930b7b"
         ],
         "/system/app/HKMC_Navi_ExSL.apk": [
           "496ef30d2c7f8260f25bd14d62c646c2"
@@ -84,7 +134,8 @@
       "built": {
         "/system/app/HKMC_BtSettings.apk": [
           "93ecaa97597a79be2a10728e45c72b33",
-          "cd98c36db6857ed174757c6010a36494"
+          "cd98c36db6857ed174757c6010a36494",
+          "e7c90e78f45f7e6b9c90ddd7a238b566"
         ],
         "/system/app/HKMC_DiPO.apk": [
           "589e6e7ae6ac05b1865e8e4c0868aed1",

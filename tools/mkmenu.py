@@ -13,8 +13,8 @@ that choice, so US/Canada units keep opening Device Connections (the stock US
 behaviour); other regions are unchanged. The edit is found by its structure, not
 by label names, and the script stops unless the code is exactly the known shape.
 
-Writes patches/common/HKMC_BtSettings.menu.<stock md5 prefix>.lpd and adds its line
-to patches/common/optional (replacing an older line for the same stock file).
+Writes patches/common/HKMC_BtSettings.menu.<stock md5 prefix>.lpd and adds its line to
+patches/common/optional, one line per stock APK (the same code patch can serve several).
 The head unit applies whichever line matches its own stock app.
 
 Needs: java with baksmali/smali 2.5.2 (~/.local/share/smali, or BAKSMALI/SMALI),
@@ -122,7 +122,9 @@ def main():
 
     opt = os.path.join(common, 'optional')
     lines = open(opt).read().splitlines() if os.path.exists(opt) else []
-    lines = [l for l in lines if ('common/%s ' % name) not in l]
+    # one line per stock APK: the same code patch can serve several APKs (e.g. the EV6 in the US
+    # and Canada), each with its own expected result, so only an identical line is replaced
+    lines = [l for l in lines if l != line]
     lines.append(line)
     open(opt, 'w').write('\n'.join(lines) + '\n')
     print(line)
