@@ -1,13 +1,13 @@
 {
-  "updated": "2026-10-23",
+  "updated": "2026-10-25",
   "repo": "VysseCodes/HMG-Leafia-Plus",
   "variants": [
     {
       "id": "kia-ev6-us-260507",
       "name": "Kia EV6",
-      "region": "US / Canada",
+      "region": "US",
       "chip": "TCC803x",
-      "product_prefix": "CVEV.",
+      "product_prefix": "CVEV.USA.",
       "years": "2022–2024",
       "firmware": "V015.012.260507",
       "status": "supported",
@@ -42,53 +42,6 @@
         ],
         "/system/app/HKMC_Navi_ExSL.apk": [
           "496ef30d2c7f8260f25bd14d62c646c2"
-        ],
-        "/system/app/Iap2ServerApp.apk": [
-          "75d7fea4d2009be6aa5c840118f58c94",
-          "7e90fa7d8a161ade71e11dc15e56c410"
-        ],
-        "/system/lib/libautoreceiver_infobank.so": [
-          "c08410a8d32a615b1aa805cd8a243d52"
-        ]
-      }
-    },
-    {
-      "id": "hyundai-ioniq5-kr-v039",
-      "name": "Hyundai Ioniq 5",
-      "region": "Korea",
-      "chip": "TCC803x",
-      "product_prefix": "NEEV.KOR.",
-      "firmware": "V039.001.260902",
-      "status": "testing",
-      "verified": [
-        "Sandbox install and uninstall on this unit's own files"
-      ],
-      "notes": "Installs, but on the first real car wireless CarPlay never connected: the unit showed no Wi-Fi interface at all. Checking whether Korean Ioniq 5 units have Wi-Fi hardware (the Korean K5 doesn't).",
-      "stock": {
-        "/system/app/HKMC_GPM.apk": "5fe8335cf37c21d35a177fe766ca4451",
-        "/system/app/HKMC_GPM.odex": "c38a7fd61f90973625401501215375db",
-        "/system/app/HKMC_DiPO.apk": "011ca864de4c659654d4f3b8ae940c35",
-        "/system/app/HKMC_DiPO.odex": "3b26cdcbf3c43f75623311f2bdfc3471",
-        "/system/app/Iap2ServerApp.apk": "fde208439f993986a60396e759797a01",
-        "/system/app/Iap2ServerApp.odex": "a672fd0e0070414f2eb70a2807117a6f",
-        "/system/app/HKMC_Navi_ExSL.apk": "2d027541d6847696833de77c45614b1a",
-        "/system/app/HKMC_Navi_ExSL.odex": "8d6fa29fb222b1bb75f8fdbc3aab48eb",
-        "/system/lib/libautoreceiver_infobank.so": "48ee793af8b86052503b8c952b034731"
-      },
-      "built": {
-        "/system/app/HKMC_BtSettings.apk": [
-          "93ecaa97597a79be2a10728e45c72b33",
-          "cd98c36db6857ed174757c6010a36494"
-        ],
-        "/system/app/HKMC_DiPO.apk": [
-          "1bb1bf51603d9b51e8cc9dbbc86ab076",
-          "c326ac37ea82e2ae0093cf5f1ea79428"
-        ],
-        "/system/app/HKMC_GPM.apk": [
-          "a2f0f7b110ab77d3992e0063e98338d4"
-        ],
-        "/system/app/HKMC_Navi_ExSL.apk": [
-          "bf2a92af59b8b041f61d44f5477f8f06"
         ],
         "/system/app/Iap2ServerApp.apk": [
           "75d7fea4d2009be6aa5c840118f58c94",
@@ -142,56 +95,6 @@
         ],
         "/system/app/HKMC_Navi_ExSL.apk": [
           "496ef30d2c7f8260f25bd14d62c646c2"
-        ],
-        "/system/app/Iap2ServerApp.apk": [
-          "75d7fea4d2009be6aa5c840118f58c94",
-          "7e90fa7d8a161ade71e11dc15e56c410"
-        ],
-        "/system/lib/libautoreceiver_infobank.so": [
-          "c08410a8d32a615b1aa805cd8a243d52"
-        ]
-      }
-    },
-    {
-      "id": "kia-k5-hev-kr-v039",
-      "name": "Kia K5 Hybrid (DL3, incl. 2022)",
-      "region": "Korea",
-      "chip": "TCC897x",
-      "product_prefix": [
-        "DL3HEV.KOR",
-        "DL3HEV22.KOR"
-      ],
-      "firmware": "V039.001.260902",
-      "status": "no-wifi",
-      "verified": [
-        "Sandbox install and uninstall on this unit's own files"
-      ],
-      "notes": "No wireless projection: this unit's Wi-Fi chip never appears on its bus (the driver powers it up and gives up), so there is no Wi-Fi hardware to use. Wired CarPlay and Android Auto are unaffected.",
-      "stock": {
-        "/system/app/HKMC_GPM.apk": "4805d9e0cafbbb4f0f622e033d4359c4",
-        "/system/app/HKMC_GPM.odex": "def8588772f648a6acedbed8ecdcd5d8",
-        "/system/app/HKMC_DiPO.apk": "ad9859a698f0ac3fbc1093ac21f61dbf",
-        "/system/app/HKMC_DiPO.odex": "b6c36634ebf49b45d84798b89cbfbf67",
-        "/system/app/Iap2ServerApp.apk": "fde208439f993986a60396e759797a01",
-        "/system/app/Iap2ServerApp.odex": "1252fd62faecba96941f2177bf36eb8b",
-        "/system/app/HKMC_Navi_ExSL.apk": "278641941999ea3b288ceae97a846f30",
-        "/system/app/HKMC_Navi_ExSL.odex": "bd758e94e85dc4e79ba13cd4a7b0f1fe",
-        "/system/lib/libautoreceiver_infobank.so": "48ee793af8b86052503b8c952b034731"
-      },
-      "built": {
-        "/system/app/HKMC_BtSettings.apk": [
-          "93ecaa97597a79be2a10728e45c72b33",
-          "cd98c36db6857ed174757c6010a36494"
-        ],
-        "/system/app/HKMC_DiPO.apk": [
-          "485b12e96b6ff6e88cbfd5cc01de7cd5",
-          "f02aa12337d9814d44282d5b88ff4001"
-        ],
-        "/system/app/HKMC_GPM.apk": [
-          "08a29f343fbdb2abc7e11eb8a5698653"
-        ],
-        "/system/app/HKMC_Navi_ExSL.apk": [
-          "ffe7aa183e34beceab9233785857cc62"
         ],
         "/system/app/Iap2ServerApp.apk": [
           "75d7fea4d2009be6aa5c840118f58c94",

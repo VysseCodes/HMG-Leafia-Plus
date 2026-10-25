@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-23",
+ "updated": "2026-10-25",
  "scope": "US and Canada, Gen5W head units (ccNC models excluded)",
  "cars": [
   {
@@ -13,7 +13,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": true
   },
   {
@@ -29,7 +29,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": true,
    "note": "2020–2021: Gen5W on the Electric only; other versions have an older head unit"
   },
@@ -44,7 +44,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": true
   },
   {
@@ -60,7 +60,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": true
   },
   {
@@ -77,7 +77,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": true
   },
   {
@@ -93,7 +93,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": true
   },
   {
@@ -109,7 +109,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": true
   },
   {
@@ -123,7 +123,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": true
   },
   {
@@ -137,7 +137,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   },
   {
@@ -153,7 +153,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   },
   {
@@ -169,7 +169,20 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
+   "priority": false
+  },
+  {
+   "brand": "Hyundai",
+   "model": "Ioniq 5",
+   "variants": [
+    "Standard"
+   ],
+   "years": "2022",
+   "regions": [
+    "CA"
+   ],
+   "firmware": "CA 260206",
    "priority": false
   },
   {
@@ -183,7 +196,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   },
   {
@@ -199,7 +212,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   },
   {
@@ -214,7 +227,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   },
   {
@@ -228,7 +241,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false,
    "note": "2021: Gen5W on the N only; other versions have an older head unit"
   },
@@ -243,7 +256,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   },
   {
@@ -256,7 +269,7 @@
    "regions": [
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507",
    "priority": false,
    "note": "2020: Gen5W on later cars only; earlier ones have an older head unit"
   },
@@ -271,7 +284,20 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
+   "priority": false
+  },
+  {
+   "brand": "Kia",
+   "model": "EV6",
+   "variants": [
+    "Standard"
+   ],
+   "years": "2022",
+   "regions": [
+    "CA"
+   ],
+   "firmware": "CA 260206",
    "priority": false
   },
   {
@@ -285,7 +311,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   },
   {
@@ -299,7 +325,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   },
   {
@@ -313,7 +339,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   },
   {
@@ -328,7 +354,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   },
   {
@@ -342,7 +368,7 @@
     "CA",
     "US"
    ],
-   "firmware": "260507",
+   "firmware": "US 260507 · CA 260206",
    "priority": false
   }
  ]

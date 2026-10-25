@@ -72,7 +72,7 @@ unit's shell lacks commands your desktop shell has (`printf`, `tail`, ...).
 
 ## Adding a car
 
-Only a car's **newest firmware** is supported (currently 260507 in the US and Canada, 260902 in Korea). A report from older firmware gets a request to update the head unit, not a port.
+Only a car's **newest firmware** is supported for its region (currently 260507 in the US, 260206 in Canada). A report from older firmware gets a request to update the head unit, not a port.
 
 1. The owner runs the **port** kit (`leafia-kit-port.zip`) and sends its `LEAFIA/private` folder privately.
 2. `tools/port.py` ports the app changes to it and writes `patches/<car>/` plus its `cars` line

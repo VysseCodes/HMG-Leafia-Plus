@@ -12,7 +12,7 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 
 ## Hard rules
 
-- Only each car's newest firmware is supported (260507 US/Canada, 260902 Korea). Don't port older firmware; ask the owner to update the head unit. On a known car with other firmware the installer falls back to basic mode and says to update (`MODE_UPDATE`).
+- Only each car's newest firmware for its region is supported (US 260507, Canada 260206; each region has its own builds, so `patches/cars` and `compat.json` match the full region, e.g. `CVEV.USA.`). Korea: no Korean car confirmed working (every unit checked had no Wi-Fi hardware), so Korean cars are on no list; reports are still welcome. Don't port older firmware; ask the owner to update the head unit. On a known car with other firmware the installer falls back to basic mode and says to update (`MODE_UPDATE`).
 
 - Never flash MICOM, the bootloader, or modem firmware. Never flash firmware meant for another car.
 - No sending our own CAN frames without a separate review. Vehicle commands only through the stock services (BCMManager etc.), and each new one gets its own review.
@@ -36,12 +36,12 @@ Community tooling for Hyundai/Kia/Genesis **Gen5W** head units (Telechips TCC803
 
 ## Supported cars (patches/cars)
 
+The Korean sets (`patches/dl3hev`, `patches/neev_kr`) are kept but not in `cars`: no Korean unit has shown Wi-Fi hardware.
+
 | Prefix | Set | Car | Notes |
 |---|---|---|---|
-| `CVEV.` | ev6 | Kia EV6 260507 | reference car |
+| `CVEV.USA.` | ev6 | Kia EV6 US 260507 | reference car |
 | `NEEV.USA.` / `NEEV23.USA.` | neev | Hyundai Ioniq 5 US 2022/2023 | app code identical to EV6, different APK wrappers |
-| `DL3HEV.KOR.` / `DL3HEV22.KOR.` | dl3hev | Kia K5 Hybrid Korea 260902 (2022 has identical projection apps) | TCC897x; **no Wi-Fi hardware** (see gotchas): wireless projection impossible, installer refuses; compat status `no-wifi` |
-| `NEEV.KOR.` | neev_kr | Hyundai Ioniq 5 Korea 260902 | ported automatically from an owner's kit; native Wi-Fi CarPlay + converters; first real car (#27) showed no `wlan0` and `wl` finds no adapter, kernel log still needed (TCC803x like the US cars); listed first among the Ioniq 5 lines in `cars` (first match wins); not yet tested on a real car |
 
 ## Gotchas learned the hard way
 
@@ -69,7 +69,7 @@ Telematics lives in `HKMC_TAppService` (system uid). Remote commands arrive over
 
 ## Open threads
 
-- Real-car tests pending: on-unit build package (all cars), CarPlay notice fix, K5 and Korean Ioniq 5 first installs, DiPO reconnect null check (all four sets).
+- Real-car tests pending: on-unit build package (all cars), CarPlay notice fix, DiPO reconnect null check (all four sets).
 - Reassemble deodexed apps with `smali a -j 1 --api 18`: with more threads smali writes a different (equivalent) dex each run.
 - Also seen on the US Ioniq 5: Iap2ServerApp `InitSupportLanguage` index out of range on iAP2 disconnect; `/system` left mounted rw after install (`nemesis remount ro` got EBUSY and the parts ignore it).
 - NEMESIS 1.15 (2026-10-21): checked against its zip/INI code and hook environment; its `carplay.session` package conflicts with ours (in `LEGACY`).

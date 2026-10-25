@@ -1,7 +1,4 @@
 # <ro.build.product prefix> <patch set> <car name>
-CVEV. ev6 Kia EV6
-NEEV.KOR. neev_kr Hyundai Ioniq 5 (Korea)
+CVEV.USA. ev6 Kia EV6 (US)
 NEEV.USA. neev Hyundai Ioniq 5 (US)
 NEEV23.USA. neev Hyundai Ioniq 5 2023 (US)
-DL3HEV.KOR. dl3hev Kia K5 Hybrid (Korea)
-DL3HEV22.KOR. dl3hev Kia K5 Hybrid 2022 (Korea)

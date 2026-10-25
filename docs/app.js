@@ -114,6 +114,7 @@ function verdict(r) {
   const allGood = parts.every((p) => p.state === "ok" || p.state === "native");
   let overall;
   if (!r.valid) overall = ["no", "This doesn't look like an HMG Leafia Plus report."];
+  else if (/\.KOR\./.test(r.props["ro.build.product"] || "")) overall = ["unknown", "Korean head unit: we have yet to confirm a single working Korean car. Every Korean unit checked so far has had no Wi-Fi hardware, which wireless CarPlay and Android Auto need. Please share your report anyway; if this unit has a working Wi-Fi chip, that changes things."];
   else if (allGood && leafiaInstalled(r, v)) overall = ["ok", "HMG Leafia Plus is already installed on this unit, with its build for the " + v.name + "."];
   else if (v && !(r.props["ro.build.product"] || "").endsWith(v.firmware)) overall = ["build", "This head unit runs firmware "
     + (r.props["ro.build.product"] || "?").split(".").pop() + ". We only support each car's newest firmware (" + v.firmware.split(".").pop()
