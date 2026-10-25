@@ -91,4 +91,5 @@ Reports from new cars, real-car tests and code are all welcome: see [CONTRIBUTIN
 
 - HMG Leafia Plus is GPL-3.0 (see `LICENSE`).
 - It runs through [NEMESIS](https://github.com/xwtk/hmg_nemesis) by xwtk, which is AGPL-3.0. Parts derived from NEMESIS packages are listed in `NOTICE.md` and stay under their original licence.
+- Thanks to [W-Floyd](https://github.com/W-Floyd) for their help with this project.
 - Not affiliated with Hyundai, Kia, Genesis, Apple or Google. Modifying your head unit is at your own risk.
