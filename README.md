@@ -37,6 +37,8 @@ Cars without a patch set yet get **basic mode**: only the wireless projection pa
 5. Car on, plug in the drive and confirm the install. The head unit restarts when it's done; remove the drive. The installer renames `NEMESIS.data` to `NEMESIS.data.installed` so it can't run again by accident.
 6. **Uninstall** any time from NEMESIS Manager (Packages → Uninstall), then restart: every file goes back to stock.
 
+**Optional: Wi-Fi client (testing).** By default the head unit's Wi-Fi only runs the hotspot that wireless CarPlay/Android Auto use. To also get the Wi-Fi menu and join a network (for example to reach ADB over your home Wi-Fi), put an empty file named `LEAFIA-WIFI-CLIENT` next to `NEMESIS.data` on the install drive. These units have one Wi-Fi radio, so whether a home network and wireless projection work at the same time is still being tested. Uninstalling turns it off again.
+
 Something wrong? Open an issue with the [problem form](../../issues/new?template=problem.yml); it walks you through the Leafia kit.
 
 ## Packages

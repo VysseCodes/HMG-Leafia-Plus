@@ -444,6 +444,20 @@ hotspot_was_removed() {
     [ -s "$BACKUP_DIR/featurexml.cfg" ] && grep -q '^-.*wifihotspot\.xml' "$BACKUP_DIR/featurexml.cfg"
 }
 
+# Opt-in Wi-Fi client: an empty LEAFIA-WIFI-CLIENT file next to our NEMESIS.data on
+# the install drive. Turns on the Android Wi-Fi feature (Wi-Fi menu, joining a
+# network) and Hyundai's "client + wireless" mode, as the original full wireless
+# setup did, for testing things like ADB over a home network. Whether the client
+# and the projection hotspot work together depends on the unit (one radio).
+wifi_client_wanted() {
+    local _d
+    for _d in /storage/usb0 /storage/usb1 /storage/usb2 /mnt/media_rw/usb0 /mnt/media_rw/usb1 /mnt/media_rw/usb2; do
+        [ -f "$_d/LEAFIA-WIFI-CLIENT" ] || continue
+        grep -q 'wireless\.carplay\.aa\.zip' "$_d/NEMESIS.data" 2>/dev/null && return 0
+    done
+    return 1
+}
+
 kick_apps() {
     am force-stop com.daudio.app.phoneprojection 2>/dev/null || true
     am force-stop com.daudio.app.dipo 2>/dev/null || true
@@ -524,6 +538,13 @@ apply_all() {
     fi
     apply_perm "$AA_XML" || return 1
     apply_perm "$CP_XML" || return 1
+    if wifi_client_wanted; then
+        set_prop_line "$BP" persist.wifi.state 3 || return 1
+        apply_perm "$WIFI_XML" || return 1
+        setprop persist.wifi.state 3 2>/dev/null || log "WARN: setprop persist.wifi.state failed"
+        putline 1 > "$BACKUP_DIR/wifi_client" 2>/dev/null || true
+        log "Wi-Fi client on (LEAFIA-WIFI-CLIENT on the install drive): Wi-Fi menu and client + wireless mode"
+    fi
     # Firmware that removed the hotspot feature (Korean) also lacks the Wi-Fi feature
     # files: add the missing ones there, so the hotspot (and the Wi-Fi chip) can start.
     # US units already have both, and are left as they are.
@@ -535,7 +556,11 @@ apply_all() {
     kick_apps
     rm -f "$BACKUP_DIR/rewrite.tmp" 2>/dev/null || true
     sync
-    log "applied wireless.projection (slim: hotspot projection only, no Wi-Fi client)"
+    if [ -f "$BACKUP_DIR/wifi_client" ]; then
+        log "applied wireless.projection (hotspot projection + Wi-Fi client)"
+    else
+        log "applied wireless.projection (slim: hotspot projection only, no Wi-Fi client)"
+    fi
     return 0
 }
 
