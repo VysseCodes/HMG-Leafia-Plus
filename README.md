@@ -51,6 +51,8 @@ See the [compatibility page](https://vyssecodes.github.io/HMG-Leafia-Plus/). The
 
 **Newest firmware only.** We support each car's newest head unit software for its region: currently **260507** in the US and **260206** in Canada. On older firmware the package installs wireless Android Auto only (basic mode) and asks you to update; use the free Hyundai, Kia or Genesis Navigation Updater, then install again.
 
+**Navigation trims only.** Gen5W is the head unit in trims with built-in navigation. Trims without navigation have a different head unit ("Display Audio", for example "Display Audio Gen2V" on the Tucson) that NEMESIS and this package don't support.
+
 **Korea:** reports from Korean head units are welcome, but we have yet to confirm a single working Korean car. Every Korean unit checked so far has had no Wi-Fi hardware, which wireless CarPlay and Android Auto need.
 
 ## The Leafia kit (run from a USB drive through NEMESIS)
