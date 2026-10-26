@@ -42,7 +42,7 @@ Cars without a patch set yet get **basic mode**: only the wireless projection pa
 
 ### Known quirks
 
-- **Keep the USB drive out while testing.** A USB drive in the port makes the head unit try wired Android Auto, which can block the first wireless connection. Remove the install drive once the head unit restarts, and plug the Leafia kit in only after you've tried CarPlay or Android Auto.
+- **USB drives and Android Auto.** On stock firmware a USB drive in the port makes the head unit try wired Android Auto, which blocks wireless Android Auto until the head unit restarts. Once Leafia is installed, Android Auto ignores USB drives and hubs. Before that (during the install, or on v1.0.4 and older), remove the drive once the head unit restarts.
 - **Switching the car off and on doesn't restart the head unit.** It stays on until the driver's door opens or a timeout passes. For a real restart, switch off, open the driver's door and wait for the screen to go dark, or hold the head unit's power button for about 10 seconds.
 - **Wireless CarPlay or Android Auto won't connect after an install** ("Phone not responding", or the phone joins the car's Wi-Fi and nothing happens): restart the head unit as above. If it still won't connect, pair again from scratch: on the phone forget the car in Android Auto (or CarPlay) settings, Bluetooth and Wi-Fi; on the car delete the phone.
 - **An interrupted install** (car switched off, drive pulled): run the install again. Every run, finished or failed, ends with CarPlay, Android Auto, the navigation and Bluetooth settings running.
