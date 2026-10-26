@@ -1,10 +1,10 @@
 /*
- * libev6aac.so - a real AAC-LC -> PCM AudioConverter for the Gen5W CarPlay stack.
+ * libleafia.so - a real AAC-LC -> PCM AudioConverter for the Gen5W CarPlay stack.
  *
  * libCarPlayUtils.so ships AudioConverterNew/SetProperty/FillComplexBuffer/Reset/
  * Dispose as stubs that always fail (-6735), so wireless CarPlay music (AAC-LC on
  * the buffered MainHigh stream) kills the session. The patched libCarPlayUtils
- * forwards those five calls here (dlopen + dlsym "ev6_<name>").
+ * forwards those five calls here (dlopen + dlsym "lfa_<name>").
  *
  * Codecs come from the head unit's own Android libraries; nothing is bundled:
  *   'aac '  -> 'lpcm'  music      FDK decoder in libstagefright_soft_aacdec.so
@@ -45,7 +45,7 @@ extern int __android_log_print(int prio, const char *tag, const char *fmt, ...);
 
 #endif
 
-#define TAG "EV6AAC"
+#define TAG "LeafiaAAC"
 #define LOGI(...) __android_log_print(4, TAG, __VA_ARGS__)
 #define LOGW(...) __android_log_print(5, TAG, __VA_ARGS__)
 
@@ -119,7 +119,7 @@ typedef struct {
     u32 pcmPos;          /* first pending frame */
     u32 packets, errors;
 } Conv;
-#define CONV_MAGIC 0x45563641u  /* EV6A */
+#define CONV_MAGIC 0x4146414cu  /* LAFA */
 
 static int load_fdk(void)
 {
@@ -263,7 +263,7 @@ static s32 new_opus_enc(const ASBD *in, const ASBD *out, void **outConv)
     return 0;
 }
 
-s32 ev6_AudioConverterNew(const ASBD *in, const ASBD *out, void **outConv)
+s32 lfa_AudioConverterNew(const ASBD *in, const ASBD *out, void **outConv)
 {
     if (!in || !out || !outConv) return kParamErr;
     *outConv = 0;
@@ -283,7 +283,7 @@ s32 ev6_AudioConverterNew(const ASBD *in, const ASBD *out, void **outConv)
     return kUnsupportedErr;
 }
 
-s32 ev6_AudioConverterDispose(void *conv)
+s32 lfa_AudioConverterDispose(void *conv)
 {
     Conv *c = (Conv *)conv;
     if (!c || c->magic != CONV_MAGIC) return kParamErr;
@@ -297,7 +297,7 @@ s32 ev6_AudioConverterDispose(void *conv)
     return 0;
 }
 
-s32 ev6_AudioConverterReset(void *conv)
+s32 lfa_AudioConverterReset(void *conv)
 {
     Conv *c = (Conv *)conv;
     if (!c || c->magic != CONV_MAGIC) return kParamErr;
@@ -309,7 +309,7 @@ s32 ev6_AudioConverterReset(void *conv)
     return 0;
 }
 
-s32 ev6_AudioConverterSetProperty(void *conv, u32 prop, u32 size, const void *data)
+s32 lfa_AudioConverterSetProperty(void *conv, u32 prop, u32 size, const void *data)
 {
     Conv *c = (Conv *)conv;
     (void)prop; (void)size; (void)data;
@@ -418,7 +418,7 @@ out:
     return made == want ? 0 : status;
 }
 
-s32 ev6_AudioConverterFillComplexBuffer(void *conv, InputProc proc, void *userData,
+s32 lfa_AudioConverterFillComplexBuffer(void *conv, InputProc proc, void *userData,
                                         u32 *ioOutputDataPacketSize,
                                         AudioBufferList *outData, ASPD *outDesc)
 {

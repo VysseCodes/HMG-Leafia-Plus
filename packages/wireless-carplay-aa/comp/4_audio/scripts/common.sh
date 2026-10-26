@@ -6,17 +6,17 @@
 #                       to type 100 / media; Opus on voice/alt like test9 (Wi-Fi only;
 #                       wired is stock)
 #   libCarPlayUtils.so  its AudioConverter* stubs (always -6735) now forward to
-#   libev6aac.so        real converters built on the head unit's own Android codecs:
+#   libleafia.so        real converters built on the head unit's own Android codecs:
 #                       AAC-LC -> PCM (music, libstagefright_soft_aacdec.so),
 #                       Opus -> PCM (Siri/calls) and PCM -> Opus (mic) via libopus.so
 # The two system libraries are patched with lpatch (recipes/carplay-audio-formats
 # and carplay-utils-converter): only when every original byte matches. Firmware
 # with its own AAC/Opus converters (utils NATIVE) needs neither the utils patch
-# nor libev6aac.so.
-# Uninstall puts both stock libraries back and removes libev6aac.so.
+# nor libleafia.so.
+# Uninstall puts both stock libraries back and removes libleafia.so.
 export PATH=/data/nemesis/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
 export LD_LIBRARY_PATH=/vendor/lib:/system/lib
-ROOT=${EV6_TEST_ROOT:-}
+ROOT=${LEAFIA_TEST_ROOT:-}
 [ -n "$ROOT" ] && PATH="$PATH:/usr/bin:/bin"   # host tools for the dry-run test only
 
 BACKUP_DIR=$ROOT/data/nemesis/backup/carplay.wifi.audio
@@ -24,9 +24,9 @@ LOG=$ROOT/data/nemesis/carplay.wifi.audio.log
 LIBDIR=$ROOT/system/lib
 AUDIO=$LIBDIR/libCarPlayAudio.so
 UTILS=$LIBDIR/libCarPlayUtils.so
-CONV=$LIBDIR/libev6aac.so
+CONV=$LIBDIR/libleafia.so
 
-SUM_CONV=badc26bd4c40a1c3e543b733a8ec5028
+SUM_CONV=a735109238789f10ada18c299788a368
 AUDIO_RECIPE=carplay-audio-formats
 UTILS_RECIPE=carplay-utils-converter
 . "${LP_ROOT:-../..}/scripts/lpatch.sh"
@@ -82,7 +82,7 @@ chown_system() {
 put_file() {
     local _src="$1"
     local _dst="$2"
-    local _tmp="${_dst}.ev6tmp"
+    local _tmp="${_dst}.lftmp"
     rm -f "$_tmp" 2>/dev/null || true
     cp "$_src" "$_tmp" || { rm -f "$_tmp" 2>/dev/null; return 1; }
     if ! cmp "$_src" "$_tmp" >/dev/null 2>&1; then
@@ -112,7 +112,7 @@ lp_to_state() {
 }
 audio_state() { lp_to_state "$(lp_state "$AUDIO_RECIPE" "$AUDIO")"; }
 utils_state() { lp_to_state "$(lp_state "$UTILS_RECIPE" "$UTILS")"; }
-# libev6aac.so is only needed where the converter stubs get patched
+# libleafia.so is only needed where the converter stubs get patched
 need_conv() { [ "$(utils_state)" != native ]; }
 
 check_live() {
@@ -138,7 +138,7 @@ check_live() {
 check_payload() {
     [ -s "$LP_ROOT/tools/lpatch" ] || { log "FAIL: payload lpatch missing"; return 1; }
     [ -s "$LP_ROOT/recipes/$AUDIO_RECIPE.recipe" ] && [ -s "$LP_ROOT/recipes/$UTILS_RECIPE.recipe" ] || { log "FAIL: payload recipes missing"; return 1; }
-    sum_eq files/libev6aac.so "$SUM_CONV" || { log "FAIL: payload libev6aac corrupt"; return 1; }
+    sum_eq files/libleafia.so "$SUM_CONV" || { log "FAIL: payload libleafia corrupt"; return 1; }
     return 0
 }
 
@@ -172,15 +172,15 @@ apply_all() {
     if need_conv; then
         # the converter first: the forwarding stubs look for it by name
         if ! sum_eq "$CONV" "$SUM_CONV"; then
-            put_file files/libev6aac.so "$CONV" || { log "FAIL: write $CONV"; return 1; }
-            log "OK: installed libev6aac.so"
+            put_file files/libleafia.so "$CONV" || { log "FAIL: write $CONV"; return 1; }
+            log "OK: installed libleafia.so"
         fi
         if [ "$(utils_state)" = stock ]; then
             patch_lib "$UTILS_RECIPE" "$UTILS" || { log "FAIL: patch $UTILS"; return 1; }
-            log "OK: libCarPlayUtils.so patched with lpatch (AudioConverter -> libev6aac.so)"
+            log "OK: libCarPlayUtils.so patched with lpatch (AudioConverter -> libleafia.so)"
         fi
     else
-        log "libCarPlayUtils.so has its own AAC/Opus converters - libev6aac.so not needed"
+        log "libCarPlayUtils.so has its own AAC/Opus converters - libleafia.so not needed"
     fi
     if [ "$(audio_state)" = stock ]; then
         patch_lib "$AUDIO_RECIPE" "$AUDIO" || { log "FAIL: patch $AUDIO"; return 1; }
@@ -208,7 +208,7 @@ restore_all() {
         fi
     fi
     if [ $_rc -eq 0 ] && [ -f "$CONV" ]; then
-        rm -f "$CONV" && log "removed libev6aac.so"
+        rm -f "$CONV" && log "removed libleafia.so"
     fi
     sync
     sys_ro

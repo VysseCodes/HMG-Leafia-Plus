@@ -25,7 +25,7 @@ trap 'rm -rf "$STAGE"' EXIT
 cp "$ROOT/kits/leafia/NEMESIS.data" "$ROOT/kits/leafia/NEMESIS.sh" "$ROOT/kits/leafia/README.txt" "$STAGE/"
 echo "$LEVEL" > "$STAGE/LEAFIA-LEVEL"
 cp "$ROOT/tools/lpatch/lpatch" "$STAGE/lpatch"
-mkdir "$STAGE/recipes" && cp "$ROOT"/recipes/*.recipe "$STAGE/recipes/"
+mkdir "$STAGE/recipes" && cp "$ROOT"/recipes/*.recipe "$ROOT"/recipes/legacy/*.recipe "$STAGE/recipes/"
 mkdir -p "$(dirname "$OUT")" && rm -f "$OUT"
 (cd "$STAGE" && zip -qrX "$OUT" NEMESIS.data NEMESIS.sh README.txt LEAFIA-LEVEL lpatch recipes)
 echo "$OUT"

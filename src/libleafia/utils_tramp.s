@@ -4,7 +4,7 @@
     .eabi_attribute Tag_THUMB_ISA_use, 2
     .thumb
 @ libCarPlayUtils.so: the five AudioConverter* exports (stubs that always failed)
-@ now forward to libev6aac.so: dlopen("libev6aac.so") + dlsym("ev6_<name>") and a
+@ now forward to libleafia.so: dlopen("libleafia.so") + dlsym("lfa_<name>") and a
 @ tail call with the caller's registers and stack untouched. If the library or symbol
 @ is missing they return -6735 (kUnsupportedErr), the same as the old stubs.
 
@@ -33,18 +33,18 @@ fail:
     bx      lr
     .balign 4
 libname:
-    .asciz  "libev6aac.so"
+    .asciz  "libleafia.so"
     .balign 4
 names:
-    .asciz  "ev6_AudioConverterNew"
+    .asciz  "lfa_AudioConverterNew"
     .org    names + 32
-    .asciz  "ev6_AudioConverterDispose"
+    .asciz  "lfa_AudioConverterDispose"
     .org    names + 64
-    .asciz  "ev6_AudioConverterReset"
+    .asciz  "lfa_AudioConverterReset"
     .org    names + 96
-    .asciz  "ev6_AudioConverterSetProperty"
+    .asciz  "lfa_AudioConverterSetProperty"
     .org    names + 128
-    .asciz  "ev6_AudioConverterFillComplexBuffer"
+    .asciz  "lfa_AudioConverterFillComplexBuffer"
     .balign 4
 
     .section .t_dispose, "ax", %progbits

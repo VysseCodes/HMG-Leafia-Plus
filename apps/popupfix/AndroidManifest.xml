@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LeafiaPopupFix: makes the Settings button of the head unit's phone projection
+     popup work. The stock popup (Mobis_SystemPopup) opens this exact package and
+     page, which Gen5W firmware doesn't have, so the button crashed. This page has
+     no screen of its own: it opens the real one, Device Connections, and closes.
+     The package name is the one the stock popup asks for; it is only installed
+     where no app with this name exists. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.daudio.app.deviceconnections">
+
+    <application
+        android:label="Leafia popup fix"
+        android:allowBackup="false"
+        android:hasCode="true">
+
+        <activity
+            android:name=".ui.connectivitySettings.PhoneProjectionSettingsActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoDisplay" />
+    </application>
+</manifest>

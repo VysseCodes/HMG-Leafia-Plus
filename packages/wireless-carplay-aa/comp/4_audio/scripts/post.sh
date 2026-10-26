@@ -1,7 +1,7 @@
 #!/system/bin/sh
 . ./scripts/common.sh
 log "postinstall carplay.wifi.audio (aac)"
-rm -f "$AUDIO.ev6tmp" "$UTILS.ev6tmp" "$CONV.ev6tmp" 2>/dev/null
+rm -f "$AUDIO.lftmp" "$UTILS.lftmp" "$CONV.lftmp" 2>/dev/null
 check_payload || exit 1
 check_live || exit 1
 if [ "$(audio_state)" = new ] && { [ "$(utils_state)" = native ] || { [ "$(utils_state)" = new ] && sum_eq "$CONV" "$SUM_CONV"; }; }; then

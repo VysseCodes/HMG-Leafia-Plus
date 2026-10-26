@@ -21,6 +21,8 @@
 #   MOCK_USB_DESCRIPTOR=1   put our install descriptor on the mock USB drive
 #   MOCK_ADB_TCP=1          ADB over network on the stock way (as NEMESIS's Enable ADB
 #                           leaves it); checks the switch to persist.adb.tcp.port and back
+#   MOCK_HAS_DEVICECONNECTIONS=1  the unit already has an app named
+#                           com.daudio.app.deviceconnections: LeafiaPopupFix must be skipped
 #   MOCK_WIFI_CLIENT=1      LEAFIA-WIFI-CLIENT on the install drive: part 1 also turns on
 #                           the Wi-Fi client (implies MOCK_USB_DESCRIPTOR=1)
 #   MOCK_NO_WIFI=1          a unit whose Wi-Fi chip never responds (no wlan0, driver
@@ -39,6 +41,8 @@ ZIP=$(cd "$(dirname "$1")" && pwd)/$(basename "$1"); PROD=$2; TD=$3; SRC=$4
 SH=${MOCK_SH:-/bin/sh}
 X=$(mktemp -d "${TMPDIR:-/tmp}/mock-hu.XXXX"); R=$X/root
 mkdir -p "$R/data/nemesis" "$R/data/dalvik-cache" "$R/storage/usb0" "$R/sys/class/net" "$X/stub" "$X/pkg"
+[ "$MOCK_HAS_DEVICECONNECTIONS" = 1 ] && mkdir -p "$R/data/system" && \
+    echo '<package name="com.daudio.app.deviceconnections" codePath="/system/app/HKMC_DeviceConnections.apk" />' > "$R/data/system/packages.xml"
 if [ "$MOCK_NO_WIFI" = 1 ]; then
     printf '#!/bin/sh\necho "<4>[   68.585868] failed to power up DHD generic adapter, max retry reached**"\n' > "$X/stub/dmesg"
 else
@@ -110,7 +114,8 @@ chmod 755 "$X"/stub/*
 # unpack the package and point its scripts at the sandbox instead of the real paths
 (cd "$X" && unzip -q "$ZIP" packages/wireless.carplay.aa.zip && unzip -q packages/wireless.carplay.aa.zip -d pkg)
 find "$X/pkg" -name '*.sh' | while read -r f; do
-    sed -i -e "1s|^#!.*|#!/bin/sh|" -e "s|/system/|$R/system/|g" -e "s|/data/|$R/data/|g" \
+    # /data/ first, held as a marker, so /data/system/... isn't also taken for /system/
+    sed -i -e "1s|^#!.*|#!/bin/sh|" -e "s|/data/|@MOCKDATA@|g" -e "s|/system/|$R/system/|g" -e "s|@MOCKDATA@|$R/data/|g" \
         -e "s|/storage/|$R/storage/|g" -e "s|/sys/class/|$R/sys/class/|g" -e "s|/mnt/media_rw/|$R/mnt/media_rw/|g" \
         -e "s|^export PATH=|export PATH=$X/stub:|" \
         -e "s|^export PATH=$X/stub:$R/data/nemesis/bin:|export PATH=$R/data/nemesis/bin:$X/stub:|" \

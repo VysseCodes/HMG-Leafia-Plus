@@ -7,7 +7,7 @@ NEMESIS package source. It installs four parts in order, with one reboot at the 
 | Wireless projection | `comp/1_projection` | Wireless feature flags, region folder from `ro.mobis.targetdir` (hotspot only) |
 | Turn-by-turn | `comp/2_tbt` | Projection apps (NEMESIS community package). Refuses unless the firmware has every cluster call it uses. |
 | CarPlay bridge | `comp/3_bridge` | Projection apps + `libCarPlayCore` via lpatch (`carplay-core-wifi`) |
-| CarPlay audio | `comp/4_audio` | `libCarPlayAudio` / `libCarPlayUtils` via lpatch, plus `libev6aac.so` where needed |
+| CarPlay audio | `comp/4_audio` | `libCarPlayAudio` / `libCarPlayUtils` via lpatch, plus `libleafia.so` where needed |
 
 Nothing modified is shipped. The head unit patches its own files:
 
