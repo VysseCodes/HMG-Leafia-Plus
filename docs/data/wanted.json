@@ -67,10 +67,8 @@
    "brand": "Kia",
    "model": "Niro",
    "variants": [
-    "Standard",
     "Hybrid",
-    "Plug-in Hybrid",
-    "Electric"
+    "Plug-in Hybrid"
    ],
    "years": "2020–2026",
    "regions": [
@@ -78,7 +76,8 @@
     "US"
    ],
    "firmware": "US 260507 · CA 260206",
-   "priority": true
+   "priority": true,
+   "note": "the US Niro EV (SG2EV.USA.*) has a build (kia-niro-ev-us-260507 in docs/data/compat.json), wired-only on this head unit: it has no Wi-Fi radio, so wired CarPlay/AA and cluster/HUD turn-by-turn over wired CarPlay; the Canadian Niro EV still needs one"
   },
   {
    "brand": "Kia",

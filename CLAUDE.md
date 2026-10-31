@@ -45,6 +45,7 @@ The Korean sets (`patches/dl3hev`, `patches/neev_kr`) are kept but not in `cars`
 | `CVEV.CAN.` | ev6_ca | Kia EV6 Canada 260206 | same projection code (every `.odex`, AA lib, CarPlay libs) as US 260507; only the DiPO/GPM APKs differ, so its manifest points at the `ev6/` patches; not yet tested on a real car |
 | `NEEV.USA.` / `NEEV23.USA.` | neev | Hyundai Ioniq 5 US 2022/2023 | app code identical to EV6, different APK wrappers |
 | `NEEV.CAN.` | neev_ca | Hyundai Ioniq 5 Canada 260206 | apps ported with `port.py`; its AA library (a0bea1c4) differs from the US one, so the library patch was hand-ported (`neev_ca/libautoreceiver_infobank.tbt.lpd`); not yet tested on a real car |
+| `SG2EV.USA.` | sg2ev | Kia Niro EV US 260507 | from a 2023 unit; apps ported with `port.py` against the Ioniq 5 Canada 260206 reference, `Iap2ServerApp` reused verbatim (same stock code); its AA library (48ee793a) is the US one, so `common/` carries the delta; installed in full mode on that 2023 unit (wired CarPlay/AA, cluster/HUD turn-by-turn over wired CarPlay with the projection app in the foreground); the unit has no Wi-Fi module, so wireless is not possible and a re-install is refused while `dmesg` still carries the DHD failure - uninstall and reboot first |
 
 ## Gotchas learned the hard way
 

@@ -30,6 +30,7 @@
       },
       "built": {
         "/system/app/HKMC_BtSettings.apk": [
+          "575ac7eb4e01e0111b444697b9f6a4e8",
           "93ecaa97597a79be2a10728e45c72b33",
           "b977e268fbe73cb5637c4413647a7dea",
           "cd98c36db6857ed174757c6010a36494",
@@ -80,6 +81,7 @@
       },
       "built": {
         "/system/app/HKMC_BtSettings.apk": [
+          "575ac7eb4e01e0111b444697b9f6a4e8",
           "93ecaa97597a79be2a10728e45c72b33",
           "b977e268fbe73cb5637c4413647a7dea",
           "cd98c36db6857ed174757c6010a36494",
@@ -135,6 +137,7 @@
       },
       "built": {
         "/system/app/HKMC_BtSettings.apk": [
+          "575ac7eb4e01e0111b444697b9f6a4e8",
           "93ecaa97597a79be2a10728e45c72b33",
           "b977e268fbe73cb5637c4413647a7dea",
           "cd98c36db6857ed174757c6010a36494",
@@ -185,6 +188,7 @@
       },
       "built": {
         "/system/app/HKMC_BtSettings.apk": [
+          "575ac7eb4e01e0111b444697b9f6a4e8",
           "93ecaa97597a79be2a10728e45c72b33",
           "b977e268fbe73cb5637c4413647a7dea",
           "cd98c36db6857ed174757c6010a36494",
@@ -206,6 +210,59 @@
         ],
         "/system/lib/libautoreceiver_infobank.so": [
           "84321500e6921b9222d5b91ff3ca75b2"
+        ]
+      }
+    },
+    {
+      "id": "kia-niro-ev-us-260507",
+      "name": "Kia Niro EV",
+      "region": "US",
+      "chip": "TCC803x",
+      "product_prefix": "SG2EV.USA.",
+      "years": "2023",
+      "firmware": "V015.012.260507",
+      "status": "no-wifi",
+      "verified": [
+        "Wired CarPlay and wired Android Auto, confirmed on a real unit",
+        "Turn-by-turn on the cluster and HUD over wired CarPlay, confirmed on a 2023 Niro EV (US) on this firmware (CarPlay screen in the foreground, built-in nav not routing)",
+        "Sandbox install and uninstall on this firmware's own files"
+      ],
+      "notes": "Wireless is not possible: the wifi.module permission XML is present (it only declares the feature the report's Wi-Fi-module line reads), android.hardware.wifi.xml is absent, the Wi-Fi SDIO host has no vmmc regulator and no card enumerates, androidboot.wifimac= is empty, and the kit's wl probe says 'wl driver adapter not found'. With the features on the driver gives up ('failed to power up DHD generic adapter, max retry reached'), so wifi_hw() reads no; stock reads unknown and installs in full mode, but a re-install over an installed unit is refused until uninstall + reboot. You get wired CarPlay/AA and cluster/HUD turn-by-turn over wired CarPlay.",
+      "stock": {
+        "/system/app/HKMC_GPM.apk": "c62af648f758dcb01a0acb6c2b901ebf",
+        "/system/app/HKMC_GPM.odex": "c4f751a36be916e72cf93df0436d63c2",
+        "/system/app/HKMC_DiPO.apk": "0b04c9d790dfe80e5d33c3be4f3b3f3b",
+        "/system/app/HKMC_DiPO.odex": "6953fa525b2a2fe4252250f38296c837",
+        "/system/app/Iap2ServerApp.apk": "fde208439f993986a60396e759797a01",
+        "/system/app/Iap2ServerApp.odex": "f3e22d94150de40f4ed603798358b0e3",
+        "/system/app/HKMC_Navi_ExSL.apk": "19559e742b1d21550aa8f0324e8e6d36",
+        "/system/app/HKMC_Navi_ExSL.odex": "5b55bdee8821d049cedc162b862f64f9",
+        "/system/lib/libautoreceiver_infobank.so": "48ee793af8b86052503b8c952b034731"
+      },
+      "built": {
+        "/system/app/HKMC_BtSettings.apk": [
+          "575ac7eb4e01e0111b444697b9f6a4e8",
+          "93ecaa97597a79be2a10728e45c72b33",
+          "b977e268fbe73cb5637c4413647a7dea",
+          "cd98c36db6857ed174757c6010a36494",
+          "e7c90e78f45f7e6b9c90ddd7a238b566"
+        ],
+        "/system/app/HKMC_DiPO.apk": [
+          "6206c7ee3162eb4f06a5ad68e46f0207",
+          "b9738fc7d316713c77bbd55eb4fd98d6"
+        ],
+        "/system/app/HKMC_GPM.apk": [
+          "a43603d4b12ed4d0f057488cc7a6b661"
+        ],
+        "/system/app/HKMC_Navi_ExSL.apk": [
+          "6a658d18532f9a0932b97963b937c2e7"
+        ],
+        "/system/app/Iap2ServerApp.apk": [
+          "75d7fea4d2009be6aa5c840118f58c94",
+          "7e90fa7d8a161ade71e11dc15e56c410"
+        ],
+        "/system/lib/libautoreceiver_infobank.so": [
+          "c08410a8d32a615b1aa805cd8a243d52"
         ]
       }
     }

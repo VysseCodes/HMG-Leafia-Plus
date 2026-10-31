@@ -63,7 +63,7 @@ function recipeState(r, id) {
 function verdict(r) {
   const v = findVariant(r);
   const parts = [];
-  const hasWifi = r.features.includes("com.hkmc.software.wifi.module");
+  const hasWifi = r.features.includes("com.hkmc.software.wifi.module") && !(v && v.status === "no-wifi");
 
   parts.push({ name: "Wireless projection (car hotspot)", state: hasWifi ? "ok" : "no",
     why: hasWifi ? "Wi-Fi module present. The package enables the wireless CarPlay/AA feature flags for your region folder ("
@@ -95,8 +95,9 @@ function verdict(r) {
   }
   parts.push({ name: "CarPlay wireless audio", state: audioState, why: audioWhy });
 
-  const built = v && (v.status === "supported" || v.status === "testing");
-  const tested = v && v.status === "supported";
+  // a car with a build but no Wi-Fi module (status "no-wifi") still has those builds
+  const built = v && ["supported", "testing", "no-wifi"].includes(v.status);
+  const tested = v && (v.status === "supported" || v.status === "no-wifi");
   const bridgeOk = filesMatch(r, v, BRIDGE_FILES);
   parts.push({ name: "CarPlay Bluetooth bridge", state: bridgeOk && built ? "ok" : "build",
     why: bridgeOk && built ? (tested ? "A tested build exists for these exact CarPlay apps." : "A build exists for these exact CarPlay apps; it hasn't been tried on a real car yet.") : "The CarPlay apps on this unit have no build yet. Sharing your report helps get one made." });
@@ -115,11 +116,11 @@ function verdict(r) {
   let overall;
   if (!r.valid) overall = ["no", "This doesn't look like an HMG Leafia Plus report."];
   else if (/\.KOR\./.test(r.props["ro.build.product"] || "")) overall = ["unknown", "Korean head unit: we have yet to confirm a single working Korean car. Every Korean unit checked so far has had no Wi-Fi hardware, which wireless CarPlay and Android Auto need. Please share your report anyway; if this unit has a working Wi-Fi chip, that changes things."];
-  else if (allGood && leafiaInstalled(r, v)) overall = ["ok", "HMG Leafia Plus is already installed on this unit, with its build for the " + v.name + "."];
   else if (v && !(r.props["ro.build.product"] || "").endsWith(v.firmware)) overall = ["build", "This head unit runs firmware "
     + (r.props["ro.build.product"] || "?").split(".").pop() + ". We only support each car's newest firmware (" + v.firmware.split(".").pop()
     + " for the " + v.name + "): update the head unit's software, then check again. Until then, the package installs wireless Android Auto (basic mode)."];
   else if (v && v.status === "no-wifi") overall = ["no", "This head unit has no working Wi-Fi hardware, so wireless CarPlay and Android Auto aren't possible. Wired CarPlay and Android Auto still work."];
+  else if (allGood && leafiaInstalled(r, v)) overall = ["ok", "HMG Leafia Plus is already installed on this unit, with its build for the " + v.name + "."];
   else if (allGood && v && v.status === "supported") overall = ["ok", "Supported: install the Wireless CarPlay and Android Auto package."];
   else if (allGood && v && v.status === "testing") overall = ["ok", "Build ready, awaiting its first real-car test. You can install the package; uninstall puts everything back to stock."];
   else if (v && v.status === "in-progress") overall = ["build", "Support for " + v.name + " is in progress. Share your report to help."];
