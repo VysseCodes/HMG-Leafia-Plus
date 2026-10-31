@@ -1,3 +1,5 @@
 dist/
 payloads/
 tools/mock/cars.local
+__pycache__/
+*.pyc
