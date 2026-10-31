@@ -119,7 +119,8 @@
       "verified": [
         "Install in full mode on real cars",
         "Wireless CarPlay on 2024 cars (owner reports, #141 and #142)",
-        "Android Auto turn-by-turn on the HUD (Google Maps) on a 2023 Limited AWD"
+        "Android Auto turn-by-turn on the HUD (Google Maps) on a 2023 Limited AWD",
+        "Sandbox install and uninstall on this firmware’s own files"
       ],
       "notes": "Ported from the US Ioniq 5 260507 build. 2022 cars (NEEV.USA.) on 260903 are not covered yet.",
       "stock": {
