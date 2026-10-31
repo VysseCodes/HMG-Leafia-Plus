@@ -25,11 +25,12 @@
 #                           the Wi-Fi client (implies MOCK_USB_DESCRIPTOR=1)
 #   MOCK_NO_WIFI=1          a unit whose Wi-Fi chip never responds (no wlan0, driver
 #                           gives up): the install must be refused
+#   MOCK_EXPECT_MODE=full   fail unless the install completes in this mode (full or basic)
 #
 # Needs: qemu-arm-static (runs the ARM lpatch), unzip, md5sum.
 set -e
 if [ $# -ne 4 ] || [ "$1" = -h ] || [ "$1" = --help ]; then
-    sed -n '2,24p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'
     exit 2
 fi
 for t in qemu-arm-static unzip md5sum; do
@@ -133,6 +134,9 @@ if "$SH" scripts/pre.sh > "$X/pre.log" 2>&1; then
     "$SH" scripts/post.sh > "$X/post.log" 2>&1 || true
     if grep -q 'all parts installed' "$X/post.log"; then
         echo "INSTALL OK $(grep -o -E "(full|basic) mode[^)]*" "$X/post.log" | head -1)"
+        if [ -n "$MOCK_EXPECT_MODE" ] && ! grep -q "all parts installed ($MOCK_EXPECT_MODE mode:" "$X/post.log"; then
+            echo "expected $MOCK_EXPECT_MODE mode, got: $(grep 'all parts installed' "$X/post.log")"; ok=0
+        fi
     else
         echo "INSTALL FAILED"; grep -i 'fail' "$X/post.log" | head; ok=0
     fi
