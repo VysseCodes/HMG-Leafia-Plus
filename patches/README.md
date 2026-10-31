@@ -8,6 +8,7 @@ One folder per car, plus `common/`. The head unit rebuilds the modified projecti
 | `ev6_ca/` | Kia EV6, Canada (`CVEV.CAN.*`): same code as the US EV6, so its manifest uses the `ev6/` patches on Canada's own APKs | 260206 |
 | `neev/` | Hyundai Ioniq 5, US (`NEEV.USA.*`, `NEEV23.USA.*`) | 260507 |
 | `neev_ca/` | Hyundai Ioniq 5, Canada (`NEEV.CAN.*`): its Android Auto library differs from the US one, so it carries its own library delta | 260206 |
+| `sg2ev/` | Kia Niro EV, US (`SG2EV.USA.*`) | 260507 |
 | `dl3hev/` | Kia K5 Hybrid, Korea: kept, not in `cars` (no Korean unit has shown Wi-Fi hardware) | 260902 |
 | `neev_kr/` | Hyundai Ioniq 5, Korea: kept, not in `cars` (as above) | 260902 |
 | `common/` | `libautoreceiver_infobank.so` for every car with the US stock library (a car with a different one has its own delta in its folder); `optional`: fixes applied wherever the stock file matches | |
@@ -38,6 +39,9 @@ It compares the new car's apps with the EV6's class by class:
 - Classes that are identical, or that differ but carry none of our changes, are taken as they are.
 - Classes that differ and carry our changes are merged automatically when the difference is only renamed members (obfuscation shifts between firmwares), or when our change applies cleanly as a 3-way patch.
 - Anything else stops the port and is listed for a person to merge.
+
+A car whose stock code is byte-identical to the reference's (as `Iap2ServerApp` is for the Niro EV) is reused
+verbatim by `port.py`'s `same_stock_code()` shortcut instead of being recompiled.
 
 Every result is then checked: each reference inside the app must resolve, and every system call must exist in the new car's framework. If all checks pass, it writes `patches/<name>/` and adds the car to `cars`. The full builds in `--out-builds` stay private.
 
