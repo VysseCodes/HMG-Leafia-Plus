@@ -12,6 +12,8 @@ class, and carries the reference builds' changes over:
     new car's version is the reference's with members renamed (obfuscation
     shifts), or when our change applies cleanly as a 3-way patch; otherwise
     the port stops and lists them for a person to merge
+  * an app whose stock code is byte-identical to the reference's is not
+    recompiled or merged at all: the reference build is reused as is
 
 Every result is checked: each reference inside the app must resolve, every
 system call must exist in the new car's framework. Then the builds are
@@ -32,7 +34,7 @@ usage:
 Needs baksmali and smali on PATH, the host lpatch (tools/lpatch/build.sh) and
 `pip install --require-hashes -r tools/requirements.txt`.
 """
-import argparse, filecmp, hashlib, os, re, shutil, subprocess, sys, tempfile, zipfile
+import argparse, filecmp, hashlib, os, re, shutil, struct, subprocess, sys, tempfile, zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -71,6 +73,48 @@ def deodex(odex, fw, out):
     skipped = r.stderr.count('skipping class')
     if r.returncode or skipped:
         sys.exit('deodex of %s failed (%d classes skipped)' % (odex, skipped))
+
+def same_stock_code(ref_odex, new_odex):
+    """Whether two stock odex files hold the same dex code, byte for byte.
+
+    Compares the two stock *odexes* only: the stock APK they sit in (resources,
+    manifest) is not compared.
+
+    Compare the dex each odex embeds (odex header: dex offset at 8, length at
+    12) from byte 32 on, skipping the dex header's checksum and signature:
+    those, and the odex header's own checksum, differ between any two builds
+    of the same code. Equal bytes after that mean the reference build's
+    classes.dex is the right build for this APK, so it can be reused as is -
+    the code was compiled the same way and only the wrapper odex differs.
+
+    Comparing the deodexed text instead would not answer this: baksmali
+    resolves member names through the framework, so identical code can print
+    differently on a car whose framework differs.
+
+    A file that is not an odex at all stops the port: then the input tree is
+    wrong. An odex with another version tag answers False instead, so a future
+    firmware falls back to the normal class-by-class merge. An odex whose
+    embedded dex header is unusable - truncated, or its dex running past EOF -
+    stops the port as well: the car's files are then not what the port expects.
+    """
+    def dex(path):
+        h = open(path, 'rb').read()
+        if h[:4] != b'dey\n':
+            sys.exit('not an odex: %s' % path)
+        # an odex this comparison cannot read is not an error: the caller
+        # deodexes it. A dex offset or length past EOF is, and would otherwise
+        # compare two empty slices and report equal code for files never read.
+        if h[:8] != b'dey\n036\0':
+            return None
+        # shorter than the header it claims to have: no offset/length to trust
+        if len(h) < 16:
+            sys.exit('broken odex: %s' % path)
+        off, n = struct.unpack_from('<II', h, 8)
+        if n < 32 or off + n > len(h):
+            sys.exit('broken odex: %s' % path)
+        return h[off:off + n]
+    ref, new = dex(ref_odex), dex(new_odex)
+    return ref is not None and new is not None and ref[32:] == new[32:]
 
 def disasm(apk, out):
     with tempfile.TemporaryDirectory() as t:
@@ -140,6 +184,10 @@ def three_way(e, t, k, tmp):
 
 # ---- checks ----
 def defs_of(root):
+    if not os.path.isdir(root):
+        # the same_stock_code() shortcut never creates work/new_<app>, and an empty
+        # baseline would quietly hide every unresolved reference
+        sys.exit('missing %s' % root)
     defs, sup = {}, {}
     for dp, _, fs in os.walk(root):
         for f in fs:
@@ -213,10 +261,19 @@ def main():
     for part, names in PARTS:
         for n in names:
             E = os.path.join(work, 'ref_' + n); K = os.path.join(work, 'new_' + n)
-            if not os.path.isdir(E): deodex(os.path.join(a.ref_stock, 'app', n + '.odex'), a.ref_fw, E)
-            if not os.path.isdir(K): deodex(os.path.join(a.new_stock, 'app', n + '.odex'), a.new_fw, K)
             T = os.path.join(work, '%s_%s_build' % (part, n))
             if not os.path.isdir(T): disasm(os.path.join(a.ref_builds, part, files_dir(a.ref_variant), n + '.apk'), T)
+            ref_odex = os.path.join(a.ref_stock, 'app', n + '.odex')
+            new_odex = os.path.join(a.new_stock, 'app', n + '.odex')
+            for p in (ref_odex, new_odex):
+                if not os.path.exists(p): sys.exit('missing %s' % p)
+            if same_stock_code(ref_odex, new_odex):
+                log('%s %s: stock code identical to the reference, using the reference build' % (part, n))
+                report.append('%s %s: stock code identical to the reference, using the reference build' % (part, n))
+                builds[(part, n)] = T
+                continue
+            if not os.path.isdir(E): deodex(ref_odex, a.ref_fw, E)
+            if not os.path.isdir(K): deodex(new_odex, a.new_fw, K)
             ce, ck, ct = classes(E), classes(K), classes(T)
             changed = {c for c in ct if c not in ce or norm_lines(os.path.join(E, c)) != norm_lines(os.path.join(T, c))}
             differs = {c for c in ck if c not in ce or norm_lines(os.path.join(E, c)) != norm_lines(os.path.join(K, c))}
@@ -261,7 +318,11 @@ def main():
     # checks: nothing new left unresolved, every system call exists
     problems = []
     for (part, n), out in builds.items():
-        base = unresolved(os.path.join(work, '%s_%s_build' % (part, n))) | unresolved(os.path.join(work, 'new_' + n))
+        # the same_stock_code() shortcut skips deodex(), so new_<app> may not exist
+        K = os.path.join(work, 'new_' + n)
+        base = unresolved(os.path.join(work, '%s_%s_build' % (part, n)))
+        if os.path.isdir(K):
+            base |= unresolved(K)
         new_bad = unresolved(out) - base
         if new_bad: problems.append('%s %s: unresolved %s' % (part, n, sorted(new_bad)[:5]))
         fw_bad = unresolved(out, fw_defs)
