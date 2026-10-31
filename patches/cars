@@ -1,6 +1,8 @@
 # <ro.build.product prefix> <patch set> <car name>
 CVEV.USA. ev6 Kia EV6 (US)
 NEEV.USA. neev Hyundai Ioniq 5 (US)
+NEEV23SE.USA.0000.V016.010.260903 neev23_260903 Hyundai Ioniq 5 2024 SE (US 260903)
+NEEV23.USA.0000.V016.010.260903 neev23_260903 Hyundai Ioniq 5 2023 (US 260903)
 NEEV23.USA. neev Hyundai Ioniq 5 2023 (US)
 CVEV.CAN. ev6_ca Kia EV6 (Canada)
 NEEV.CAN. neev_ca Hyundai Ioniq 5 (Canada)

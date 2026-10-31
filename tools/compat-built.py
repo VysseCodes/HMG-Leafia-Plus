@@ -49,7 +49,10 @@ def main():
     db = json.loads(raw)
     for v in db['variants']:
         prefixes = v['product_prefix'] if isinstance(v['product_prefix'], list) else [v['product_prefix']]
-        found = {sets[c] for c in sets for p in prefixes if c.startswith(p) or p.startswith(c)}
+        found = set()
+        for p in prefixes:
+            within = [c for c in sets if p.startswith(c)]
+            found |= {sets[max(within, key=len)]} if within else {sets[c] for c in sets if c.startswith(p)}
         if len(found) > 1:
             sys.exit('%s: product prefixes map to several patch sets %s' % (v['id'], sorted(found)))
         b = built_for(found.pop()) if found else {}
