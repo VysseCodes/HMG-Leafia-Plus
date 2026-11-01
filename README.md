@@ -1,5 +1,14 @@
 # HMG Leafia Plus
 
+> [!IMPORTANT]
+> **HMG Leafia Plus is archived. Its successor is [HMG-API](https://github.com/VysseCodes/HMG-API).**
+>
+> HMG-API is a mod manager for Gen5W head units. Wireless CarPlay and Android Auto with turn-by-turn on the cluster and HUD is one of its mods, next to many others. It installs through NEMESIS, a USB stick or adb, and removing anything puts back exactly what it changed. [Install guide](https://github.com/VysseCodes/HMG-API/wiki/Installing-HMG-API) · [Supported cars](https://github.com/VysseCodes/HMG-API/wiki/Supported-cars) · [Releases](https://github.com/VysseCodes/HMG-API/releases)
+>
+> - **Your car or software version isn't supported yet?** Install HMG-API and make a [Car Report](https://github.com/VysseCodes/HMG-API/wiki/Car-Report). It maps your car from its own software, and it's what's needed to add it.
+> - **Already running Leafia?** It keeps working, and its uninstall still restores your stock files. Uninstall Leafia in NEMESIS Manager before you turn on HMG-API's wireless CarPlay and Android Auto mod (both change the same files).
+> - Issues and pull requests here are closed. Please use [HMG-API's issues](https://github.com/VysseCodes/HMG-API/issues/new/choose).
+
 [![Sponsor on GitHub](https://img.shields.io/badge/Sponsor_on_GitHub-%E2%9D%A4-bf3989?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/VysseCodes)
 [![Buy me a coffee on Ko-fi](https://img.shields.io/badge/Buy_me_a_coffee-Ko--fi-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white)](https://ko-fi.com/vyssecodes)
 
